@@ -1,0 +1,27 @@
+---
+// src/pages/projects.astro
+import { slide } from 'astro:transitions';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import { projects } from '../../data/projects';
+import ProjectCard from '../../components/ProjectCard.astro';
+---
+
+<Layout title="My Projects">
+  <Header />
+  <main class="container pt-32 pb-16" transition:animate={slide({ duration: '0.3s' })}>
+    <div class="text-center mb-14">
+       <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
+        <span class="lang-ru">Мои Проекты</span>
+        <span class="lang-en">My Work</span>
+      </h1>
+      <p class="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
+        <span class="lang-ru">Здесь собраны некоторые из моих любимых проектов.</span>
+        <span class="lang-en">A collection of some of my favorite projects I've worked on.</span>
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {projects.map(p => <ProjectCard project={p} />)}
+    </div>
+  </main>
+</Layout>

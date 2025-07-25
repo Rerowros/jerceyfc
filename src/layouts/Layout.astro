@@ -1,0 +1,106 @@
+---
+// src/layouts/Layout.astro
+import '../styles/global.css';
+import '../styles/gos.css';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="ru" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Портфолио веб-разработчика" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <meta name="view-transition" content="same-origin" />
+    
+    <!-- Добавляем ClientRouter для SPA-переходов -->
+    <ClientRouter />
+
+    <script is:inline>
+      // Скрипт выполняется до рендера, чтобы избежать мигания
+      function applyTheme() {
+        const theme = localStorage.getItem('theme');
+        const palette = localStorage.getItem('palette') || 'indigo';
+        const view = localStorage.getItem('view');
+        const lang = localStorage.getItem('lang') || 'ru';
+        
+        document.documentElement.lang = lang;
+
+        // ПРИОРИТЕТ №1: ПРОВЕРЯЕМ РЕЖИМ ДЛЯ СЛАБОВИДЯЩИХ
+        if (view === 'gos') {
+          // Если включен "гос-режим", устанавливаем его и БОЛЬШЕ НИЧЕГО НЕ ДЕЛАЕМ.
+          // Этот режим имеет свои собственные, непереопределяемые стили.
+          document.documentElement.setAttribute('data-view', 'gos');
+        } else {
+          // Если "гос-режим" выключен, работаем с обычной логикой тем и палитр.
+          // 1. Устанавливаем тему Dark/Light
+          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+          // 2. Устанавливаем цветовую палитру
+          document.documentElement.setAttribute('data-theme', palette);
+        }
+      }
+
+      // Применяем тему сразу при загрузке
+      applyTheme();
+
+      // Для View Transitions - применяем тему после каждого перехода
+      document.addEventListener('astro:after-swap', applyTheme);
+    </script>
+
+  </head>
+<body class="bg-background text-foreground bg-theme-gradient font-['Inter'] transition-colors duration-300">
+  <slot />
+</body>
+<script is:inline>
+  function initScrollAnimations() {
+    // Выбираем все элементы, которые мы хотим анимировать
+    const animatedElements = document.querySelectorAll('.scroll-animate');
+
+    // Настройки для Observer.
+    // threshold: 0.1 означает, что анимация сработает, когда 10% элемента появится на экране.
+    const observerOptions = {
+      threshold: 0.1,
+      // Можно добавить rootMargin, чтобы анимация начиналась чуть раньше/позже
+      // rootMargin: "0px 0px -100px 0px" // сработает на 100px раньше, чем элемент достигнет низа экрана
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        // Если элемент в поле зрения
+        if (entry.isIntersecting) {
+          // Добавляем класс, запускающий анимацию
+          entry.target.classList.add('is-visible');
+          // Отключаем наблюдение за этим элементом, т.к. анимация должна сработать один раз
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Запускаем наблюдение за каждым элементом
+    animatedElements.forEach(element => {
+      observer.observe(element);
+    });
+  }
+
+  // Инициализируем при первой загрузке
+  document.addEventListener('DOMContentLoaded', initScrollAnimations);
+  
+  // Переинициализируем после каждого View Transition
+  document.addEventListener('astro:page-load', initScrollAnimations);
+</script>
+</html>

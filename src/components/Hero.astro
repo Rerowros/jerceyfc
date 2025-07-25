@@ -1,0 +1,43 @@
+---
+// src/components/Hero.astro
+import SparklesIcon from '../../public/SparklesIcon.astro';
+---
+<div class="bg-card/70 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-xl flex flex-col justify-center h-full text-left transition-all duration-300 hover:border-primary/50 hover:shadow-primary/10">
+  <div class="flex flex-col gap-6">
+    <h1 class="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight text-foreground scroll-animate" style="transition-delay: 100ms;">
+      <span class="lang-ru">Привет, я <span class="text-primary">Ярослав</span></span>
+      <span class="lang-en">Hi, I'm <span class="text-primary">Yaroslav</span></span><br />
+      <span class="lang-ru">Full-Stack Разработчик</span>
+      <span class="lang-en">A Full-Stack Developer</span>
+    </h1>
+    <p class="text-lg md:text-xl text-muted-foreground max-w-xl scroll-animate" style="transition-delay: 200ms;">
+      <span class="lang-ru">Создаю быстрые, красивые и функциональные веб-приложения.</span>
+      <span class="lang-en">Building fast, beautiful, and functional web applications.</span>
+    </p>
+    <div class="mt-2 scroll-animate" style="transition-delay: 300ms;">
+      <a href="#projects" class="inline-block bg-primary hover:opacity-90 text-primary-foreground font-semibold py-3 px-8 rounded-md text-lg shadow-lg transition-opacity duration-200">
+        <span class="lang-ru">Мои работы</span>
+        <span class="lang-en">View My Work</span>
+      </a>
+    </div>
+
+    <!-- ===== НАЧАЛО ОБНОВЛЕННОГО БЛОКА ===== -->
+    <div 
+      class="mt-8 flex items-center gap-2 text-sm text-muted-foreground/80 scroll-animate" 
+      style="transition-delay: 500ms;"
+    >
+      <SparklesIcon class="w-4 h-4 text-primary shrink-0" />
+      <p>
+        <span class="lang-ru">
+          Создано с вниманием к деталям. 
+          <a href="/about" class="font-semibold text-primary/80 hover:text-primary underline decoration-dotted underline-offset-4 transition-colors">Найдёте?</a> ✨
+        </span>
+        <span class="lang-en">
+          Crafted with attention to detail. 
+          <a href="/about" class="font-semibold text-primary/80 hover:text-primary underline decoration-dotted underline-offset-4 transition-colors">Find them?</a> ✨
+        </span>
+      </p>
+    </div>
+    <!-- ===== КОНЕЦ ОБНОВЛЕННОГО БЛОКА ===== -->
+  </div>
+</div>

@@ -1,0 +1,77 @@
+---
+// src/components/Skills.astro
+import IconFrontend from '../../public/icon-frontend.svg'; // Предполагаем, что вы создадите и эти
+import IconBackend from '../../public/icon-backend.svg'; // иконки в формате SVG
+import IconTools from '../../public/icon-tools.svg'; // иконки для инструментов и DevOps
+import IconMl from '../../public/IconMl.astro'; // Наша новая иконка
+import IconDesktop from '../../public/IconDesktop.astro'; // Наша новая иконка
+---
+<section id="skills" class="bg-muted py-24 rounded-3xl">
+  <div class="container">
+    <h2 class="text-4xl md:text-5xl font-extrabold text-center mb-14 tracking-tight text-foreground scroll-animate">
+      <span class="lang-ru">Мой Стек Технологий</span>
+      <span class="lang-en">My Tech Stack</span>
+    </h2>
+    
+      <!-- Первая строка: 3 основные карточки -->
+    <div class="flex flex-col items-center gap-8">
+      <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Card 1: Frontend -->
+        <div class="bg-card p-8 rounded-2xl shadow-lg ... scroll-animate" style="transition-delay: 100ms;">
+          <IconFrontend class="w-12 h-12 mb-2 text-primary" />
+          <h3 class="text-2xl font-bold mb-1 text-foreground">Frontend</h3>
+          <p class="text-muted-foreground">
+            Next.js, TypeScript, JavaScript, Astro, React, Tailwind CSS, HTML/CSS
+          </p>
+        </div>
+
+        <!-- Card 2: Backend -->
+        <div class="bg-card p-8 rounded-2xl shadow-lg ... scroll-animate" style="transition-delay: 200ms;">
+          <IconBackend class="w-12 h-12 mb-2 text-primary" />
+          <h3 class="text-2xl font-bold mb-1 text-foreground">Backend</h3>
+          <p class="text-muted-foreground">
+            Python, PHP, Node.js, C#, PostgreSQL, MongoDB, Express
+          </p>
+        </div>
+
+        <!-- Card 3: Machine Learning -->
+        <div class="bg-card p-8 rounded-2xl shadow-lg ... scroll-animate" style="transition-delay: 300ms;">
+          <IconMl class="w-12 h-12 mb-2 text-primary" />
+          <h3 class="text-2xl font-bold mb-1 text-foreground">
+            <span class="lang-ru">Машинное обучение</span>
+            <span class="lang-en">Machine Learning</span>
+          </h3>
+          <p class="text-muted-foreground">
+            TensorFlow, NumPy, Numba, Reinforcement Learning, NLP, TF-IDF
+          </p>
+        </div>
+      </div>
+
+      <!-- Вторая строка: 2 дополнительные карточки -->
+      <div class="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-8">
+         <div class="bg-card p-8 rounded-2xl shadow-lg ... scroll-animate" style="transition-delay: 400ms;">
+          <IconDesktop class="w-12 h-12 mb-2 text-primary" />
+          <h3 class="text-2xl font-bold mb-1 text-foreground">
+            <span class="lang-ru">Десктоп и боты</span>
+            <span class="lang-en">Desktop & Bots</span>
+          </h3>
+          <p class="text-muted-foreground">
+            C#, WinUI 3, Python, Telegram API (Telethon), AsyncIO, CLI
+          </p>
+        </div>
+
+        <!-- Card 5: Tools & DevOps -->
+        <div class="bg-card p-8 rounded-2xl shadow-lg ... scroll-animate" style="transition-delay: 500ms;">
+          <IconTools class="w-12 h-12 mb-2 text-primary" />
+          <h3 class="text-2xl font-bold mb-1 text-foreground">
+            <span class="lang-ru">Инструменты и DevOps</span>
+            <span class="lang-en">Tools & DevOps</span>
+          </h3>
+          <p class="text-muted-foreground">
+            Git, Docker, Nginx, Linux, SSH, CI/CD, Vercel
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

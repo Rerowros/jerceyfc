@@ -1,0 +1,26 @@
+---
+// src/components/Footer.astro
+import GitHubIcon from '../../public/GitHubIcon.astro';
+import LinkedInIcon from '../../public/LinkedInIcon.astro';
+import TelegramIcon from '../../public/TelegramIcon.astro';
+---
+<footer class="bg-muted py-8">
+  <div class="container text-center text-muted-foreground">
+    <div class="flex justify-center gap-6 mb-4">
+      <a href="https://github.com/Rerowros" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+        <GitHubIcon class="w-6 h-6" />
+      </a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+        <LinkedInIcon class="w-6 h-6" />
+      </a>
+       <a href="https://t.me/jerseyfc" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
+        <TelegramIcon class="w-6 h-6" />
+      </a>
+    </div>
+    <p class="text-sm">
+      © {new Date().getFullYear()} JerseyFC. 
+<span class="lang-ru">Никакие права не защищены, можете забирать :)</span> 
+<span class="lang-en">No rights reserved, take anything you want :)</span>
+    </p>
+  </div>
+</footer>
