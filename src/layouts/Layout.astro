@@ -21,46 +21,15 @@ const { title } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/J.png" />
 
     <meta name="view-transition" content="same-origin" />
     
     <!-- Добавляем ClientRouter для SPA-переходов -->
     <ClientRouter />
 
-    <script is:inline>
-      // Скрипт выполняется до рендера, чтобы избежать мигания
-      function applyTheme() {
-        const theme = localStorage.getItem('theme');
-        const palette = localStorage.getItem('palette') || 'indigo';
-        const view = localStorage.getItem('view');
-        const lang = localStorage.getItem('lang') || 'ru';
-        
-        document.documentElement.lang = lang;
 
-        // ПРИОРИТЕТ №1: ПРОВЕРЯЕМ РЕЖИМ ДЛЯ СЛАБОВИДЯЩИХ
-        if (view === 'gos') {
-          // Если включен "гос-режим", устанавливаем его и БОЛЬШЕ НИЧЕГО НЕ ДЕЛАЕМ.
-          // Этот режим имеет свои собственные, непереопределяемые стили.
-          document.documentElement.setAttribute('data-view', 'gos');
-        } else {
-          // Если "гос-режим" выключен, работаем с обычной логикой тем и палитр.
-          // 1. Устанавливаем тему Dark/Light
-          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-          // 2. Устанавливаем цветовую палитру
-          document.documentElement.setAttribute('data-theme', palette);
-        }
-      }
-
-      // Применяем тему сразу при загрузке
-      applyTheme();
-
-      // Для View Transitions - применяем тему после каждого перехода
-      document.addEventListener('astro:after-swap', applyTheme);
-    </script>
+    <script src="/theme-init.js" data-astro-exec></script>
 
   </head>
 <body class="bg-background text-foreground bg-theme-gradient font-['Inter'] transition-colors duration-300">
