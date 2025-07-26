@@ -1,21 +1,36 @@
+
 # Copilot Instructions for AI Agents
 
 ## Overview
-This is an Astro-based static site. The project is strictly static (no backend/server code) and relies on Astro conventions with custom organization for components and styles. Tailwind CSS is the main styling tool.
+This is a static portfolio site built with Astro and Tailwind CSS. There is **no backend/server code**; all logic is client-side or static. The project is organized for clarity and maintainability, with a focus on reusable components, theme/language switching, and smooth SPA-like navigation.
 
 ## Architecture & Structure
 - **Pages:** All routes are `.astro` files in `src/pages/`. Main entry: `src/pages/index.astro`. Subroutes (e.g., `/projects`) are folders with their own `index.astro`.
-- **Components:** Reusable UI elements in `src/components/` (e.g., `Header.astro`, `Hero.astro`, `Projects.astro`, `ProjectCard.astro`). Import with relative paths.
-- **Layouts:** Shared layout logic in `src/layouts/` (e.g., `Layout.astro`). Layout handles `<html>`, `<head>`, theme, and language logic.
-- **Styles:** Global and container-specific styles in `src/styles/` (`global.css`, `container.css`, `gos.css`). Tailwind is configured via `tailwind.config.js` and used via utility classes in `.astro` files.
-- **Static Assets:** Images and icons go in `public/` (SVG icons as `.astro` components).
-- **Data:** Project data is in `src/data/projects.ts` as a typed array, imported into pages/components.
+- **Components:** UI is split into small, reusable `.astro` components in `src/components/` (e.g., `Header.astro`, `Hero.astro`, `ProjectCard.astro`). Import using relative paths.
+- **Layouts:** Shared layout logic in `src/layouts/` (see `Layout.astro`). Layout manages `<html>`, `<head>`, theme, and language attributes. All pages use this layout.
+- **Styles:** Tailwind CSS is the main styling tool. Global and custom styles are in `src/styles/` (`global.css`, `gos.css`). Tailwind config: `tailwind.config.js`.
+- **Static Assets:** Images and icons are in `public/`. SVG icons are often `.astro` components for easy reuse.
+- **Data:** Project data is a typed array in `src/data/projects.ts`, imported into pages/components.
 
-## Patterns & Conventions
-- **Component Usage:** UI is split into small `.astro` components. Import with relative paths (e.g., `import Header from '../components/Header.astro'`).
-- **Styling:** Use Tailwind utility classes. For custom styles, import CSS from `src/styles/`.
-- **Theme System:** Theme palettes are defined via CSS variables in `global.css` (see `:root[data-theme=...]`). Theme switching uses classes and transitions (e.g., `.theme-sun-enter`, `.theme-moon-leave`). Palette and theme are set via localStorage and `<html>` attributes.
-- **Language Switch:** Language toggling is handled via `.lang-en`, `.lang-ru` classes and the `lang` attribute on `<html>`. Use `<span class="lang-ru">...</span><span class="lang-en">...</span>` for bilingual text.
+## Key Patterns & Conventions
+- **Component Usage:** Always import components with relative paths (e.g., `import Header from '../components/Header.astro'`).
+- **Styling:** Use Tailwind utility classes in `.astro` files. For custom styles, import CSS from `src/styles/`.
+- **Theme System:** Theme palettes are defined via CSS variables in `global.css` under `:root[data-theme=...]`. Theme switching uses classes and transitions (e.g., `.theme-sun-enter`, `.theme-moon-leave`). Theme is set via localStorage and `<html>` attributes. See `theme-init.js` and `Layout.astro` for implementation.
+- **Language Switch:** Bilingual text uses `<span class="lang-ru">...</span><span class="lang-en">...</span>`. The `<html>` tag and body classes control language. See `Layout.astro` for logic.
+- **SPA Navigation:** Uses `<ClientRouter />` from `astro:transitions` for smooth page transitions. Re-initialize scroll animations on `astro:page-load` (see inline script in `Layout.astro`).
+- **Scroll Animations:** Elements with `.scroll-animate` are animated via IntersectionObserver (see inline script in `Layout.astro`).
+
+## Developer Workflows
+- **Build:** Run `npm run build` to generate static files.
+- **Dev Server:** Run `npm run dev` for local development with hot reload.
+- **Preview:** Run `npm run preview` to serve the built site locally.
+- **No tests:** There are no automated tests or test runners configured.
+
+## Integration Points & External Dependencies
+- **Astro:** Static site generator. Config: `astro.config.mjs`.
+- **Tailwind CSS:** Utility-first CSS. Config: `tailwind.config.js`.
+- **Fonts:** Uses Inter from Google Fonts (see `<head>` in `Layout.astro`).
+- **Icons:** SVGs in `public/` and as `.astro` components.
 
 ## Examples
 - Add a new page: create `src/pages/about.astro`.
@@ -36,4 +51,4 @@ This is an Astro-based static site. The project is strictly static (no backend/s
 - `tsconfig.json` — TypeScript config
 
 ---
-If any conventions or workflows are unclear, please request clarification or examples from the user.
+If any conventions or workflows are unclear, request clarification or examples from the user.

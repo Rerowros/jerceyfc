@@ -308,3 +308,18 @@ body {
   color: var(--color-card-foreground) !important;
 }
 
+/* Языковые переключения - по умолчанию скрыты */
+.lang-ru, .lang-en {
+  display: none;
+}
+
+/* Русский язык активен */
+html[lang="ru"] .lang-ru {
+  display: initial;
+}
+
+/* Английский язык активен */
+html[lang="en"] .lang-en {
+  display: initial;
+}
+
