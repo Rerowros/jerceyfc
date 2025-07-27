@@ -17,10 +17,6 @@ import Footer from '../components/Footer.astro';
 	<Header />
 	<main transition:animate={slide({ duration: '0.3s' })}>
     <div id="main-content-wrapper" class="main-content flex flex-col gap-24" style="transition: filter 0.4s ease-out;">
-      <!-- 
-        ИЗМЕНЕНИЕ: Убираем div-обертки. 
-        Компоненты <Hero /> и <About /> теперь сами будут отвечать за свой стиль.
-      -->
       <section class="container pt-20 md:pt-24 lg:pt-32 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Hero />
         <About />

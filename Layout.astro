@@ -298,46 +298,6 @@ const { title } = Astro.props;
         document.documentElement.lang = newLang;
         localStorage.setItem('lang', newLang);
         updateGosButtonText(); // Обновляем текст кнопки ГОСТ
-        // --- АНИМАЦИЯ ПРИ ПЕРЕКЛЮЧЕНИИ ЯЗЫКА ---
-        const langEls = document.querySelectorAll('.lang-ru, .lang-en');
-        langEls.forEach(el => {
-          // Пропускаем все .lang-ru/.lang-en, находящиеся внутри .spoiler-text или с data-no-animate
-          if (el.closest('.spoiler-text') || el.hasAttribute('data-no-animate')) return;
-          const orig = el.textContent;
-          el.style.transition = 'opacity 0.5s';
-          el.style.opacity = '0.5';
-          let frame = 0;
-          const totalFrames = 22;
-          const scramble = () => {
-            let out = '';
-            for (let i = 0; i < orig.length; i++) {
-              const ch = orig[i];
-              // Не трогаем пробелы и спецсимволы
-              if (/[^а-яА-Яa-zA-Z0-9]/.test(ch)) {
-                out += ch;
-                continue;
-              }
-              const progress = frame / totalFrames;
-              if (progress < 0.6 && Math.random() < 0.33) {
-                out += '0123456789!@#$%^&*'[Math.floor(Math.random()*16)];
-              } else {
-                out += ch;
-              }
-            }
-            el.textContent = out;
-            el.classList.add('animated');
-            el.style.opacity = (frame < totalFrames - 2) ? '0.5' : '1';
-            frame++;
-            if (frame < totalFrames) {
-              setTimeout(scramble, 65);
-            } else {
-              el.textContent = orig;
-              el.classList.remove('animated');
-              el.style.opacity = '1';
-            }
-          };
-          scramble();
-        });
       };
     }
 

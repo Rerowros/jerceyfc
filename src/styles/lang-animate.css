@@ -1,0 +1,9 @@
+/* Стили для плавности анимации текста при смене языка */
+.lang-ru, .lang-en {
+  transition: color 0.5s, text-shadow 0.5s;
+}
+
+.lang-ru.animated, .lang-en.animated {
+  color: #a3e635;
+  text-shadow: 0 0 8px #bef264;
+}
