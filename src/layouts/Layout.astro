@@ -1,7 +1,6 @@
 ---
 // src/layouts/Layout.astro
 import '../styles/global.css';
-import '../styles/gos.css';
 import '../styles/lang-animate.css';
 import { ClientRouter } from 'astro:transitions';
 
@@ -38,10 +37,6 @@ const { title } = Astro.props;
         
         document.documentElement.lang = lang;
 
-        // ПРИОРИТЕТ №1: ПРОВЕРЯЕМ РЕЖИМ ДЛЯ СЛАБОВИДЯЩИХ
-        if (view === 'gos') {
-          document.documentElement.setAttribute('data-view', 'gos');
-        } else {
           // 1. Устанавливаем тему Dark/Light
           if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -51,7 +46,7 @@ const { title } = Astro.props;
           // 2. Устанавливаем цветовую палитру
           document.documentElement.setAttribute('data-theme', palette);
         }
-      }
+      
       applyInitialState();
       document.addEventListener('astro:after-swap', applyInitialState);
     </script>
