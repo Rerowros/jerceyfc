@@ -2,6 +2,10 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
+import sitemap from '@astrojs/sitemap';
+
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -25,6 +29,7 @@ export default defineConfig({
       })
     ]
   },
+
   i18n: {
     defaultLocale: 'ru',
     locales: ['ru', 'en'],
@@ -32,4 +37,6 @@ export default defineConfig({
       prefixDefaultLocale: false, 
     },
   },
+  site: 'https://jerseyfc.me',
+  integrations: [sitemap(), react()],
 });

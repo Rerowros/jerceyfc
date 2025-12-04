@@ -1,26 +1,50 @@
 ---
 // src/components/Footer.astro
-import GitHubIcon from '../../public/GitHubIcon.astro';
-import LinkedInIcon from '../../public/LinkedInIcon.astro';
-import TelegramIcon from '../../public/TelegramIcon.astro';
+import GitHubIcon from "../../public/GitHubIcon.astro";
+import LinkedInIcon from "../../public/LinkedInIcon.astro";
+import TelegramIcon from "../../public/TelegramIcon.astro";
 ---
-<footer class="bg-muted py-8">
-  <div class="container text-center text-muted-foreground">
-    <div class="flex justify-center gap-6 mb-4">
-      <a href="https://github.com/Rerowros" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
-        <GitHubIcon class="w-6 h-6" />
-      </a>
-      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
-        <LinkedInIcon class="w-6 h-6" />
-      </a>
-       <a href="https://t.me/jerseyfc" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">
-        <TelegramIcon class="w-6 h-6" />
-      </a>
+
+<footer class="relative z-10 py-12 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="glass-card rounded-2xl p-8 text-center">
+      <!-- Социальные иконки -->
+      <div class="flex justify-center gap-4 mb-6">
+        <a
+          href="https://github.com/Rerowros"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="icon-btn group"
+          title="GitHub"
+        >
+          <GitHubIcon
+            class="w-5 h-5 group-hover:text-[var(--color-primary)] transition-colors"
+          />
+        </a>
+        <a
+          href="https://t.me/jerseyfc"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="icon-btn group"
+          title="Telegram"
+        >
+          <TelegramIcon
+            class="w-5 h-5 group-hover:text-[var(--color-primary)] transition-colors"
+          />
+        </a>
+      </div>
+
+      <!-- Копирайт -->
+      <p class="text-sm text-[var(--color-muted-foreground)]">
+        © {new Date().getFullYear()}
+        <span class="text-gradient font-semibold">JerseyFC</span>.
+        <span class="lang-ru"
+          >Никакие права не защищены, можете забирать :)</span
+        >
+        <span class="lang-en"
+          >No rights reserved, take anything you want :)</span
+        >
+      </p>
     </div>
-    <p class="text-sm">
-      © {new Date().getFullYear()} JerseyFC. 
-<span class="lang-ru">Никакие права не защищены, можете забирать :)</span> 
-<span class="lang-en">No rights reserved, take anything you want :)</span>
-    </p>
   </div>
 </footer>

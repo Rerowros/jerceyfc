@@ -1,0 +1,229 @@
+---
+// src/components/ui/Background.astro
+---
+
+<div
+  id="magic-background"
+  class="fixed inset-0 z-[-1] overflow-hidden transition-colors duration-500 bg-background"
+>
+  <!-- 1. Градиентные блобы (теперь под сеткой для глубины) -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- 2. Геометрическая сетка -->
+  <div class="absolute inset-0 grid-overlay"></div>
+
+  <!-- 3. Следование мыши (теперь под шумом, но над сеткой) -->
+  <div id="mouse-follower" class="hidden md:block"></div>
+
+  <!-- 4. Частицы -->
+  <div
+    id="particles-container"
+    class="absolute inset-0 overflow-hidden pointer-events-none"
+  >
+  </div>
+
+  <!-- 5. Шум (самый верхний, но очень прозрачный) -->
+  <div class="bg-noise"></div>
+</div>
+
+<style>
+  /* Сетка - Делаем линии тоньше и четче */
+  .grid-overlay {
+    /* Используем background-size для четкости */
+    background-size: 50px 50px;
+    background-image: linear-gradient(
+        to right,
+        var(--color-border) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+
+    /* Маска для плавного исчезновения по краям */
+    mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 90%);
+    -webkit-mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 40%,
+      transparent 90%
+    );
+
+    /* Важно для производительности и четкости */
+    transform: translateZ(0);
+    opacity: 0.8;
+  }
+
+  /* Блобы */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px); /* Чуть меньше размытие для четкости цвета */
+    /* Используем переменную для смены режима наложения в светлой теме */
+    mix-blend-mode: var(--blob-blend-mode, screen);
+    will-change: transform;
+  }
+
+  /* Специфика для светлой темы через глобальный класс html.light (Astro это поддерживает) */
+  :global(html.light) .blob {
+    filter: blur(100px);
+    opacity: 0.8; /* Повышаем видимость в светлой теме */
+  }
+
+  .blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: var(--blob-color-1);
+    animation: blob-1 25s infinite ease-in-out alternate;
+    opacity: 0.6;
+  }
+
+  .blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 45vw;
+    height: 45vw;
+    background: var(--blob-color-2);
+    animation: blob-2 30s infinite ease-in-out alternate-reverse;
+    opacity: 0.5;
+  }
+
+  .blob-3 {
+    top: 40%;
+    right: 30%;
+    width: 30vw;
+    height: 30vw;
+    background: var(--blob-color-3);
+    animation: blob-3 20s infinite ease-in-out alternate;
+    opacity: 0.3;
+  }
+
+  /* Анимации блобов оставляем теми же */
+  @keyframes blob-1 {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      transform: translate(50px, -40px) scale(1.1);
+    }
+  }
+  @keyframes blob-2 {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      transform: translate(-50px, 40px) scale(1.1);
+    }
+  }
+  @keyframes blob-3 {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+    100% {
+      transform: translate(20px, -20px) scale(1.2) rotate(180deg);
+    }
+  }
+
+  /* Частицы */
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--color-primary);
+    pointer-events: none;
+    animation: float-up linear infinite;
+  }
+
+  /* Следование за мышью */
+  #mouse-follower {
+    position: fixed;
+    width: 400px; /* Увеличили размер */
+    height: 400px;
+    background: radial-gradient(
+      circle,
+      var(--color-primary) 0%,
+      transparent 70%
+    ); /* Градиент вместо сплошного цвета для мягкости */
+
+    border-radius: 50%;
+    pointer-events: none;
+
+    /* Смена режима наложения через переменную */
+    mix-blend-mode: var(--mouse-blend-mode, screen);
+
+    opacity: 0.15; /* Базовая прозрачность для темной темы */
+    filter: blur(60px);
+    transition: transform 0.1s ease-out; /* Убираем opacity из транзишена, чтобы не мигало */
+    will-change: transform;
+    z-index: 0;
+  }
+
+  /* Усиление видимости мыши в светлой теме */
+  :global(html.light) #mouse-follower {
+    opacity: 0.25; /* Сильнее в светлой теме */
+    background: radial-gradient(
+      circle,
+      var(--color-primary) 0%,
+      transparent 60%
+    );
+  }
+</style>
+
+<script>
+  // JS код инициализации остается без изменений
+  function initBackground() {
+    const container = document.getElementById("particles-container");
+    if (!container) return;
+    container.innerHTML = "";
+
+    // Уменьшаем количество частиц, чтобы не шумело
+    const particleCount = 20;
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement("div");
+      particle.className = "particle";
+      const left = Math.random() * 100;
+      const top = Math.random() * 100;
+      const size = Math.random() < 0.3 ? 3 : 1; // Частицы чуть меньше
+      const duration = Math.random() * 20 + 15; // Медленнее
+      const delay = Math.random() * 10;
+
+      particle.style.cssText = `
+        left: ${left}%;
+        top: ${top}%;
+        width: ${size}px;
+        height: ${size}px;
+        animation-duration: ${duration}s;
+        animation-delay: ${delay}s;
+        opacity: ${Math.random() * 0.5 + 0.1};
+      `;
+      container.appendChild(particle);
+    }
+
+    const follower = document.getElementById("mouse-follower");
+    if (follower && window.innerWidth >= 768) {
+      let targetX = 0,
+        targetY = 0;
+      let currentX = 0,
+        currentY = 0;
+
+      document.addEventListener("mousemove", (e) => {
+        // Центрируем (400px / 2 = 200)
+        targetX = e.clientX - 200;
+        targetY = e.clientY - 200;
+      });
+
+      function animate() {
+        if (!follower) return;
+        currentX += (targetX - currentX) * 0.1;
+        currentY += (targetY - currentY) * 0.1;
+        follower.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+  }
+
+  document.addEventListener("astro:page-load", initBackground);
+  initBackground();
+</script>

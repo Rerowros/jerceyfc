@@ -1,27 +1,50 @@
 ---
 // src/components/Header.astro
-import HeaderControls from './HeaderControls.astro';
+import HeaderControls from "./HeaderControls.astro";
 ---
-<header class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+
+<header
+  class="fixed top-0 left-0 right-0 z-50 glass-card border-t-0 border-x-0 rounded-none"
+>
   <div class="container mx-auto px-4">
     <div class="flex justify-between items-center h-16">
       <!-- Лого/Имя -->
-    <a href="/" class="text-xl md:text-2xl font-extrabold tracking-tight text-primary">
+      <a
+        href="/"
+        class="text-xl md:text-2xl font-bold font-cinzel text-gradient"
+      >
         <span class="lang-ru">Jersey</span>
         <span class="lang-en">Jersey</span>
       </a>
 
       <!-- Контролы для десктопа -->
       <div class="hidden md:flex items-center gap-6">
-        <nav class="flex gap-6 font-medium text-muted-foreground">
-          <a href="/#skills" class="hover:text-primary transition-colors">
-            <span class="lang-ru">Навыки</span><span class="lang-en">Skills</span>
+        <nav
+          class="flex gap-6 font-medium text-[var(--color-muted-foreground)]"
+        >
+          <a
+            href="/#skills"
+            class="hover:text-[var(--color-primary)] transition-colors"
+          >
+            <span class="lang-ru">Навыки</span><span class="lang-en"
+              >Skills</span
+            >
           </a>
-          <a href="/about" class="hover:text-primary transition-colors">
-            <span class="lang-ru">Обо мне</span><span class="lang-en">About</span>
+          <a
+            href="/about"
+            class="hover:text-[var(--color-primary)] transition-colors"
+          >
+            <span class="lang-ru">Обо мне</span><span class="lang-en"
+              >About</span
+            >
           </a>
-          <a href="/projects" class="hover:text-primary transition-colors">
-            <span class="lang-ru">Проекты</span><span class="lang-en">Projects</span>
+          <a
+            href="/projects"
+            class="hover:text-[var(--color-primary)] transition-colors"
+          >
+            <span class="lang-ru">Проекты</span><span class="lang-en"
+              >Projects</span
+            >
           </a>
         </nav>
         <HeaderControls />
@@ -29,32 +52,69 @@ import HeaderControls from './HeaderControls.astro';
 
       <!-- Кнопка бургер-меню для мобильных -->
       <div class="md:hidden">
-        <button id="mobile-menu-button" class="text-foreground" aria-label="Открыть меню">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h4"></path></svg>
+        <button
+          id="mobile-menu-button"
+          class="icon-btn"
+          aria-label="Открыть меню"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16m-4 6h4"></path></svg
+          >
         </button>
       </div>
     </div>
   </div>
 
   <!-- Выпадающее меню для мобильных -->
-  <div id="mobile-menu" class="hidden md:hidden bg-background/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800">
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden glass-card border-t border-[var(--color-border)]"
+  >
     <nav class="container px-4 py-4 space-y-3">
-      <a href="/#skills" class="block py-2 text-muted-foreground hover:text-primary transition-colors">
+      <a
+        href="/#skills"
+        class="block py-2 text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors"
+      >
         <span class="lang-ru">Навыки</span><span class="lang-en">Skills</span>
       </a>
-      <a href="/about" class="block py-2 text-muted-foreground hover:text-primary transition-colors">
+      <a
+        href="/about"
+        class="block py-2 text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors"
+      >
         <span class="lang-ru">Обо мне</span><span class="lang-en">About</span>
       </a>
-      <a href="/projects" class="block py-2 text-muted-foreground hover:text-primary transition-colors">
-        <span class="lang-ru">Проекты</span><span class="lang-en">Projects</span>
+      <a
+        href="/projects"
+        class="block py-2 text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors"
+      >
+        <span class="lang-ru">Проекты</span><span class="lang-en">Projects</span
+        >
       </a>
-      
+
       <!-- Мобильная версия HeaderControls -->
-      <div class="pt-4 border-t border-foreground/10 space-y-4">
+      <div class="pt-4 border-t border-[var(--color-border)] space-y-4">
         <!-- ГОСТ-версия -->
-        <button id="gos-view-toggle-mobile" class="w-full text-sm font-semibold px-3 py-2 rounded-md bg-background hover:bg-foreground/10 transition-colors text-left">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block -mt-0.5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M4 21h16v-2H4v2zm0-3h2v-7h2v7h4v-7h2v7h4v-7h2v7h2v-9L12 3L2 9v9zm0-11.24L12 5.5l8 4.26V7H4v-.24zM12 7.5L6.47 10h11.06L12 7.5z"></path>
+        <button
+          id="gos-view-toggle-mobile"
+          class="w-full text-sm font-semibold px-3 py-2 rounded-md glass-card hover:border-[var(--color-primary)] transition-colors text-left"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 inline-block -mt-0.5 mr-2"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M4 21h16v-2H4v2zm0-3h2v-7h2v7h4v-7h2v7h4v-7h2v7h2v-9L12 3L2 9v9zm0-11.24L12 5.5l8 4.26V7H4v-.24zM12 7.5L6.47 10h11.06L12 7.5z"
+            ></path>
           </svg>
           <span class="lang-ru">ГОСТ-версия</span>
           <span class="lang-en">Gov. standard</span>
@@ -62,42 +122,121 @@ import HeaderControls from './HeaderControls.astro';
 
         <!-- Цветовая палитра -->
         <div class="flex items-center justify-between">
-          <span class="text-sm text-muted-foreground">
-            <span class="lang-ru">Цветовая схема</span><span class="lang-en">Color scheme</span>
+          <span class="text-sm text-[var(--color-muted-foreground)]">
+            <span class="lang-ru">Цветовая схема</span><span class="lang-en"
+              >Color scheme</span
+            >
           </span>
           <div id="palette-switcher-mobile" class="flex items-center gap-2">
-            <button data-theme="indigo" class="h-4 w-4 rounded-full bg-[#4f46e5] ring-offset-background ring-offset-1 focus:ring-1 ring-slate-400 transition-all" title="Indigo"></button>
-            <button data-theme="lavender" class="h-4 w-4 rounded-full bg-[#8c6df5] ring-offset-background ring-offset-1 focus:ring-1 ring-slate-400 transition-all" title="Lavender"></button>
-            <button data-theme="mint" class="h-4 w-4 rounded-full bg-[#25b083] ring-offset-background ring-offset-1 focus:ring-1 ring-slate-400 transition-all" title="Mint"></button>
-            <button data-theme="sunny" class="h-4 w-4 rounded-full bg-[#facc15] ring-offset-background ring-offset-1 focus:ring-1 ring-slate-400 transition-all" title="Sunny"></button>
+            <button
+              data-theme="indigo"
+              class="h-5 w-5 rounded-full bg-[#818cf8] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
+              title="Indigo"></button>
+            <button
+              data-theme="lavender"
+              class="h-5 w-5 rounded-full bg-[#c084fc] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
+              title="Lavender"></button>
+            <button
+              data-theme="mint"
+              class="h-5 w-5 rounded-full bg-[#34d399] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
+              title="Mint"></button>
+            <button
+              data-theme="sunny"
+              class="h-5 w-5 rounded-full bg-[#fbbf24] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
+              title="Sunny"></button>
+            <button
+              data-theme="rose"
+              class="h-5 w-5 rounded-full bg-[#fb7185] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
+              title="Rose"></button>
           </div>
         </div>
 
         <!-- Язык и тема -->
         <div class="flex items-center gap-3">
-          <button id="lang-toggle-mobile" class="flex-1 font-semibold text-sm px-3 py-2 rounded-md bg-background hover:bg-foreground/10 transition-colors">
+          <button
+            id="lang-toggle-mobile"
+            class="flex-1 font-semibold text-sm px-3 py-2 rounded-md glass-card hover:border-[var(--color-primary)] transition-colors"
+          >
             <span class="lang-ru">Переключить на EN</span>
             <span class="lang-en">Switch to RU</span>
           </button>
-          
-          <button id="theme-toggle-mobile" class="p-2 text-xl relative overflow-hidden rounded-md hover:bg-foreground/10 transition-colors">
-            <span id="theme-icon-mobile" class="theme-icon inline-block relative w-6 h-6">
-              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+          <button id="theme-toggle-mobile" class="icon-btn">
+            <span
+              id="theme-icon-mobile"
+              class="theme-icon inline-block relative w-5 h-5"
+            >
+              <svg
+                class="absolute inset-0 w-full h-full"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <g id="sun-group-mobile">
-                  <circle cx="16" cy="16" r="6" fill="#facc15" />
+                  <circle cx="16" cy="16" r="6" fill="#facc15"></circle>
                   <g>
-                    <line x1="16" y1="4" x2="16" y2="8" stroke="#facc15" stroke-width="2" />
-                    <line x1="16" y1="24" x2="16" y2="28" stroke="#facc15" stroke-width="2" />
-                    <line x1="4" y1="16" x2="8" y2="16" stroke="#facc15" stroke-width="2" />
-                    <line x1="24" y1="16" x2="28" y2="16" stroke="#facc15" stroke-width="2" />
-                    <line x1="7.76" y1="7.76" x2="10.34" y2="10.34" stroke="#facc15" stroke-width="2" />
-                    <line x1="21.66" y1="21.66" x2="24.24" y2="24.24" stroke="#facc15" stroke-width="2" />
-                    <line x1="7.76" y1="24.24" x2="10.34" y2="21.66" stroke="#facc15" stroke-width="2" />
-                    <line x1="21.66" y1="10.34" x2="24.24" y2="7.76" stroke="#facc15" stroke-width="2" />
+                    <line
+                      x1="16"
+                      y1="4"
+                      x2="16"
+                      y2="8"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="16"
+                      y1="24"
+                      x2="16"
+                      y2="28"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="4"
+                      y1="16"
+                      x2="8"
+                      y2="16"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="24"
+                      y1="16"
+                      x2="28"
+                      y2="16"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="7.76"
+                      y1="7.76"
+                      x2="10.34"
+                      y2="10.34"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="21.66"
+                      y1="21.66"
+                      x2="24.24"
+                      y2="24.24"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="7.76"
+                      y1="24.24"
+                      x2="10.34"
+                      y2="21.66"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
+                    <line
+                      x1="21.66"
+                      y1="10.34"
+                      x2="24.24"
+                      y2="7.76"
+                      stroke="#facc15"
+                      stroke-width="2"></line>
                   </g>
                 </g>
                 <g id="moon-group-mobile">
-                <path d="M16 8a8 8 0 1 0 8 8c-4.42 0-8-3.58-8-8z" fill="#4f46e5" />
+                  <path
+                    d="M16 8a8 8 0 1 0 8 8c-4.42 0-8-3.58-8-8z"
+                    fill="#4f46e5"></path>
                 </g>
               </svg>
             </span>

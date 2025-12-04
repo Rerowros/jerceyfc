@@ -1,41 +1,140 @@
 ---
 // src/components/Hero.astro
-import SparklesIcon from '../../public/SparklesIcon.astro';
+// Красивый Hero-блок в стиле Ethera
 ---
-<div class="bg-card/70 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-xl flex flex-col justify-center h-full text-left transition-all duration-300 hover:border-primary/50 hover:shadow-primary/10">
-  <div class="flex flex-col gap-6">
-    <h1 class="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight text-foreground scroll-animate" style="transition-delay: 100ms;">
-      <span class="lang-ru">Привет, я <span class="text-primary">Ярослав</span></span>
-      <span class="lang-en">Hi, I'm <span class="text-primary">Yaroslav</span></span><br />
-      <span class="lang-ru">Full-Stack Разработчик</span>
-      <span class="lang-en">A Full-Stack Developer</span>
-    </h1>
-    <p class="text-lg md:text-xl text-muted-foreground max-w-xl scroll-animate" style="transition-delay: 200ms;">
-      <span class="lang-ru">Создаю быстрые, красивые и функциональные веб-приложения.</span>
-      <span class="lang-en">Building fast, beautiful, and functional web applications.</span>
-    </p>
-    <div class="mt-2 scroll-animate" style="transition-delay: 300ms;">
-      <a href="#projects" class=" btn">
-        <span class="lang-ru">Мои работы</span>
-        <span class="lang-en">View My Work</span>
-      </a>
+
+<section class="min-h-screen flex items-center justify-center px-4 py-20">
+  <div
+    class="glass-card shine-border rounded-3xl p-8 md:p-14 max-w-4xl w-full relative overflow-hidden group"
+  >
+    <!-- Эффект свечения при ховере -->
+    <div
+      class="absolute -inset-1 bg-gradient-to-r from-[var(--color-primary)] via-purple-500 to-[var(--color-primary)] rounded-3xl blur-xl opacity-0 group-hover:opacity-30 transition-all duration-1000"
+    >
     </div>
 
-    <div 
-      class="mt-8 flex items-center gap-2 text-sm text-muted-foreground/80 scroll-animate" 
-      style="transition-delay: 500ms;"
+    <!-- Верхняя граница-блик -->
+    <div
+      class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"
     >
-      <SparklesIcon class="w-4 h-4 text-primary shrink-0" />
-      <p>
-        <span class="lang-ru">
-          Создано с вниманием к деталям. 
-          <a href="/about" class="font-semibold text-primary/80 hover:text-primary underline decoration-dotted underline-offset-4 transition-colors">Найдёте?</a>
-        </span>
-        <span class="lang-en">
-          Crafted with attention to detail. 
-          <a href="/about" class="font-semibold text-primary/80 hover:text-primary underline decoration-dotted underline-offset-4 transition-colors">Find them?</a>
-        </span>
+    </div>
+
+    <div class="relative z-10 flex flex-col gap-8">
+      <!-- Статус badge -->
+      <div class="scroll-animate">
+        <div
+          class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 w-fit"
+        >
+          <span class="relative flex h-2.5 w-2.5">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--color-primary)]"
+            ></span>
+          </span>
+          <span
+            class="text-[var(--color-primary)] text-xs font-semibold tracking-wider uppercase"
+          >
+            <span class="lang-ru">Открыт к предложениям</span>
+            <span class="lang-en">Available for work</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Заголовок -->
+      <div class="scroll-animate" style="transition-delay: 100ms;">
+        <h1
+          class="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight tracking-tight font-cinzel"
+        >
+          <span class="lang-ru">
+            Привет, я
+            <span class="text-gradient">Ярослав</span>
+          </span>
+          <span class="lang-en">
+            Hi, I'm
+            <span class="text-gradient">Yaroslav</span>
+          </span>
+        </h1>
+        <p
+          class="text-xl md:text-3xl text-[var(--color-muted-foreground)] font-light mt-4"
+        >
+          <span class="lang-ru">Full-Stack Архитектор</span>
+          <span class="lang-en">Full-Stack Architect</span>
+        </p>
+      </div>
+
+      <!-- Описание -->
+      <p
+        class="scroll-animate text-base md:text-lg text-[var(--color-muted-foreground)] max-w-2xl leading-relaxed"
+        style="transition-delay: 200ms;"
+      >
+        <span class="lang-ru"
+          >Превращаю хаос в структуру, а идеи — в цифровое искусство.
+          Специализируюсь на создании высокопроизводительных веб-систем,
+          Telegram-ботов и десктоп-приложений.</span
+        >
+        <span class="lang-en"
+          >Turning chaos into structure and ideas into digital art. Specializing
+          in high-performance web systems, Telegram bots, and desktop
+          applications.</span
+        >
       </p>
+
+      <!-- Кнопки -->
+      <div
+        class="scroll-animate flex flex-wrap gap-4 mt-4"
+        style="transition-delay: 300ms;"
+      >
+        <a
+          href="#projects"
+          class="btn-primary inline-flex items-center gap-2 group/btn"
+        >
+          <span class="lang-ru">Смотреть проекты</span>
+          <span class="lang-en">View Projects</span>
+          <svg
+            class="w-5 h-5 transition-transform group-hover/btn:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+        <a href="/about" class="btn-secondary inline-flex items-center gap-2">
+          <span class="lang-ru">Обо мне</span>
+          <span class="lang-en">About Me</span>
+        </a>
+      </div>
+
+      <!-- Стек технологий -->
+      <div
+        class="scroll-animate mt-8 pt-8 border-t border-[var(--color-border)]"
+        style="transition-delay: 400ms;"
+      >
+        <p class="section-title mb-4">
+          <span class="lang-ru">Технологии</span>
+          <span class="lang-en">Tech Stack</span>
+        </p>
+        <div class="flex flex-wrap gap-2">
+          {
+            [
+              "Python",
+              "TypeScript",
+              "C#",
+              "Next.js",
+              "Astro",
+              "Tailwind",
+              "PostgreSQL",
+              "Redis",
+            ].map((tech) => <span class="tag">{tech}</span>)
+          }
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</section>
