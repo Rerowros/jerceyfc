@@ -1,0 +1,194 @@
+---
+// src/components/HeaderControls.astro
+---
+
+<div class="flex items-center gap-3">
+  <!-- 1. Кнопка "Палитра" -->
+  <div class="relative group">
+    <button
+      id="palette-toggle"
+      class="icon-btn relative z-50 group-hover:border-[var(--color-primary)] transition-colors cursor-pointer"
+      aria-label="Change Color Theme"
+      title="Color Theme"
+      type="button"
+    >
+      <!-- pointer-events-none важен, чтобы клик всегда шел по кнопке, а не по path -->
+      <svg
+        class="w-5 h-5 pointer-events-none"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+        ></path>
+      </svg>
+    </button>
+
+    <!-- Выпадающее меню -->
+    <div
+      id="palette-menu"
+      class="absolute top-full right-0 mt-3 p-3 glass-card rounded-xl opacity-0 invisible translate-y-2 transition-all duration-300 w-max z-[100]"
+    >
+      <div class="flex items-center gap-2" id="palette-buttons">
+        <button
+          data-theme="indigo"
+          class="w-6 h-6 rounded-full bg-[#818cf8] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Indigo"></button>
+        <button
+          data-theme="lavender"
+          class="w-6 h-6 rounded-full bg-[#c084fc] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Lavender"></button>
+        <button
+          data-theme="mint"
+          class="w-6 h-6 rounded-full bg-[#34d399] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Mint"></button>
+        <button
+          data-theme="sunny"
+          class="w-6 h-6 rounded-full bg-[#fbbf24] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Sunny"></button>
+        <button
+          data-theme="rose"
+          class="w-6 h-6 rounded-full bg-[#fb7185] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Rose"></button>
+      </div>
+      <!-- Декоративная стрелочка -->
+      <div
+        class="absolute -top-1.5 right-3 w-3 h-3 bg-[var(--color-card)] border-l border-t border-[var(--color-border)] transform rotate-45 pointer-events-none"
+      >
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Переключатель языка -->
+  <button
+    id="lang-toggle"
+    class="icon-btn group relative overflow-hidden font-cinzel font-bold text-sm hover:border-[var(--color-primary)] transition-colors"
+    aria-label="Switch Language"
+  >
+    <!-- Контейнер для смены текста -->
+    <span class="relative z-10 block w-full text-center">
+      <span class="lang-ru">RU</span>
+      <span class="lang-en">EN</span>
+    </span>
+
+    <!-- Декоративная подсветка при ховере -->
+    <div
+      class="absolute inset-0 bg-[var(--color-primary)]/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+    >
+    </div>
+  </button>
+
+  <!-- 3. Переключатель темы -->
+  <button
+    id="theme-toggle"
+    class="icon-btn hover:border-[var(--color-primary)] transition-colors relative overflow-hidden cursor-pointer"
+    title="Toggle Dark Mode"
+    type="button"
+  >
+    <span
+      id="theme-icon"
+      class="theme-icon inline-block relative w-5 h-5 pointer-events-none overflow-hidden"
+    >
+      <svg
+        class="absolute inset-0 w-full h-full"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <!-- Группа Солнца -->
+        <g
+          id="sun-group"
+          class="origin-center transition-all duration-500 ease-out"
+        >
+          <circle cx="16" cy="16" r="6" fill="currentColor"></circle>
+          <path
+            d="M16 4L16 8M16 24L16 28M4 16L8 16M24 16L28 16M7.76 7.76L10.34 10.34M21.66 21.66L24.24 24.24M7.76 24.24L10.34 21.66M21.66 10.34L24.24 7.76"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></path>
+        </g>
+        <!-- Группа Луны -->
+        <g
+          id="moon-group"
+          class="origin-center transition-all duration-500 ease-out"
+        >
+          <path d="M16 8a8 8 0 1 0 8 8c-4.42 0-8-3.58-8-8z" fill="currentColor"
+          ></path>
+        </g>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<style>
+  /* Логика отображения БЕЗ JavaScript */
+
+  /* По умолчанию (Темная тема): Солнце скрыто, Луна видна */
+  #sun-group {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+  #moon-group {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  /* Светлая тема (класс .light на html): Солнце видно, Луна скрыта */
+  :global(html.light) #sun-group {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  :global(html.light) #moon-group {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+
+  /* Те же стили для мобильной версии, если там используются те же ID */
+  /* Мобильные группы: по умолчанию (тёмная) - солнце скрыто, луна видна */
+  #sun-group-mobile {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+    transition: all 0.5s ease-out;
+    transform-origin: center;
+  }
+  #moon-group-mobile {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+    transition: all 0.5s ease-out;
+    transform-origin: center;
+  }
+
+  /* При светлой теме инвертируем видимость */
+  :global(html.light) #sun-group-mobile {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  :global(html.light) #moon-group-mobile {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+  .color-btn-active {
+    border-color: var(--color-foreground) !important;
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 2px var(--color-background),
+      0 0 10px var(--color-primary);
+  }
+</style>
+
+<script>
+  import { initThemeControls } from "../../scripts/theme"; // Путь зависит от вложенности components/layout
+  import { initLanguageControls } from "../../scripts/language"; // Добавили
+
+  const init = () => {
+    initThemeControls();
+    initLanguageControls(); // Вызываем
+  };
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("DOMContentLoaded", init);
+</script>
