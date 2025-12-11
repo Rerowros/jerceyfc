@@ -1,0 +1,29 @@
+<script is:inline>
+  function initMagneticButtons() {
+    // Находим все кнопки с классом .btn или .icon-btn
+    const buttons = document.querySelectorAll('.btn, .icon-btn, .magnetic');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        // Вычисляем центр кнопки
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        // Сдвигаем кнопку в сторону мыши (сила 0.3 - слабая, 0.8 - сильная)
+        // Используем transform, но добавляем transition: transform 0.1s для плавности
+        btn.style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
+        btn.style.transition = 'transform 0.1s ease-out';
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        // Возвращаем на место
+        btn.style.transform = 'translate(0px, 0px)';
+        btn.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)'; // Эффект пружины
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initMagneticButtons);
+  document.addEventListener('DOMContentLoaded', initMagneticButtons);
+</script>

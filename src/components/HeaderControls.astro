@@ -1,114 +1,293 @@
 ---
 // src/components/HeaderControls.astro
-// Элементы управления в хедере: палитра, язык, тема
 ---
 
-<div class="flex flex-col md:flex-row items-center gap-4">
-  <!-- Переключатель палитры -->
-  <div id="palette-switcher" class="flex items-center gap-2">
+<div class="flex items-center gap-3">
+  <!-- 1. Кнопка "Палитра" -->
+  <div class="relative group">
     <button
-      data-theme="indigo"
-      class="h-5 w-5 rounded-full bg-[#818cf8] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
-      title="Indigo"></button>
-    <button
-      data-theme="lavender"
-      class="h-5 w-5 rounded-full bg-[#c084fc] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
-      title="Lavender"></button>
-    <button
-      data-theme="mint"
-      class="h-5 w-5 rounded-full bg-[#34d399] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
-      title="Mint"></button>
-    <button
-      data-theme="sunny"
-      class="h-5 w-5 rounded-full bg-[#fbbf24] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
-      title="Sunny"></button>
-    <button
-      data-theme="rose"
-      class="h-5 w-5 rounded-full bg-[#fb7185] ring-offset-background ring-offset-2 focus:ring-2 ring-white/20 transition-all hover:scale-110"
-      title="Rose"></button>
+      id="palette-toggle"
+      class="icon-btn relative z-50 group-hover:border-[var(--color-primary)] transition-colors cursor-pointer"
+      aria-label="Change Color Theme"
+      title="Color Theme"
+      type="button"
+    >
+      <!-- pointer-events-none важен, чтобы клик всегда шел по кнопке, а не по path -->
+      <svg
+        class="w-5 h-5 pointer-events-none"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+        ></path>
+      </svg>
+    </button>
+
+    <!-- Выпадающее меню -->
+    <div
+      id="palette-menu"
+      class="absolute top-full right-0 mt-3 p-3 glass-card rounded-xl opacity-0 invisible translate-y-2 transition-all duration-300 w-max z-[100]"
+    >
+      <div class="flex items-center gap-2" id="palette-buttons">
+        <button
+          data-theme="indigo"
+          class="w-6 h-6 rounded-full bg-[#818cf8] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Indigo"></button>
+        <button
+          data-theme="lavender"
+          class="w-6 h-6 rounded-full bg-[#c084fc] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Lavender"></button>
+        <button
+          data-theme="mint"
+          class="w-6 h-6 rounded-full bg-[#34d399] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Mint"></button>
+        <button
+          data-theme="sunny"
+          class="w-6 h-6 rounded-full bg-[#fbbf24] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Sunny"></button>
+        <button
+          data-theme="rose"
+          class="w-6 h-6 rounded-full bg-[#fb7185] border-2 border-transparent hover:scale-110 transition-transform focus:outline-none"
+          title="Rose"></button>
+      </div>
+      <!-- Декоративная стрелочка -->
+      <div
+        class="absolute -top-1.5 right-3 w-3 h-3 bg-[var(--color-card)] border-l border-t border-[var(--color-border)] transform rotate-45 pointer-events-none"
+      >
+      </div>
+    </div>
   </div>
 
-  <!-- Переключатель языка -->
-  <button id="lang-toggle" class="icon-btn text-sm font-semibold w-10">
-    <span class="lang-ru">EN</span>
-    <span class="lang-en">RU</span>
+  <!-- 2. Переключатель языка -->
+  <button
+    id="lang-toggle"
+    class="icon-btn text-sm font-bold w-10 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+    title="Switch Language"
+    type="button"
+  >
+    <span class="lang-ru pointer-events-none">EN</span>
+    <span class="lang-en pointer-events-none">RU</span>
   </button>
 
-  <!-- Переключатель темы -->
-  <button id="theme-toggle" class="icon-btn">
-    <span id="theme-icon" class="theme-icon inline-block relative w-5 h-5">
+  <!-- 3. Переключатель темы -->
+  <button
+    id="theme-toggle"
+    class="icon-btn hover:border-[var(--color-primary)] transition-colors relative overflow-hidden cursor-pointer"
+    title="Toggle Dark Mode"
+    type="button"
+  >
+    <span
+      id="theme-icon"
+      class="theme-icon inline-block relative w-5 h-5 pointer-events-none"
+    >
       <svg
         class="absolute inset-0 w-full h-full"
         viewBox="0 0 32 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g id="sun-group" class="transition-all duration-300">
-          <circle cx="16" cy="16" r="6" fill="#fbbf24"></circle>
+        <g id="sun-group" class="transition-all duration-500">
+          <circle cx="16" cy="16" r="6" fill="currentColor"></circle>
           <g>
             <line
               x1="16"
               y1="4"
               x2="16"
               y2="8"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"></line>
             <line
               x1="16"
               y1="24"
               x2="16"
               y2="28"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"></line>
             <line
               x1="4"
               y1="16"
               x2="8"
               y2="16"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"></line>
             <line
               x1="24"
               y1="16"
               x2="28"
               y2="16"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
-            <line
-              x1="7.76"
-              y1="7.76"
-              x2="10.34"
-              y2="10.34"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
-            <line
-              x1="21.66"
-              y1="21.66"
-              x2="24.24"
-              y2="24.24"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
-            <line
-              x1="7.76"
-              y1="24.24"
-              x2="10.34"
-              y2="21.66"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
-            <line
-              x1="21.66"
-              y1="10.34"
-              x2="24.24"
-              y2="7.76"
-              stroke="#fbbf24"
-              stroke-width="2"></line>
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"></line>
           </g>
         </g>
-        <g id="moon-group" class="transition-all duration-300">
-          <path d="M16 8a8 8 0 1 0 8 8c-4.42 0-8-3.58-8-8z" fill="#818cf8"
+        <g id="moon-group" class="transition-all duration-500">
+          <path d="M16 8a8 8 0 1 0 8 8c-4.42 0-8-3.58-8-8z" fill="currentColor"
           ></path>
         </g>
       </svg>
     </span>
   </button>
 </div>
+
+<style>
+  /* Активное состояние кнопки цвета */
+  .color-btn-active {
+    border-color: var(--color-foreground) !important;
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 2px var(--color-background),
+      0 0 10px var(--color-primary);
+  }
+
+  /* Видимое меню */
+  .menu-visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+  }
+</style>
+
+<script>
+  function initHeaderControls() {
+    // --- 1. Логика Палитры ---
+    const paletteToggle = document.getElementById("palette-toggle");
+    const paletteMenu = document.getElementById("palette-menu");
+    const paletteButtons = document.querySelectorAll("#palette-buttons button");
+
+    if (paletteToggle && paletteMenu) {
+      paletteToggle.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        paletteMenu.classList.toggle("menu-visible");
+        paletteToggle.classList.toggle("text-[var(--color-primary)]");
+      };
+
+      document.onclick = (e) => {
+        // @ts-ignore
+        if (
+          !paletteMenu.contains(e.target) &&
+          !paletteToggle.contains(e.target)
+        ) {
+          paletteMenu.classList.remove("menu-visible");
+          paletteToggle.classList.remove("text-[var(--color-primary)]");
+        }
+      };
+    }
+
+    // Обновление активной кнопки палитры
+    const updateActiveColorButton = () => {
+      const currentTheme =
+        document.documentElement.getAttribute("data-theme") || "indigo";
+      paletteButtons.forEach((btn) => {
+        // @ts-ignore
+        if (btn.dataset.theme === currentTheme) {
+          btn.classList.add("color-btn-active");
+        } else {
+          btn.classList.remove("color-btn-active");
+        }
+      });
+    };
+    updateActiveColorButton();
+
+    paletteButtons.forEach((btn) => {
+      // @ts-ignore
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        // @ts-ignore
+        const theme = e.currentTarget.dataset.theme;
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("palette", theme);
+        updateActiveColorButton();
+      };
+    });
+
+    // --- 2. Логика Темы ---
+    const themeToggle = document.getElementById("theme-toggle");
+    if (themeToggle) {
+      themeToggle.onclick = () => {
+        const isLight = document.documentElement.classList.toggle("light");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+
+        // Анимация иконки обрабатывается CSS классами .theme-sun-enter и т.д. в global.css,
+        // которые реагируют на наличие класса .light у html или через JS (как было в старом коде).
+        // Для простоты оставим CSS переходы.
+        const sunGroup = document.getElementById("sun-group");
+        const moonGroup = document.getElementById("moon-group");
+        if (sunGroup && moonGroup) {
+          if (isLight) {
+            sunGroup.classList.remove("opacity-0");
+            moonGroup.classList.add("opacity-0");
+          } else {
+            sunGroup.classList.add("opacity-0");
+            moonGroup.classList.remove("opacity-0");
+          }
+        }
+      };
+    }
+
+    // --- 3. Логика Языка (Matrix Effect) ---
+    const langToggle = document.getElementById("lang-toggle");
+    if (langToggle) {
+      langToggle.onclick = () => {
+        const newLang = document.documentElement.lang === "ru" ? "en" : "ru";
+        document.documentElement.lang = newLang;
+        localStorage.setItem("lang", newLang);
+
+        // Matrix Animation Logic
+        const langEls = document.querySelectorAll(".lang-ru, .lang-en");
+        langEls.forEach((el) => {
+          // Пропускаем спойлеры и элементы без анимации
+          if (el.closest(".spoiler-text") || el.hasAttribute("data-no-animate"))
+            return;
+
+          // Пропускаем сложные элементы (вложенные теги)
+          if (el.children.length > 0) return;
+
+          const orig = el.textContent || "";
+          // @ts-ignore
+          el.style.opacity = "0.5";
+          let frame = 0;
+          const totalFrames = 20;
+          const chars = "0123456789!@#$%^&*";
+
+          const scramble = () => {
+            let out = "";
+            for (let i = 0; i < orig.length; i++) {
+              // Если символ не буква/цифра - оставляем
+              if (/[^а-яА-Яa-zA-Z0-9]/.test(orig[i])) {
+                out += orig[i];
+                continue;
+              }
+              if (frame < totalFrames && Math.random() < 0.5) {
+                out += chars[Math.floor(Math.random() * chars.length)];
+              } else {
+                out += orig[i];
+              }
+            }
+            el.textContent = out;
+            frame++;
+            if (frame <= totalFrames) {
+              requestAnimationFrame(scramble);
+            } else {
+              el.textContent = orig;
+              // @ts-ignore
+              el.style.opacity = "1";
+            }
+          };
+          scramble();
+        });
+      };
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initHeaderControls);
+  document.addEventListener("astro:page-load", initHeaderControls);
+</script>

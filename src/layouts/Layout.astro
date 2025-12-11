@@ -4,7 +4,7 @@ import '../styles/global.css';
 import '../styles/lang-animate.css';
 import { ClientRouter } from 'astro:transitions';
 import Background from '../components/ui/Background.astro';
-
+import MagneticButtons  from '../components/MagneticButtons.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -20,24 +20,21 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} | Jersey</title>
+    <!-- Мета-теги остались без изменений... -->
     <link rel="canonical" href={`https://jerceyfc.ru${pathname}`} />
-
-    <!-- Open Graph -->
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={`${title} | Jersey`} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`https://jerceyfc.ru${pathname}`} />
     <meta property="og:image" content="/J.png" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@jerseyfc" />
     <meta name="twitter:title" content={`${title} | Jersey`} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="/J.png" />
 
-    <!-- JSON-LD: Person / WebSite -->
+    <!-- JSON-LD... -->
     <script type="application/ld+json" is:inline>
       {JSON.stringify({
         "@context": "https://schema.org",
@@ -70,364 +67,54 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
     <link rel="icon" type="image/png" href="/J.png" />
 
     <meta name="view-transition" content="same-origin" />
-    
-    <!-- Добавляем ClientRouter для SPA-переходов -->
     <ClientRouter />
 
     <script is:inline>
-      // Скрипт выполняется до рендера, чтобы избежать мигания
+      // Инициализация состояния (тема, палитра, язык)
       function applyInitialState() {
         const theme = localStorage.getItem('theme');
         const palette = localStorage.getItem('palette') || 'indigo';
-        const view = localStorage.getItem('view');
         const lang = localStorage.getItem('lang') || 'ru';
         
         document.documentElement.lang = lang;
 
-        // 1. Устанавливаем тему (темная по умолчанию)
-        // Используем html.light для светлой темы, без класса = темная
         if (theme === 'light') {
           document.documentElement.classList.add('light');
         } else {
           document.documentElement.classList.remove('light');
         }
         
-        // 2. Устанавливаем цветовую палитру
         document.documentElement.setAttribute('data-theme', palette);
       }
       
       applyInitialState();
       document.addEventListener('astro:after-swap', applyInitialState);
     </script>
-
   </head>
 <body class="font-['Inter'] antialiased selection:bg-primary/30">
-  <!-- Магический фон -->
   <Background />
-  
-  <!-- Основной контент -->
   <main class="relative z-10">
     <slot />
   </main>
+  <MagneticButtons/>
+  
+  <!-- Скрипт Scroll Animation Observer перенесен сюда, так как он глобальный -->
+  <script>
+    function initScrollObserver() {
+      const animatedElements = document.querySelectorAll('.scroll-animate');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      animatedElements.forEach(element => observer.observe(element));
+    }
+    
+    document.addEventListener('astro:page-load', initScrollObserver);
+    document.addEventListener('DOMContentLoaded', initScrollObserver);
+  </script>
 </body>
-<script is:inline>
-  function initializePage() {
-    // --- ОБЩАЯ ЛОГИКА ДЛЯ ВСЕХ КОНТРОЛОВ ---
-    
-    // Функция для обновления текста на кнопке ГОСТ-режима
-    function updateGosButtonText() {
-      const gosViewToggle = document.getElementById('gos-view-toggle');
-      if (!gosViewToggle) return;
-      const isGosView = document.documentElement.dataset.view === 'gos';
-      const ruText = gosViewToggle.querySelector('.lang-ru');
-      const enText = gosViewToggle.querySelector('.lang-en');
-      if (isGosView) {
-        ruText.textContent = 'Стандартная версия';
-        enText.textContent = 'Standard View';
-      } else {
-        ruText.textContent = 'ГОСТ-версия';
-        enText.textContent = 'Gov. standard';
-      }
-    }
-    updateGosButtonText(); // Вызываем при инициализации
-
-    // Обработчик для кнопки ГОСТ-режима
-    const gosViewToggle = document.getElementById('gos-view-toggle');
-    if (gosViewToggle) {
-      gosViewToggle.onclick = () => {
-        const isGosView = document.documentElement.dataset.view === 'gos';
-        localStorage.setItem('view', isGosView ? '' : 'gos');
-        window.location.reload();
-      };
-    }
-
-    // Если включен ГОСТ-режим, остальная логика не выполняется
-    if (document.documentElement.dataset.view === 'gos') {
-      // Скрываем ненужные контролы в ГОСТ-режиме
-      const paletteSwitcher = document.getElementById('palette-switcher');
-      const themeToggle = document.getElementById('theme-toggle');
-      if(paletteSwitcher) paletteSwitcher.style.display = 'none';
-      if(themeToggle) themeToggle.style.display = 'none';
-      return;
-    }
-
-    // --- ЛОГИКА МОБИЛЬНОГО МЕНЮ ---
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileMenuButton && mobileMenu) {
-      mobileMenuButton.onclick = () => {
-        mobileMenu.classList.toggle('hidden');
-      };
-      
-      // Закрывать меню при клике на ссылку
-      const menuLinks = mobileMenu.querySelectorAll('a');
-      menuLinks.forEach(link => {
-        link.onclick = () => {
-          mobileMenu.classList.add('hidden');
-        };
-      });
-    }
-
-    // --- ЛОГИКА МОБИЛЬНЫХ КОНТРОЛОВ ---
-    
-    // Мобильная ГОСТ-версия
-    const gosViewToggleMobile = document.getElementById('gos-view-toggle-mobile');
-    if (gosViewToggleMobile) {
-      function updateMobileGosButtonText() {
-        const isGosView = document.documentElement.dataset.view === 'gos';
-        const ruText = gosViewToggleMobile.querySelector('.lang-ru');
-        const enText = gosViewToggleMobile.querySelector('.lang-en');
-        if (isGosView) {
-          ruText.textContent = 'Стандартная версия';
-          enText.textContent = 'Standard View';
-        } else {
-          ruText.textContent = 'ГОСТ-версия';
-          enText.textContent = 'Gov. standard';
-        }
-      }
-      updateMobileGosButtonText();
-      
-      gosViewToggleMobile.onclick = () => {
-        const isGosView = document.documentElement.dataset.view === 'gos';
-        localStorage.setItem('view', isGosView ? '' : 'gos');
-        window.location.reload();
-      };
-    }
-
-    // Мобильная палитра
-    const paletteSwitcherMobile = document.getElementById('palette-switcher-mobile');
-    if (paletteSwitcherMobile) {
-      function updateMobileActivePalette() {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'indigo';
-        paletteSwitcherMobile.querySelectorAll('button').forEach(button => {
-          button.classList.toggle('ring-1', button.dataset.theme === currentTheme);
-          button.classList.toggle('ring-primary', button.dataset.theme === currentTheme);
-        });
-      }
-      updateMobileActivePalette();
-
-      paletteSwitcherMobile.onclick = (e) => {
-        if (e.target instanceof HTMLElement && e.target.dataset.theme) {
-          document.documentElement.setAttribute('data-theme', e.target.dataset.theme);
-          localStorage.setItem('palette', e.target.dataset.theme);
-          updateMobileActivePalette();
-        }
-      };
-    }
-
-    // Мобильный язык
-    const langToggleMobile = document.getElementById('lang-toggle-mobile');
-    if (langToggleMobile) {
-      langToggleMobile.onclick = () => {
-        const newLang = document.documentElement.lang === 'ru' ? 'en' : 'ru';
-        document.documentElement.lang = newLang;
-        localStorage.setItem('lang', newLang);
-        updateGosButtonText();
-        if (gosViewToggleMobile) updateMobileGosButtonText();
-        // --- АНИМАЦИЯ ПРИ ПЕРЕКЛЮЧЕНИИ ЯЗЫКА (МОБИЛЬНОЕ) ---
-        const langEls = document.querySelectorAll('.lang-ru, .lang-en');
-        langEls.forEach(el => {
-          // Пропускаем все .lang-ru/.lang-en, находящиеся внутри .spoiler-text или с data-no-animate
-          // И если внутри есть хотя бы один дочерний элемент (например, <a>), не анимируем вообще
-          if (el.closest('.spoiler-text') || el.hasAttribute('data-no-animate') || [...el.childNodes].some(n => n.nodeType === Node.ELEMENT_NODE)) return;
-          const textNodes = [];
-          for (let node of el.childNodes) {
-            if (node.nodeType === Node.TEXT_NODE) textNodes.push(node);
-          }
-          if (textNodes.length === 0) return;
-          el.style.transition = 'opacity 0.5s';
-          el.style.opacity = '0.5';
-          let frame = 0;
-          const totalFrames = 22;
-          // Сохраняем оригинальный текст для каждого узла
-          const origs = textNodes.map(n => n.textContent);
-          const scramble = () => {
-            textNodes.forEach((node, idx) => {
-              const orig = origs[idx];
-              let out = '';
-              for (let i = 0; i < orig.length; i++) {
-                const ch = orig[i];
-                // Не трогаем пробелы и спецсимволы
-                if (/[^а-яА-Яa-zA-Z0-9]/.test(ch)) {
-                  out += ch;
-                  continue;
-                }
-                const progress = frame / totalFrames;
-                if (progress < 0.6 && Math.random() < 0.33) {
-                  out += '0123456789!@#$%^&*'[Math.floor(Math.random()*16)];
-                } else {
-                  out += ch;
-                }
-              }
-              node.textContent = out;
-            });
-            el.classList.add('animated');
-            el.style.opacity = (frame < totalFrames - 2) ? '0.5' : '1';
-            frame++;
-            if (frame < totalFrames) {
-              setTimeout(scramble, 65);
-            } else {
-              textNodes.forEach((node, idx) => node.textContent = origs[idx]);
-              el.classList.remove('animated');
-              el.style.opacity = '1';
-            }
-          };
-          scramble();
-        });
-      };
-    }
-
-    // Мобильная тема
-    const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-    if (themeToggleMobile) {
-      const themeIconMobile = document.getElementById('theme-icon-mobile');
-      const sunGroupMobile = themeIconMobile?.querySelector('#sun-group-mobile');
-      const moonGroupMobile = themeIconMobile?.querySelector('#moon-group-mobile');
-      
-      function setMobileIcon(isLight) {
-        if (sunGroupMobile && moonGroupMobile) {
-          if (isLight) {
-            sunGroupMobile.style.transform = 'translateY(0)'; sunGroupMobile.style.opacity = 1;
-            moonGroupMobile.style.transform = 'translateY(-100%)'; moonGroupMobile.style.opacity = 0;
-          } else {
-            sunGroupMobile.style.transform = 'translateY(100%)'; sunGroupMobile.style.opacity = 0;
-            moonGroupMobile.style.transform = 'translateY(0)'; moonGroupMobile.style.opacity = 1;
-          }
-        }
-      }
-      setMobileIcon(document.documentElement.classList.contains('light'));
-      
-      themeToggleMobile.onclick = () => {
-        const willBeLight = !document.documentElement.classList.contains('light');
-        setMobileIcon(willBeLight);
-        setTimeout(() => {
-          document.documentElement.classList.toggle('light');
-          localStorage.setItem('theme', willBeLight ? 'light' : 'dark');
-        }, 100);
-      };
-    }
-
-    // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ (DARK/LIGHT) ---
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-      const themeIcon = document.getElementById('theme-icon');
-      const sunGroup = themeIcon.querySelector('#sun-group');
-      const moonGroup = themeIcon.querySelector('#moon-group');
-      
-      function setIcon(isLight) {
-        if (!sunGroup || !moonGroup) return;
-        if (isLight) {
-          sunGroup.classList.add('theme-sun-enter');
-          moonGroup.classList.add('theme-moon-leave');
-          sunGroup.classList.remove('theme-sun-leave');
-          moonGroup.classList.remove('theme-moon-enter');
-        } else {
-          sunGroup.classList.add('theme-sun-leave');
-          moonGroup.classList.add('theme-moon-enter');
-          sunGroup.classList.remove('theme-sun-enter');
-          moonGroup.classList.remove('theme-moon-leave');
-        }
-      }
-      setIcon(document.documentElement.classList.contains('light'));
-
-      themeToggle.onclick = () => {
-        const willBeLight = !document.documentElement.classList.contains('light');
-        setIcon(willBeLight);
-        setTimeout(() => {
-          document.documentElement.classList.toggle('light');
-          localStorage.setItem('theme', willBeLight ? 'light' : 'dark');
-        }, 100);
-      };
-    }
-
-    // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ЯЗЫКА ---
-    const langToggle = document.getElementById('lang-toggle');
-    if (langToggle) {
-      langToggle.onclick = () => {
-        const newLang = document.documentElement.lang === 'ru' ? 'en' : 'ru';
-        document.documentElement.lang = newLang;
-        localStorage.setItem('lang', newLang);
-        updateGosButtonText(); // Обновляем текст кнопки ГОСТ
-        // --- АНИМАЦИЯ ПРИ ПЕРЕКЛЮЧЕНИИ ЯЗЫКА ---
-        const langEls = document.querySelectorAll('.lang-ru, .lang-en');
-        langEls.forEach(el => {
-          // Пропускаем все .lang-ru/.lang-en, находящиеся внутри .spoiler-text или с data-no-animate
-          if (el.closest('.spoiler-text') || el.hasAttribute('data-no-animate')) return;
-          const orig = el.textContent;
-          el.style.transition = 'opacity 0.5s';
-          el.style.opacity = '0.5';
-          let frame = 0;
-          const totalFrames = 22;
-          const scramble = () => {
-            let out = '';
-            for (let i = 0; i < orig.length; i++) {
-              const ch = orig[i];
-              // Не трогаем пробелы и спецсимволы
-              if (/[^а-яА-Яa-zA-Z0-9]/.test(ch)) {
-                out += ch;
-                continue;
-              }
-              const progress = frame / totalFrames;
-              if (progress < 0.6 && Math.random() < 0.33) {
-                out += '0123456789!@#$%^&*'[Math.floor(Math.random()*16)];
-              } else {
-                out += ch;
-              }
-            }
-            el.textContent = out;
-            el.classList.add('animated');
-            el.style.opacity = (frame < totalFrames - 2) ? '0.5' : '1';
-            frame++;
-            if (frame < totalFrames) {
-              setTimeout(scramble, 65);
-            } else {
-              el.textContent = orig;
-              el.classList.remove('animated');
-              el.style.opacity = '1';
-            }
-          };
-          scramble();
-        });
-      };
-    }
-
-    // --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ПАЛИТРЫ ---
-    const paletteSwitcher = document.getElementById('palette-switcher');
-    if (paletteSwitcher) {
-      function updateActivePalette() {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'indigo';
-        paletteSwitcher.querySelectorAll('button').forEach(button => {
-          button.classList.toggle('ring-2', button.dataset.theme === currentTheme);
-          button.classList.toggle('ring-primary', button.dataset.theme === currentTheme);
-        });
-      }
-      updateActivePalette();
-
-      paletteSwitcher.onclick = (e) => {
-        if (e.target instanceof HTMLElement && e.target.dataset.theme) {
-          document.documentElement.setAttribute('data-theme', e.target.dataset.theme);
-          localStorage.setItem('palette', e.target.dataset.theme);
-          updateActivePalette();
-        }
-      };
-    }
-
-    // --- ЛОГИКА АНИМАЦИИ ПРИ СКРОЛЛЕ ---
-    const animatedElements = document.querySelectorAll('.scroll-animate');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    animatedElements.forEach(element => observer.observe(element));
-  }
-
-  document.addEventListener('astro:page-load', initializePage);
-  initializePage();
-</script>
-</html>
-</script>
 </html>

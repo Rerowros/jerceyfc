@@ -246,3 +246,119 @@ import HeaderControls from "./HeaderControls.astro";
     </nav>
   </div>
 </header>
+<script>
+  function initMobileHeader() {
+    // 1. Мобильное меню (бургер)
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    if (mobileMenuButton && mobileMenu) {
+      // Сброс обработчика для избежания дублирования при навигации
+      const toggleMenu = () => mobileMenu.classList.toggle("hidden");
+      mobileMenuButton.onclick = toggleMenu;
+
+      // Закрытие при клике на ссылку
+      mobileMenu.querySelectorAll("a").forEach((link) => {
+        link.onclick = () => mobileMenu.classList.add("hidden");
+      });
+    }
+
+    // 2. Мобильная ГОСТ кнопка
+    const gosBtn = document.getElementById("gos-view-toggle-mobile");
+    if (gosBtn) {
+      const updateText = () => {
+        const isGos = document.documentElement.dataset.view === "gos";
+        const ru = gosBtn.querySelector(".lang-ru");
+        const en = gosBtn.querySelector(".lang-en");
+        if (ru && en) {
+          ru.textContent = isGos ? "Стандартная версия" : "ГОСТ-версия";
+          en.textContent = isGos ? "Standard View" : "Gov. standard";
+        }
+      };
+      updateText();
+      gosBtn.onclick = () => {
+        const isGos = document.documentElement.dataset.view === "gos";
+        localStorage.setItem("view", isGos ? "" : "gos");
+        window.location.reload();
+      };
+    }
+
+    // 3. Мобильная палитра
+    const paletteMobile = document.getElementById("palette-switcher-mobile");
+    if (paletteMobile) {
+      // Подсветка активной
+      const updateActive = () => {
+        const current =
+          document.documentElement.getAttribute("data-theme") || "indigo";
+        paletteMobile.querySelectorAll("button").forEach((btn) => {
+          // @ts-ignore
+          const isActive = btn.dataset.theme === current;
+          btn.classList.toggle("ring-2", isActive);
+          btn.classList.toggle("ring-white", isActive);
+        });
+      };
+      updateActive();
+
+      paletteMobile.onclick = (e) => {
+        // @ts-ignore
+        const theme = e.target?.dataset?.theme;
+        if (theme) {
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem("palette", theme);
+          updateActive();
+        }
+      };
+    }
+
+    // 4. Мобильный язык (с Matrix эффектом)
+    const langMobile = document.getElementById("lang-toggle-mobile");
+    if (langMobile) {
+      langMobile.onclick = () => {
+        const newLang = document.documentElement.lang === "ru" ? "en" : "ru";
+        document.documentElement.lang = newLang;
+        localStorage.setItem("lang", newLang);
+
+        // Обновляем текст ГОСТ кнопки если она есть
+        if (gosBtn) {
+          const isGos = document.documentElement.dataset.view === "gos";
+          const ru = gosBtn.querySelector(".lang-ru");
+          const en = gosBtn.querySelector(".lang-en");
+          if (ru && en) {
+            ru.textContent = isGos ? "Стандартная версия" : "ГОСТ-версия";
+            en.textContent = isGos ? "Standard View" : "Gov. standard";
+          }
+        }
+
+        // Запуск глобальной анимации смены языка (если функция доступна или дублируем логику)
+        // Для упрощения просто переключаем CSS классы через глобальный атрибут lang
+      };
+    }
+
+    // 5. Мобильная тема
+    const themeMobile = document.getElementById("theme-toggle-mobile");
+    if (themeMobile) {
+      const icon = document.getElementById("theme-icon-mobile");
+      const sun = icon?.querySelector("#sun-group-mobile");
+      const moon = icon?.querySelector("#moon-group-mobile");
+
+      const updateIcon = (isLight: boolean) => {
+        if (sun && moon) {
+          // @ts-ignore
+          sun.style.opacity = isLight ? "1" : "0";
+          // @ts-ignore
+          moon.style.opacity = isLight ? "0" : "1";
+        }
+      };
+      updateIcon(document.documentElement.classList.contains("light"));
+
+      themeMobile.onclick = () => {
+        const isLight = document.documentElement.classList.toggle("light");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        updateIcon(isLight);
+      };
+    }
+  }
+
+  document.addEventListener("astro:page-load", initMobileHeader);
+  document.addEventListener("DOMContentLoaded", initMobileHeader);
+</script>

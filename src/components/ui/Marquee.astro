@@ -1,0 +1,42 @@
+---
+// src/components/ui/Marquee.astro
+const skills = [
+  "Python", "TypeScript", "React", "Next.js", "Astro", "Tailwind", 
+  "Node.js", "PostgreSQL", "Docker", "Figma", "Git", "Linux"
+];
+---
+
+<div class="relative flex overflow-hidden py-10 bg-[var(--color-background)]">
+  <!-- Градиентные маски по краям для плавного исчезновения -->
+  <div class="absolute top-0 bottom-0 left-0 w-20 z-10 bg-gradient-to-r from-[var(--color-background)] to-transparent"></div>
+  <div class="absolute top-0 bottom-0 right-0 w-20 z-10 bg-gradient-to-l from-[var(--color-background)] to-transparent"></div>
+
+  <!-- Контейнер с анимацией -->
+  <div class="flex animate-marquee whitespace-nowrap">
+    <!-- Дублируем список 2 раза для бесшовности -->
+    {Array(2).fill(null).map(() => (
+      <div class="flex gap-8 mx-4">
+        {skills.map((skill) => (
+          <div class="flex items-center gap-2 px-6 py-3 rounded-full border border-[var(--color-border)] bg-[var(--color-card)]/50 backdrop-blur-sm text-[var(--color-foreground)] font-medium text-lg hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors cursor-default">
+             <span class="w-2 h-2 rounded-full bg-[var(--color-primary)]"></span>
+             {skill}
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+  /* Пауза при наведении */
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+</style>
