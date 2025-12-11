@@ -3,7 +3,8 @@ import { defineCollection, z } from 'astro:content';
 
 const projectsCollection = defineCollection({
   type: 'content',
-  schema: z.object({
+  // ИЗМЕНЕНИЕ ЗДЕСЬ: Превращаем schema в функцию, которая принимает { image }
+  schema: ({ image }) => z.object({
     title: z.object({
       ru: z.string(),
       en: z.string(),
@@ -17,8 +18,11 @@ const projectsCollection = defineCollection({
       en: z.string().optional(),
     }).optional(),
     tags: z.array(z.string()),
-    coverImage: z.string().optional(), 
-    gallery: z.array(z.string()).optional(),
+    
+    // ИЗМЕНЕНИЕ: Используем image() хелпер
+    coverImage: image().optional(), 
+    gallery: z.array(image()).optional(),
+    
     demoUrl: z.string().optional(),
     repoUrl: z.string().optional(),
     pubDate: z.date(),

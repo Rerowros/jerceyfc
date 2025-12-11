@@ -1,16 +1,32 @@
 ---
 // src/layouts/Layout.astro
+
+import '@fontsource/manrope/400.css';
+import '@fontsource/manrope/500.css';
+import '@fontsource/manrope/800.css';
+import '@fontsource/unbounded/400.css';
+import '@fontsource/unbounded/700.css';
+import '@fontsource/unbounded/900.css';
+
 import '../styles/global.css';
 import '../styles/lang-animate.css';
 import { ClientRouter } from 'astro:transitions';
 import Background from '../components/ui/Background.astro';
+import MobileHint from '../components/ui/MobileHint.astro';
+
 interface Props {
   title?: string;
   description?: string;
   pathname?: string;
 }
-const { title = 'Портфолио | Jersey', description = 'Портфолио Jersey — разработчик веб-приложений, Telegram-ботов и десктоп-приложений. Проекты и исходный код.', pathname = '/' } = Astro.props;
+
+const { 
+  title = 'Full-Stack Developer | Jersey', 
+  description = 'Jersey — Full-Stack разработчик (React, TypeScript, Python). Создание современных веб-приложений и автоматизация через Telegram-ботов.', 
+  pathname = '/' 
+} = Astro.props;
 ---
+
 <!doctype html>
 <html lang="ru" class="scroll-smooth">
   <head>
@@ -20,22 +36,25 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark light">
     <meta name="darkreader-lock">
-    <title>{title} | Jersey</title>
-    <!-- Мета-теги остались без изменений... -->
+    
+    <meta name="keywords" content="Web Development, React Developer, TypeScript, Python, Telegram Bots, Next.js, Astro, Frontend, Backend, Full-Stack, Разработка сайтов, Телеграм боты" />
+    
+    <title>{title}</title>
+
     <link rel="canonical" href={`https://jerceyfc.me${pathname}`} />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={`${title} | Jersey`} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`https://jerceyfc.me${pathname}`} />
     <meta property="og:image" content="/J.png" />
+    
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@jerseyfc" />
-    <meta name="twitter:title" content={`${title} | Jersey`} />
+    <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="/J.png" />
 
-    <!-- JSON-LD... -->
     <script type="application/ld+json" is:inline>
       {JSON.stringify({
         "@context": "https://schema.org",
@@ -45,8 +64,9 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
             "name": "Jersey",
             "url": "https://jerceyfc.me/",
             "sameAs": ["https://t.me/jerseyfc", "https://github.com/Rerowros"],
-            "jobTitle": "Software Developer",
-            "description": "Разработчик веб-приложений, Telegram-ботов и десктоп-приложений."
+            "jobTitle": "Full-Stack Web Developer",
+            "knowsAbout": ["React", "TypeScript", "Python", "Next.js", "Telegram API"],
+            "description": "Разработчик веб-приложений и Telegram-ботов с фокусом на React и Python."
           },
           {
             "@type": "WebSite",
@@ -62,28 +82,25 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
       })}
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/J.png" />
 
     <meta name="view-transition" content="same-origin" />
     <ClientRouter />
 
-  <script>
-    import { applyTheme } from '../scripts/theme';
-    applyTheme();
-    // Astro View Transitions могут сбрасывать состояние html тега, поэтому подстрахуемся
-    document.addEventListener('astro:after-swap', applyTheme);
-  </script>
+    <script>
+      import { applyTheme } from '../scripts/theme';
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
+    </script>
   </head>
 <body class="font-['Inter'] antialiased selection:bg-primary/30">
   <Background />
   <main class="relative z-10 w-full overflow-x-hidden">
     <slot />
   </main>
+    <MobileHint />
+
   
-  <!-- Скрипт Scroll Animation Observer перенесен сюда, так как он глобальный -->
   <script>
     function initScrollObserver() {
       const animatedElements = document.querySelectorAll('.scroll-animate');
@@ -104,8 +121,6 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
 
   <script>
   import { initMagneticButtons } from '../scripts/magnetic';
-
-  // Запускаем при загрузке и при переходах между страницами
   document.addEventListener('astro:page-load', initMagneticButtons);
   document.addEventListener('DOMContentLoaded', initMagneticButtons);
   </script>

@@ -6,7 +6,7 @@ import Header from "../../components/layout/Header.astro";
 import Footer from "../../components/layout/Footer.astro";
 import GitHubIcon from "../../components/icons/GitHubIcon.astro";
 import { slide } from "astro:transitions";
-
+import { Image } from "astro:assets";
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
   return projects.map((project) => ({
@@ -22,7 +22,8 @@ interface Props {
 const { project } = Astro.props;
 const { data } = project;
 
-const hasImage = data.coverImage && data.coverImage.trim() !== "";
+const coverImage = data.coverImage;
+const hasImage = !!coverImage;
 const typeGradients: Record<string, string> = {
   web: "bg-blue-600",
   desktop: "bg-emerald-600",
@@ -47,12 +48,16 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
   >
     <div class="absolute inset-0 z-0">
       {
-        hasImage ? (
+        hasImage && coverImage ? (
           <>
-            <img
-              src={data.coverImage}
+            <Image
+              src={coverImage}
               class="w-full h-full object-cover opacity-20 blur-3xl scale-110"
               alt=""
+              width={800}
+              height={600}
+              format="webp"
+              quality={70}
             />
             <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-background)] via-transparent to-[var(--color-background)]" />
           </>
@@ -60,14 +65,13 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
           <div class={`absolute inset-0 opacity-10 ${bgAccent} blur-[100px]`} />
         )
       }
-      <div class="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03]"></div>
+      <div class="absolute inset-0 opacity-[0.03]"></div>
     </div>
 
     <div
       class="container relative z-10 max-w-6xl mx-auto"
       transition:animate={slide({ duration: "0.5s" })}
     >
-      <!-- Хлебные крошки -->
       <a
         href="/projects"
         class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors mb-4 md:mb-8 group"
@@ -92,7 +96,9 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
       </a>
 
       <!-- Заголовок и Мета -->
-      <div class="flex flex-col lg:flex-row gap-6 md:gap-8 lg:items-end justify-between">
+      <div
+        class="flex flex-col lg:flex-row gap-6 md:gap-8 lg:items-end justify-between"
+      >
         <div class="space-y-4 max-w-3xl">
           <div class="flex items-center gap-3">
             <span
@@ -186,15 +192,19 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
       <!-- ЛЕВАЯ КОЛОНКА -->
       <div class="space-y-8 md:space-y-12">
         {
-          hasImage && (
+          hasImage && coverImage && (
             <div
               class="rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-2xl bg-[#050505]"
               transition:name={`img-${project.slug}`}
             >
-              <img
-                src={data.coverImage}
+              <Image
+                src={coverImage}
                 alt={data.title.en}
                 class="w-full h-auto"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={90}
               />
             </div>
           )
@@ -236,12 +246,17 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
                 <span class="lang-en">Screenshots Gallery</span>
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {data.gallery.map((img: string) => (
+                {data.gallery.map((img) => (
                   <div class="group relative rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-card)] aspect-video cursor-zoom-in">
-                    <img
+                    <Image
                       src={img}
+                      alt=""
                       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
+                      width={600}
+                      height={400}
+                      format="webp"
+                      quality={80}
                     />
                   </div>
                 ))}
@@ -317,4 +332,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
   </main>
 
   <Footer />
+
+  <script>
+    const state = { left: 0, top: 0 };
+  </script>
 </Layout>
