@@ -208,6 +208,7 @@ h6,
   font-family: "Unbounded", sans-serif; /* Было 'Cinzel' */
   letter-spacing: -0.03em;
   font-weight: 900; /* Unbounded лучше смотрится в жирном начертании */
+  font-display: swap;
 }
 
 /* Дополнительный твик для очень крупных заголовков (как на Hero) */
@@ -504,4 +505,31 @@ body {
 
 .mobile-glare-animate {
   animation: mobile-glare 2s ease-out forwards;
+}
+
+/* Анимация для первого экрана (без JS) */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  opacity: 0; /* Начинаем скрытым */
+  animation: fade-in-up 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  /* forwards заставит элемент остаться видимым после анимации */
+}
+
+/* Для пользователей, которые отключили анимации в системе - показываем сразу */
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
 }
