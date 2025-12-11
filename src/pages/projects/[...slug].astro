@@ -1,0 +1,320 @@
+---
+// src/pages/projects/[...slug].astro
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/layout/Header.astro";
+import Footer from "../../components/layout/Footer.astro";
+import GitHubIcon from "../../components/icons/GitHubIcon.astro";
+import { slide } from "astro:transitions";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+
+const hasImage = data.coverImage && data.coverImage.trim() !== "";
+const typeGradients: Record<string, string> = {
+  web: "bg-blue-600",
+  desktop: "bg-emerald-600",
+  bot: "bg-orange-600",
+  ml: "bg-pink-600",
+  library: "bg-slate-600",
+};
+// @ts-ignore
+const bgAccent = typeGradients[data.type] || "bg-indigo-600";
+---
+
+<Layout
+  title={data.title.ru}
+  description={data.description.ru}
+  pathname={`/projects/${project.slug}`}
+>
+  <Header />
+
+  <!-- 1. PROJECT HERO SECTION -->
+  <section
+    class="relative pt-24 pb-12 md:pt-32 md:pb-20 px-4 overflow-hidden min-h-[40vh] md:min-h-[50vh] flex flex-col justify-end"
+  >
+    <div class="absolute inset-0 z-0">
+      {
+        hasImage ? (
+          <>
+            <img
+              src={data.coverImage}
+              class="w-full h-full object-cover opacity-20 blur-3xl scale-110"
+              alt=""
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-background)] via-transparent to-[var(--color-background)]" />
+          </>
+        ) : (
+          <div class={`absolute inset-0 opacity-10 ${bgAccent} blur-[100px]`} />
+        )
+      }
+      <div class="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03]"></div>
+    </div>
+
+    <div
+      class="container relative z-10 max-w-6xl mx-auto"
+      transition:animate={slide({ duration: "0.5s" })}
+    >
+      <!-- Хлебные крошки -->
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors mb-4 md:mb-8 group"
+      >
+        <div
+          class="w-8 h-8 rounded-full border border-[var(--color-border)] flex items-center justify-center bg-[var(--color-card)] group-hover:border-[var(--color-primary)] transition-colors"
+        >
+          <svg
+            class="w-4 h-4 transition-transform group-hover:-translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"></path></svg
+          >
+        </div>
+        <span class="lang-ru">Назад к проектам</span>
+        <span class="lang-en">Back to Projects</span>
+      </a>
+
+      <!-- Заголовок и Мета -->
+      <div class="flex flex-col lg:flex-row gap-6 md:gap-8 lg:items-end justify-between">
+        <div class="space-y-4 max-w-3xl">
+          <div class="flex items-center gap-3">
+            <span
+              class={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-widest border ${
+                data.status === "completed"
+                  ? "border-green-500/30 text-green-400 bg-green-500/10"
+                  : data.status === "private"
+                    ? "border-red-500/30 text-red-400 bg-red-500/10"
+                    : "border-blue-500/30 text-blue-400 bg-blue-500/10"
+              }`}
+            >
+              {data.status}
+            </span>
+            <span
+              class="text-xs text-[var(--color-muted-foreground)] font-mono"
+            >
+              {
+                new Date(data.pubDate).toLocaleDateString("ru-RU", {
+                  year: "numeric",
+                  month: "long",
+                })
+              }
+            </span>
+          </div>
+
+          <h1
+            class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold font-cinzel leading-[1.1] text-glow break-words hyphens-auto"
+          >
+            <span class="lang-ru">{data.title.ru}</span>
+            <span class="lang-en">{data.title.en}</span>
+          </h1>
+
+          <p
+            class="text-lg md:text-2xl text-[var(--color-muted-foreground)] leading-relaxed font-light border-l-2 border-[var(--color-primary)] pl-4 md:pl-6"
+          >
+            <span class="lang-ru">{data.description.ru}</span>
+            <span class="lang-en">{data.description.en}</span>
+          </p>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="flex flex-wrap gap-4 mt-2 lg:mt-0">
+          {
+            data.demoUrl && (
+              <a
+                href={data.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-primary flex items-center gap-2 shadow-xl shadow-[var(--color-primary)]/20 w-full sm:w-auto justify-center"
+              >
+                <span class="lang-ru">Открыть проект</span>
+                <span class="lang-en">Open Project</span>
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            )
+          }
+          {
+            data.repoUrl && (
+              <a
+                href={data.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-foreground)] flex items-center gap-2 w-full sm:w-auto justify-center"
+              >
+                <GitHubIcon class="w-5 h-5" />
+                <span class="lang-ru">Код</span>
+                <span class="lang-en">Code</span>
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. MAIN CONTENT GRID -->
+  <main class="container max-w-6xl mx-auto px-4 py-8 md:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 md:gap-12">
+      <!-- ЛЕВАЯ КОЛОНКА -->
+      <div class="space-y-8 md:space-y-12">
+        {
+          hasImage && (
+            <div
+              class="rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-2xl bg-[#050505]"
+              transition:name={`img-${project.slug}`}
+            >
+              <img
+                src={data.coverImage}
+                alt={data.title.en}
+                class="w-full h-auto"
+              />
+            </div>
+          )
+        }
+
+        <div class="prose prose-lg prose-invert max-w-none">
+          <div
+            class="glass-card p-6 md:p-10 rounded-3xl border border-[var(--color-border)] relative overflow-hidden"
+          >
+            <div
+              class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[var(--color-primary)] to-transparent"
+            >
+            </div>
+
+            <h3
+              class="text-xl md:text-2xl font-bold text-[var(--color-foreground)] mb-4 md:mb-6 font-cinzel"
+            >
+              <span class="lang-ru">О проекте</span>
+              <span class="lang-en">About Project</span>
+            </h3>
+            <p
+              class="whitespace-pre-line text-base md:text-lg text-[var(--color-muted-foreground)] leading-loose"
+            >
+              <span class="lang-ru"
+                >{data.details?.ru || data.description.ru}</span
+              >
+              <span class="lang-en"
+                >{data.details?.en || data.description.en}</span
+              >
+            </p>
+          </div>
+        </div>
+
+        {
+          data.gallery && data.gallery.length > 0 && (
+            <div class="space-y-6">
+              <h3 class="text-xl md:text-2xl font-bold font-cinzel text-glow">
+                <span class="lang-ru">Галерея скриншотов</span>
+                <span class="lang-en">Screenshots Gallery</span>
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.gallery.map((img: string) => (
+                  <div class="group relative rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-card)] aspect-video cursor-zoom-in">
+                    <img
+                      src={img}
+                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- ПРАВАЯ КОЛОНКА -->
+      <aside class="space-y-6">
+        <div
+          class="glass-card rounded-2xl p-6 border border-[var(--color-border)] sticky top-24"
+        >
+          <h4
+            class="text-sm font-bold uppercase tracking-wider text-[var(--color-muted-foreground)] mb-6 border-b border-[var(--color-border)] pb-4"
+          >
+            <span class="lang-ru">Информация</span>
+            <span class="lang-en">Project Info</span>
+          </h4>
+
+          <div class="space-y-6">
+            <div>
+              <div class="text-xs text-[var(--color-muted-foreground)] mb-1">
+                <span class="lang-ru">Платформа</span><span class="lang-en"
+                  >Platform</span
+                >
+              </div>
+              <div
+                class="font-semibold text-[var(--color-foreground)] capitalize flex items-center gap-2"
+              >
+                {data.type}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs text-[var(--color-muted-foreground)] mb-2">
+                <span class="lang-ru">Стек технологий</span><span
+                  class="lang-en">Tech Stack</span
+                >
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {
+                  data.tags.map((tag: string) => (
+                    <span class="px-2.5 py-1 text-xs font-medium rounded-md bg-[var(--color-foreground)]/5 border border-[var(--color-border)] text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-colors cursor-default">
+                      {tag}
+                    </span>
+                  ))
+                }
+              </div>
+            </div>
+
+            <div class="h-px bg-[var(--color-border)]"></div>
+
+            <div class="grid grid-cols-1 gap-3">
+              {
+                !data.demoUrl && !data.repoUrl && (
+                  <div class="p-3 rounded-lg bg-[var(--color-background)]/50 border border-[var(--color-border)] text-center text-sm text-[var(--color-muted-foreground)]">
+                    <span class="lang-ru">
+                      Ссылки недоступны (Приватный проект)
+                    </span>
+                    <span class="lang-en">
+                      Links unavailable (Private Project)
+                    </span>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
