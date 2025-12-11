@@ -1,0 +1,338 @@
+---
+// src/components/ui/ProjectCard.astro
+import type { CollectionEntry } from "astro:content";
+import { getProjectStyle } from "../../utils/projectStyles";
+import { projectIcons } from "../../utils/icons";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { data, slug } = project;
+
+const style = getProjectStyle(data.tags, data.type);
+// @ts-ignore
+const currentIcon = projectIcons[data.type] || projectIcons.web;
+
+const hasImage =
+  data.coverImage &&
+  data.coverImage.trim() !== "" &&
+  !data.coverImage.includes("placeholder");
+---
+
+<a
+  href={`/projects/${slug}`}
+  class="project-card-tilt group relative flex flex-col h-full rounded-3xl bg-[var(--color-card)] border border-[var(--color-border)] overflow-hidden"
+  style="transform-style: preserve-3d;"
+>
+  <!-- 1. ТЕКСТУРА ШУМА (Усилена видимость) -->
+  <div
+    class="absolute inset-0 z-0 opacity-[0.07] pointer-events-none mix-blend-soft-light"
+    style='background-image: url("data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.8\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E");'
+  >
+  </div>
+
+  <!-- 2. ЭФФЕКТ БЛИКА (GLARE) - Новый элемент -->
+  <div
+    class="card-glare absolute -inset-[100%] z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    style="background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 60%); mix-blend-mode: overlay;"
+  >
+  </div>
+  <div
+    class="absolute inset-0 z-40 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full skew-x-12 pointer-events-none md:hidden mobile-shine"
+  >
+  </div>
+  <!-- ВЕРХНЯЯ ЧАСТЬ -->
+  <div
+    class="relative h-56 w-full overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-card)] z-10"
+    style="transform: translateZ(20px);"
+  >
+    {/* Статус Featured */}
+    {
+      data.featured && (
+        <div class="absolute top-4 left-4 z-30">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 border border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-lg">
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" />
+            </span>
+            Featured
+          </span>
+        </div>
+      )
+    }
+
+    {
+      hasImage ? (
+        <>
+          <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-card)] via-transparent to-transparent opacity-60 z-10" />
+          <div class="absolute top-4 right-4 z-20 p-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-white/80 shadow-lg">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              set:html={currentIcon}
+            />
+          </div>
+          <img
+            src={data.coverImage}
+            alt={data.title.en}
+            class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+        </>
+      ) : (
+        <div
+          class={`absolute inset-0 w-full h-full bg-gradient-to-br ${style.gradient} animate-shimmer flex items-center justify-center overflow-hidden`}
+        >
+          <div class="absolute inset-0 opacity-30 bg-grid-pattern mix-blend-overlay" />
+
+          {/* Водяной знак - параллакс Z=10px */}
+          <div
+            class="absolute -bottom-4 -right-4 font-black text-8xl text-white opacity-[0.07] select-none pointer-events-none font-cinzel overflow-hidden leading-none tracking-tighter"
+            style="transform: translateZ(10px);"
+          >
+            {style.label}
+          </div>
+
+          {/* Иконка - параллакс Z=40px (сильнее выпирает) */}
+          <div
+            class={`relative z-10 ${style.iconColor} opacity-90 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]`}
+            style="transform: translateZ(40px);"
+          >
+            <svg
+              class="w-16 h-16"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.5"
+              set:html={currentIcon}
+            />
+          </div>
+        </div>
+      )
+    }
+  </div>
+
+  <!-- НИЖНЯЯ ЧАСТЬ -->
+  <div
+    class="flex flex-col flex-grow p-6 relative z-10 bg-[var(--color-card)]/40 backdrop-blur-sm"
+    style="transform: translateZ(20px);"
+  >
+    <div class="mb-3">
+      <h3
+        class="text-lg md:text-xl font-bold font-cinzel leading-tight text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1"
+      >
+        <span class="lang-ru">{data.title.ru}</span>
+        <span class="lang-en">{data.title.en}</span>
+      </h3>
+    </div>
+
+    <p
+      class="text-sm text-[var(--color-muted-foreground)] line-clamp-2 mb-6 leading-relaxed flex-grow"
+    >
+      <span class="lang-ru">{data.description.ru}</span>
+      <span class="lang-en">{data.description.en}</span>
+    </p>
+
+    <div
+      class="mt-auto pt-4 border-t border-[var(--color-border)]/50 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-2">
+        {
+          data.tags
+            .slice(0, 2)
+            .map((tag: string) => (
+              <span class="text-[10px] uppercase font-bold tracking-wide text-[var(--color-muted-foreground)] bg-[var(--color-foreground)]/5 px-2 py-1 rounded-md border border-[var(--color-border)]">
+                {tag}
+              </span>
+            ))
+        }
+        {
+          data.tags.length > 2 && (
+            <span class="text-[10px] text-[var(--color-muted-foreground)] opacity-60">
+              +{data.tags.length - 2}
+            </span>
+          )
+        }
+      </div>
+
+      <div
+        class="w-8 h-8 rounded-full border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted-foreground)] group-hover:bg-[var(--color-primary)] group-hover:border-[var(--color-primary)] group-hover:text-white transition-all duration-300"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+</a>
+
+<script>
+  function initTilt() {
+    const cards = document.querySelectorAll(".project-card-tilt");
+
+    cards.forEach((card) => {
+      // Состояние для каждого элемента
+      let state = {
+        mouseX: 0,
+        mouseY: 0,
+        height: 0,
+        width: 0,
+        targetX: 0,
+        targetY: 0,
+        currentX: 0,
+        currentY: 0,
+        request: null as number | null, // ID анимации
+      };
+
+      // @ts-ignore
+      const glare = card.querySelector(".card-glare");
+
+      const updateDimensions = () => {
+        // @ts-ignore
+        const rect = card.getBoundingClientRect();
+        state.width = rect.width;
+        state.height = rect.height;
+        // @ts-ignore
+        state.left = rect.left;
+        // @ts-ignore
+        state.top = rect.top;
+      };
+
+      // Основной цикл анимации (60fps)
+      const animate = () => {
+        // LERP (Linear Interpolation) - формула плавности
+        // 0.1 - это коэффициент "вязкости". Меньше = плавнее/медленнее, Больше = резче.
+        state.currentX += (state.targetX - state.currentX) * 0.1;
+        state.currentY += (state.targetY - state.currentY) * 0.1;
+
+        // Если разница микроскопическая, не обновляем DOM (оптимизация)
+        const delta =
+          Math.abs(state.targetX - state.currentX) +
+          Math.abs(state.targetY - state.currentY);
+
+        if (delta > 0.01) {
+          // @ts-ignore
+          card.style.transform = `perspective(1000px) rotateX(${state.currentX}deg) rotateY(${state.currentY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+          if (glare) {
+            // Блик двигаем без задержки (или можно тоже добавить lerp)
+            // @ts-ignore
+            glare.style.transform = `translate(${state.mouseX}px, ${state.mouseY}px) translate(-50%, -50%)`;
+          }
+
+          // Продолжаем цикл
+          state.request = requestAnimationFrame(animate);
+        } else {
+          // Останавливаем цикл, если движения нет
+          state.request = null;
+        }
+      };
+
+      // @ts-ignore
+      card.addEventListener("mouseenter", () => {
+        updateDimensions();
+        // ВАЖНО: Убираем CSS transition, чтобы JS управлял мгновенно
+        // @ts-ignore
+        card.style.transition = "none";
+        if (glare) {
+          // @ts-ignore
+          glare.style.transition = "opacity 0.3s ease";
+        }
+      });
+
+      // @ts-ignore
+      card.addEventListener("mousemove", (e: MouseEvent) => {
+        const x = e.clientX - (state.left || 0);
+        const y = e.clientY - (state.top || 0);
+
+        state.mouseX = x;
+        state.mouseY = y;
+
+        const centerX = state.width / 2;
+        const centerY = state.height / 2;
+
+        // Вычисляем ЦЕЛЕВЫЕ углы (куда мы хотим прийти)
+        // Угол 8 градусов
+        state.targetX = ((y - centerY) / centerY) * -8;
+        state.targetY = ((x - centerX) / centerX) * 8;
+
+        // Запускаем анимацию, если она не идет
+        if (!state.request) {
+          state.request = requestAnimationFrame(animate);
+        }
+      });
+
+      // @ts-ignore
+      card.addEventListener("mouseleave", () => {
+        // При выходе возвращаем CSS transition для плавного возврата в ноль
+        // @ts-ignore
+        card.style.transition = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
+        // @ts-ignore
+        card.style.transform =
+          "perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)";
+
+        // Сбрасываем переменные
+        state.targetX = 0;
+        state.targetY = 0;
+        state.currentX = 0;
+        state.currentY = 0;
+
+        if (state.request) {
+          cancelAnimationFrame(state.request);
+          state.request = null;
+        }
+      });
+
+      // Обновляем размеры при ресайзе окна
+      window.addEventListener("resize", updateDimensions);
+    });
+  }
+
+  document.addEventListener("astro:page-load", initTilt);
+  document.addEventListener("DOMContentLoaded", initTilt);
+</script>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    if (window.innerWidth < 768) {
+      const cards = document.querySelectorAll(".project-card-tilt");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const shine = entry.target.querySelector(".mobile-shine");
+              if (shine) {
+                shine.animate(
+                  [
+                    { transform: "translateX(-100%) skewX(-15deg)" },
+                    { transform: "translateX(200%) skewX(-15deg)" },
+                  ],
+                  { duration: 1500, easing: "ease-in-out" }
+                );
+              }
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
+
+      cards.forEach((card) => observer.observe(card));
+    }
+  });
+</script>
