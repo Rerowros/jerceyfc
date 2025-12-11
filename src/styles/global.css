@@ -315,6 +315,11 @@ h1 {
   transition: opacity 0.4s, transform 0.4s;
 }
 
+.menu-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
 /* ========================================
    VIEW TRANSITIONS
    ======================================== */
@@ -448,4 +453,55 @@ body {
   letter-spacing: 0.15em;
   color: var(--color-primary);
   margin-bottom: 0.5rem;
+}
+
+/* === УТИЛИТЫ ДЛЯ КАРТОЧЕК === */
+
+/* 1. Глобальная сетка (как на фоне сайта, но адаптированная для блоков) */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+/* 2. Анимация переливающегося градиента */
+@keyframes shimmer-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-shimmer {
+  background-size: 300% 300%; /* Увеличиваем размер фона, чтобы было чему двигаться */
+  animation: shimmer-gradient 8s ease infinite;
+}
+
+@keyframes mobile-glare {
+  0% {
+    transform: translateX(-150%) skewX(-15deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.mobile-glare-animate {
+  animation: mobile-glare 2s ease-out forwards;
 }
