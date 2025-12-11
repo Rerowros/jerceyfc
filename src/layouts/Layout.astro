@@ -4,7 +4,6 @@ import '../styles/global.css';
 import '../styles/lang-animate.css';
 import { ClientRouter } from 'astro:transitions';
 import Background from '../components/ui/Background.astro';
-import MagneticButtons  from '../components/MagneticButtons.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -71,34 +70,18 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
     <meta name="view-transition" content="same-origin" />
     <ClientRouter />
 
-    <script is:inline>
-      // Инициализация состояния (тема, палитра, язык)
-      function applyInitialState() {
-        const theme = localStorage.getItem('theme');
-        const palette = localStorage.getItem('palette') || 'indigo';
-        const lang = localStorage.getItem('lang') || 'ru';
-        
-        document.documentElement.lang = lang;
-
-        if (theme === 'light') {
-          document.documentElement.classList.add('light');
-        } else {
-          document.documentElement.classList.remove('light');
-        }
-        
-        document.documentElement.setAttribute('data-theme', palette);
-      }
-      
-      applyInitialState();
-      document.addEventListener('astro:after-swap', applyInitialState);
-    </script>
+  <script>
+    import { applyTheme } from '../scripts/theme';
+    applyTheme();
+    // Astro View Transitions могут сбрасывать состояние html тега, поэтому подстрахуемся
+    document.addEventListener('astro:after-swap', applyTheme);
+  </script>
   </head>
 <body class="font-['Inter'] antialiased selection:bg-primary/30">
   <Background />
-  <main class="relative z-10">
+  <main class="relative z-10 w-full overflow-x-hidden">
     <slot />
   </main>
-  <MagneticButtons/>
   
   <!-- Скрипт Scroll Animation Observer перенесен сюда, так как он глобальный -->
   <script>
@@ -118,5 +101,14 @@ const { title = 'Портфолио | Jersey', description = 'Портфолио
     document.addEventListener('astro:page-load', initScrollObserver);
     document.addEventListener('DOMContentLoaded', initScrollObserver);
   </script>
+
+  <script>
+  import { initMagneticButtons } from '../scripts/magnetic';
+
+  // Запускаем при загрузке и при переходах между страницами
+  document.addEventListener('astro:page-load', initMagneticButtons);
+  document.addEventListener('DOMContentLoaded', initMagneticButtons);
+  </script>
+
 </body>
 </html>
