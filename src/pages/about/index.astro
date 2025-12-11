@@ -1,161 +1,277 @@
 ---
 // src/pages/about/index.astro
-import { slide } from 'astro:transitions';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import EmailIcon from '../../../public/EmailIcon.astro';
-import TelegramIcon from '../../../public/TelegramIcon.astro';
-import Footer from '../../components/Footer.astro';
+import { slide } from "astro:transitions";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/layout/Header.astro";
+import EmailIcon from "../../components/icons/EmailIcon.astro";
+import TelegramIcon from "../../components/icons/TelegramIcon.astro";
+import Footer from "../../components/layout/Footer.astro";
 ---
-<Layout title="Обо мне " description="Обо мне — разработчик веб‑приложений, Telegram‑ботов и WinUI приложений. Принимаю проекты и сотрудничество." pathname="/about">
-	<Header />
 
-  <section id="about-question" class="min-h-[100vh] w-full flex items-center justify-center bg-primary text-primary-foreground relative overflow-hidden">
-    <h2 id="question-title" class="text-4xl md:text-6xl font-extrabold tracking-tight opacity-0 scale-100 transition-all duration-700 text-center px-4">
-    <span class="lang-ru">Вам действительно это интересно?</span>
-    <span class="lang-en">Are you really interested?</span>
+<Layout
+  title="Обо мне "
+  description="Обо мне — разработчик веб‑приложений, Telegram‑ботов и WinUI приложений."
+  pathname="/about"
+>
+  <Header />
+
+  <section
+    id="about-question"
+    class="min-h-[80vh] md:min-h-[100vh] w-full flex items-center justify-center bg-primary text-primary-foreground relative overflow-hidden"
+  >
+    <h2
+      id="question-title"
+      class="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight opacity-0 scale-100 transition-all duration-700 text-center px-6 leading-tight"
+    >
+      <span class="lang-ru">Вам действительно это интересно?</span>
+      <span class="lang-en">Are you really interested?</span>
     </h2>
   </section>
 
   <!-- Основной контент страницы -->
-  <section id="about-card" class="w-full bg-background py-16 md:py-24" transition:animate={slide({ duration: '0.3s' })}>
-    <div class="max-w-3xl mx-auto p-8 opacity-0 scale-100 transition-all duration-700 space-y-12">
-      
+  <section
+    id="about-card"
+    class="w-full bg-background py-12 md:py-24"
+    transition:animate={slide({ duration: "0.3s" })}
+  >
+    <div
+      class="max-w-3xl mx-auto px-6 md:px-8 py-8 opacity-0 scale-100 transition-all duration-700 space-y-12"
+    >
       <div>
-        <h3 class="text-3xl md:text-4xl font-extrabold text-foreground mb-6">
+        <h3 class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6">
           <span class="lang-ru">Мой подход к работе</span>
           <span class="lang-en">My Approach to Work</span>
         </h3>
-        <div class="text-lg text-muted-foreground space-y-4">
+        <div class="text-base md:text-lg text-muted-foreground space-y-4">
           <p>
             <span class="lang-ru">
-              Если вы доскроллили до сюда, значит, вам важны не только навыки, но и человек, с которым предстоит работать. И вы правы. Технологии меняются, а принципы остаются. Для меня разработка — это не просто написание кода. Это выстраивание отношений: с продуктом, с командой и с бизнесом.
+              Если вы доскроллили до сюда, значит, вам важны не только навыки,
+              но и человек, с которым предстоит работать. И вы правы. Технологии
+              меняются, а принципы остаются. Для меня разработка — это не просто
+              написание кода. Это выстраивание отношений: с продуктом, с
+              командой и с бизнесом.
             </span>
             <span class="lang-en">
-              If you've scrolled this far, it means you care not just about skills, but about the person you'll be working with. And you're right. Technologies change, but principles remain. For me, development isn't just about writing code. It's about building relationships: with the product, the team, and the business.
+              If you've scrolled this far, it means you care not just about
+              skills, but about the person you'll be working with. And you're
+              right. Technologies change, but principles remain. For me,
+              development isn't just about writing code. It's about building
+              relationships: with the product, the team, and the business.
             </span>
           </p>
           <p>
             <span class="lang-ru">
-              Я стремлюсь понимать цели, которые стоят за каждой задачей, чтобы предлагать решения, приносящие реальную пользу, а не просто "закрывать тикеты".
+              Я стремлюсь понимать цели, которые стоят за каждой задачей, чтобы
+              предлагать решения, приносящие реальную пользу, а не просто
+              "закрывать тикеты".
             </span>
             <span class="lang-en">
-              I strive to understand the goals behind every task to offer solutions that deliver real value, not just to "close tickets."
+              I strive to understand the goals behind every task to offer
+              solutions that deliver real value, not just to "close tickets."
             </span>
           </p>
         </div>
       </div>
 
       <div>
-        <h3 class="text-3xl md:text-4xl font-extrabold text-foreground mb-6">
+        <h3 class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6">
           <span class="lang-ru">Мои принципы</span>
           <span class="lang-en">My Principles</span>
         </h3>
-        <div class="text-lg text-muted-foreground space-y-4">
+        <div class="text-base md:text-lg text-muted-foreground space-y-4">
           <p>
             <span class="lang-ru">
-              Они простые, почти как заповеди, и помогают мне делать работу, за которую не стыдно.
+              Они простые, почти как заповеди, и помогают мне делать работу, за
+              которую не стыдно.
             </span>
             <span class="lang-en">
-              They are simple, almost like commandments, and they help me do work I can be proud of.
+              They are simple, almost like commandments, and they help me do
+              work I can be proud of.
             </span>
           </p>
           <ul class="space-y-4 list-inside">
             <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <svg
+                class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"></path></svg
+              >
               <span>
-                <strong class="text-foreground"><span class="lang-ru">Честность.</span><span class="lang-en">Honesty.</span></strong>
-                <span class="lang-ru"> Говорить прямо о проблемах и сроках. Не врать ни себе, ни другим. Прозрачность экономит время, деньги и нервы.</span>
-                <span class="lang-en"> To speak directly about problems and deadlines. No lying to myself or others. Transparency saves time, money, and nerves.</span>
+                <strong class="text-foreground"
+                  ><span class="lang-ru">Честность.</span><span class="lang-en"
+                    >Honesty.</span
+                  ></strong
+                >
+                <br class="md:hidden" />
+                <span class="lang-ru">
+                  Говорить прямо о проблемах и сроках. Не врать ни себе, ни
+                  другим. Прозрачность экономит время, деньги и нервы.</span
+                >
+                <span class="lang-en">
+                  To speak directly about problems and deadlines. No lying to
+                  myself or others. Transparency saves time, money, and nerves.</span
+                >
               </span>
             </li>
             <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <svg
+                class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"></path></svg
+              >
               <span>
-                <strong class="text-foreground"><span class="lang-ru">Надёжность.</span><span class="lang-en">Reliability.</span></strong>
-                <span class="lang-ru"> Если я взялся за проект — я его не брошу. Я несу ответственность за свой код и доводжу дело до конца.</span>
-                <span class="lang-en"> If I take on a project, I won't abandon it. I take responsibility for my code and see things through to completion.</span>
+                <strong class="text-foreground"
+                  ><span class="lang-ru">Надёжность.</span><span class="lang-en"
+                    >Reliability.</span
+                  ></strong
+                >
+                <br class="md:hidden" />
+                <span class="lang-ru">
+                  Если я взялся за проект — я его не брошу. Я несу
+                  ответственность за свой код и доводжу дело до конца.</span
+                >
+                <span class="lang-en">
+                  If I take on a project, I won't abandon it. I take
+                  responsibility for my code and see things through to
+                  completion.</span
+                >
               </span>
             </li>
             <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              <svg
+                class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"></path></svg
+              >
               <span>
-                <strong class="text-foreground"><span class="lang-ru">Золотое правило.</span><span class="lang-en">The Golden Rule.</span></strong>
-                <span class="lang-ru"> Поступай с другими так, как хочешь, чтобы поступали с тобой. Это касается и кода, который я пишу для будущих разработчиков, и общения в команде.</span>
-                <span class="lang-en"> Treat others as you would like to be treated. This applies to the code I write for future developers and to communication within the team.</span>
+                <strong class="text-foreground"
+                  ><span class="lang-ru">Золотое правило.</span><span
+                    class="lang-en">The Golden Rule.</span
+                  ></strong
+                >
+                <br class="md:hidden" />
+                <span class="lang-ru">
+                  Поступай с другими так, как хочешь, чтобы поступали с тобой.
+                  Это касается и кода, который я пишу для будущих разработчиков,
+                  и общения в команде.</span
+                >
+                <span class="lang-en">
+                  Treat others as you would like to be treated. This applies to
+                  the code I write for future developers and to communication
+                  within the team.</span
+                >
               </span>
             </li>
           </ul>
         </div>
       </div>
-      
-<div class="border-l-4 border-primary pl-6 py-2">
-        <h4 class="text-2xl md:text-3xl font-bold text-foreground mb-3">
+
+      <div class="border-l-4 border-primary pl-4 md:pl-6 py-2">
+        <h4 class="text-xl md:text-3xl font-bold text-foreground mb-3">
           <span class="lang-ru" data-no-animate>
             <span>За деньги — да. </span>
-            <span class="spoiler-text" title="Нажмите, чтобы увидеть">Но не хуйню.</span>
+            <span class="spoiler-text" title="Нажмите, чтобы увидеть"
+              >Но не хуйню.</span
+            >
           </span>
           <span class="lang-en" data-no-animate>
             <span>For money — yes. </span>
-            <span class="spoiler-text" title="Click to reveal">But not for bullshit.</span>
+            <span class="spoiler-text" title="Click to reveal"
+              >But not for bullshit.</span
+            >
           </span>
         </h4>
-        <p class="text-lg text-muted-foreground">
+        <p class="text-base md:text-lg text-muted-foreground">
           <span class="lang-ru">
-            Я ценю своё время и опыт. Но я не буду участвовать в проектах без чёткой цели или там, где от меня ждут халтуры. Моя работа — создавать ценность, а не просто выставлять счета.
+            Я ценю своё время и опыт. Но я не буду участвовать в проектах без
+            чёткой цели или там, где от меня ждут халтуры. Моя работа —
+            создавать ценность, а не просто выставлять счета.
           </span>
           <span class="lang-en">
-            I value my time and expertise. But I won't participate in projects without a clear purpose or where shoddy work is expected. My job is to create value, not just to bill hours.
+            I value my time and expertise. But I won't participate in projects
+            without a clear purpose or where shoddy work is expected. My job is
+            to create value, not just to bill hours.
           </span>
         </p>
       </div>
 
-      <div class="text-center pt-16">
+      <div class="text-center pt-12 md:pt-16">
         <h3 class="text-2xl md:text-3xl font-bold text-foreground mb-4">
           <span class="lang-ru">Готовы к диалогу?</span>
           <span class="lang-en">Ready to talk?</span>
         </h3>
         <p class="text-muted-foreground mb-8 max-w-xl mx-auto">
-          <span class="lang-ru">Если у вас есть интересный проект, предложение о сотрудничестве или просто вопрос — напишите мне.</span>
-          <span class="lang-en">If you have an interesting project, a collaboration proposal, or just a question — feel free to write to me.</span>
+          <span class="lang-ru"
+            >Если у вас есть интересный проект, предложение о сотрудничестве или
+            просто вопрос — напишите мне.</span
+          >
+          <span class="lang-en"
+            >If you have an interesting project, a collaboration proposal, or
+            just a question — feel free to write to me.</span
+          >
         </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="mailto:" class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200">
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <a
+            href="mailto:"
+            class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200"
+          >
             <EmailIcon class="w-6 h-6" />
             <span class="font-semibold">
-                <span class="lang-ru">Написать на Email</span>
-                <span class="lang-en">Write via Email</span>
+              <span class="lang-ru">Написать на Email</span>
+              <span class="lang-en">Write via Email</span>
             </span>
           </a>
-          <a href="https://t.me/jerseyfc" target="_blank" rel="noopener noreferrer" class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200">
+          <a
+            href="https://t.me/jerseyfc"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200"
+          >
             <TelegramIcon class="w-6 h-6" />
             <span class="font-semibold">
-                <span class="lang-ru">Написать в Telegram</span>
-                <span class="lang-en">Write on Telegram</span>
+              <span class="lang-ru">Написать в Telegram</span>
+              <span class="lang-en">Write on Telegram</span>
             </span>
           </a>
         </div>
       </div>
-
-
-
     </div>
   </section>
-
 
   <script>
     function initAboutAnimations() {
       // --- Элементы ---
-      const question = document.getElementById('question-title');
-      const card = document.getElementById('about-card');
-      const cardContent = card ? card.querySelector('.max-w-3xl') : null;
+      const question = document.getElementById("question-title");
+      const card = document.getElementById("about-card");
+      // @ts-ignore
+      const cardContent = card ? card.querySelector(".max-w-3xl") : null;
 
       // --- Easing функция ---
       const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
       // --- Анимация надписи ---
       function animateQuestion() {
-        const section = document.getElementById('about-question');
+        const section = document.getElementById("about-question");
         if (!section || !question) return;
         const rect = section.getBoundingClientRect();
         const vh = window.innerHeight;
@@ -176,14 +292,17 @@ import Footer from '../../components/Footer.astro';
         // Запускаем анимацию, когда верхняя часть секции #about-card видна в окне
         const triggerPoint = window.innerHeight * 0.8;
         if (rect.top < triggerPoint) {
-            let progress = Math.min(1, Math.max(0, (triggerPoint - rect.top) / (window.innerHeight * 0.5)));
-            progress = easeOut(progress);
-             window.requestAnimationFrame(() => {
-                if (cardContent instanceof HTMLElement) {
-                  cardContent.style.opacity = String(progress);
-                  cardContent.style.transform = `translateY(${50 * (1 - progress)}px)`;
-                }
-            });
+          let progress = Math.min(
+            1,
+            Math.max(0, (triggerPoint - rect.top) / (window.innerHeight * 0.5))
+          );
+          progress = easeOut(progress);
+          window.requestAnimationFrame(() => {
+            if (cardContent instanceof HTMLElement) {
+              cardContent.style.opacity = String(progress);
+              cardContent.style.transform = `translateY(${50 * (1 - progress)}px)`;
+            }
+          });
         }
       }
 
@@ -192,50 +311,44 @@ import Footer from '../../components/Footer.astro';
         animateQuestion();
         animateCard();
       }
-      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener("scroll", onScroll, { passive: true });
       // Первичная отрисовка
       onScroll();
-      
+
       // Инициализируем spoiler-эффекты
-      const spoilers = document.querySelectorAll('.spoiler-text');
-      spoilers.forEach(spoiler => {
-        spoiler.addEventListener('click', () => {
-          spoiler.classList.add('is-revealed');
-        }, { once: true }); // { once: true } гарантирует, что обработчик сработает только один раз
+      const spoilers = document.querySelectorAll(".spoiler-text");
+      spoilers.forEach((spoiler) => {
+        spoiler.addEventListener(
+          "click",
+          () => {
+            spoiler.classList.add("is-revealed");
+          },
+          { once: true }
+        );
       });
     }
 
     // Инициализируем при первой загрузке и после каждого View Transition
-    document.addEventListener('DOMContentLoaded', initAboutAnimations);
-    document.addEventListener('astro:page-load', initAboutAnimations);
+    document.addEventListener("DOMContentLoaded", initAboutAnimations);
+    document.addEventListener("astro:page-load", initAboutAnimations);
   </script>
 
   <style>
-  .spoiler-text {
-    /* Применяем размытие и делаем курсор в виде указателя */
-    filter: blur(5px);
-    cursor: pointer;
-    
-    /* Плавный переход для эффекта */
-    transition: filter 0.3s ease-in-out;
-    
-    /* Небольшой фон, чтобы элемент был заметнее */
-    background-color: rgba(128, 128, 128, 0.15);
-    padding: 0 0.1em;
-    border-radius: 5px;
-  }
+    .spoiler-text {
+      filter: blur(5px);
+      cursor: pointer;
+      transition: filter 0.3s ease-in-out;
+      background-color: rgba(128, 128, 128, 0.15);
+      padding: 0 0.1em;
+      border-radius: 5px;
+    }
 
-  .spoiler-text.is-revealed {
-    /* Убираем размытие, когда добавлен класс */
-    filter: blur(0);
-    
-    /* Возвращаем обычный курсор */
-    cursor: text;
-    
-    /* Убираем фон для естественного вида */
-    background-color: transparent;
-  }
-</style>
+    .spoiler-text.is-revealed {
+      filter: blur(0);
+      cursor: text;
+      background-color: transparent;
+    }
+  </style>
 
-<Footer></Footer>
+  <Footer />
 </Layout>
