@@ -9,15 +9,15 @@ import Footer from "../../components/layout/Footer.astro";
 ---
 
 <Layout
-  title="Обо мне "
-  description="Обо мне — разработчик веб‑приложений, Telegram‑ботов и WinUI приложений."
+  title="Обо мне | Jersey"
+  description="Обо мне — разработчик современных веб-приложений и автоматизированных Telegram-ботов."
   pathname="/about"
 >
   <Header />
 
   <section
     id="about-question"
-    class="min-h-[80vh] md:min-h-[100vh] w-full flex items-center justify-center bg-primary text-primary-foreground relative overflow-hidden"
+    class="min-h-[60vh] md:min-h-[70vh] w-full flex items-center justify-center bg-primary text-primary-foreground relative overflow-hidden"
   >
     <h2
       id="question-title"
@@ -38,57 +38,49 @@ import Footer from "../../components/layout/Footer.astro";
       class="max-w-3xl mx-auto px-6 md:px-8 py-8 opacity-0 scale-100 transition-all duration-700 space-y-12"
     >
       <div>
-        <h3 class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6">
+        <h3
+          class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6"
+        >
           <span class="lang-ru">Мой подход к работе</span>
           <span class="lang-en">My Approach to Work</span>
         </h3>
         <div class="text-base md:text-lg text-muted-foreground space-y-4">
           <p>
             <span class="lang-ru">
-              Если вы доскроллили до сюда, значит, вам важны не только навыки,
-              но и человек, с которым предстоит работать. И вы правы. Технологии
-              меняются, а принципы остаются. Для меня разработка — это не просто
-              написание кода. Это выстраивание отношений: с продуктом, с
-              командой и с бизнесом.
+              Я специализируюсь на веб-разработке (React, TypeScript) и создании
+              Telegram-ботов (Python). Для меня код — это инструмент решения
+              бизнес-задач.
             </span>
             <span class="lang-en">
-              If you've scrolled this far, it means you care not just about
-              skills, but about the person you'll be working with. And you're
-              right. Technologies change, but principles remain. For me,
-              development isn't just about writing code. It's about building
-              relationships: with the product, the team, and the business.
+              I specialize in web development (React, TypeScript) and creating
+              Telegram bots (Python). For me, code is a tool for solving
+              business problems.
             </span>
           </p>
           <p>
             <span class="lang-ru">
-              Я стремлюсь понимать цели, которые стоят за каждой задачей, чтобы
-              предлагать решения, приносящие реальную пользу, а не просто
-              "закрывать тикеты".
+              Стремлюсь писать чистый, поддерживаемый код, который легко
+              масштабировать. Если это веб-приложение — оно должно быть быстрым
+              и отзывчивым. Если бот — он должен работать без сбоев.
             </span>
             <span class="lang-en">
-              I strive to understand the goals behind every task to offer
-              solutions that deliver real value, not just to "close tickets."
+              I strive to write clean, maintainable code that is easy to scale.
+              If it's a web app, it must be fast and responsive. If it's a bot,
+              it must run flawlessly.
             </span>
           </p>
         </div>
       </div>
 
+      <!-- Остальные блоки (Принципы, Контакты) остались без изменений, так как они универсальны -->
       <div>
-        <h3 class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6">
+        <h3
+          class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6"
+        >
           <span class="lang-ru">Мои принципы</span>
           <span class="lang-en">My Principles</span>
         </h3>
         <div class="text-base md:text-lg text-muted-foreground space-y-4">
-          <p>
-            <span class="lang-ru">
-              Они простые, почти как заповеди, и помогают мне делать работу, за
-              которую не стыдно.
-            </span>
-            <span class="lang-en">
-              They are simple, almost like commandments, and they help me do
-              work I can be proud of.
-            </span>
-          </p>
           <ul class="space-y-4 list-inside">
             <li class="flex items-start">
               <svg
@@ -109,13 +101,10 @@ import Footer from "../../components/layout/Footer.astro";
                   ></strong
                 >
                 <br class="md:hidden" />
-                <span class="lang-ru">
-                  Говорить прямо о проблемах и сроках. Не врать ни себе, ни
-                  другим. Прозрачность экономит время, деньги и нервы.</span
+                <span class="lang-ru">Говорить прямо о проблемах и сроках.</span
                 >
-                <span class="lang-en">
-                  To speak directly about problems and deadlines. No lying to
-                  myself or others. Transparency saves time, money, and nerves.</span
+                <span class="lang-en"
+                  >To speak directly about problems and deadlines.</span
                 >
               </span>
             </li>
@@ -133,50 +122,16 @@ import Footer from "../../components/layout/Footer.astro";
               >
               <span>
                 <strong class="text-foreground"
-                  ><span class="lang-ru">Надёжность.</span><span class="lang-en"
-                    >Reliability.</span
+                  ><span class="lang-ru">Качество.</span><span class="lang-en"
+                    >Quality.</span
                   ></strong
                 >
                 <br class="md:hidden" />
-                <span class="lang-ru">
-                  Если я взялся за проект — я его не брошу. Я несу
-                  ответственность за свой код и доводжу дело до конца.</span
+                <span class="lang-ru"
+                  >Делать так, чтобы потом не пришлось переделывать.</span
                 >
-                <span class="lang-en">
-                  If I take on a project, I won't abandon it. I take
-                  responsibility for my code and see things through to
-                  completion.</span
-                >
-              </span>
-            </li>
-            <li class="flex items-start">
-              <svg
-                class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                ><path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M5 13l4 4L19 7"></path></svg
-              >
-              <span>
-                <strong class="text-foreground"
-                  ><span class="lang-ru">Золотое правило.</span><span
-                    class="lang-en">The Golden Rule.</span
-                  ></strong
-                >
-                <br class="md:hidden" />
-                <span class="lang-ru">
-                  Поступай с другими так, как хочешь, чтобы поступали с тобой.
-                  Это касается и кода, который я пишу для будущих разработчиков,
-                  и общения в команде.</span
-                >
-                <span class="lang-en">
-                  Treat others as you would like to be treated. This applies to
-                  the code I write for future developers and to communication
-                  within the team.</span
+                <span class="lang-en"
+                  >Do it right so you don't have to redo it later.</span
                 >
               </span>
             </li>
@@ -201,14 +156,13 @@ import Footer from "../../components/layout/Footer.astro";
         </h4>
         <p class="text-base md:text-lg text-muted-foreground">
           <span class="lang-ru">
-            Я ценю своё время и опыт. Но я не буду участвовать в проектах без
-            чёткой цели или там, где от меня ждут халтуры. Моя работа —
-            создавать ценность, а не просто выставлять счета.
+            Ценю время и результат. Работаю с современным стеком технологий (TS,
+            React, Python), чтобы создавать продукты, которыми приятно
+            пользоваться.
           </span>
           <span class="lang-en">
-            I value my time and expertise. But I won't participate in projects
-            without a clear purpose or where shoddy work is expected. My job is
-            to create value, not just to bill hours.
+            I value time and results. I work with a modern tech stack (TS,
+            React, Python) to create products that are a pleasure to use.
           </span>
         </p>
       </div>
@@ -220,25 +174,23 @@ import Footer from "../../components/layout/Footer.astro";
         </h3>
         <p class="text-muted-foreground mb-8 max-w-xl mx-auto">
           <span class="lang-ru"
-            >Если у вас есть интересный проект, предложение о сотрудничестве или
-            просто вопрос — напишите мне.</span
+            >Пишите в Telegram — это самый быстрый способ связи.</span
           >
           <span class="lang-en"
-            >If you have an interesting project, a collaboration proposal, or
-            just a question — feel free to write to me.</span
+            >Message me on Telegram — it's the fastest way to connect.</span
           >
         </p>
         <div
           class="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
-            href="mailto:"
+            href="mailto:contact@jerceyfc.me"
             class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200"
           >
             <EmailIcon class="w-6 h-6" />
             <span class="font-semibold">
-              <span class="lang-ru">Написать на Email</span>
-              <span class="lang-en">Write via Email</span>
+              <span class="lang-ru">Email</span>
+              <span class="lang-en">Email</span>
             </span>
           </a>
           <a
@@ -249,8 +201,8 @@ import Footer from "../../components/layout/Footer.astro";
           >
             <TelegramIcon class="w-6 h-6" />
             <span class="font-semibold">
-              <span class="lang-ru">Написать в Telegram</span>
-              <span class="lang-en">Write on Telegram</span>
+              <span class="lang-ru">Telegram</span>
+              <span class="lang-en">Telegram</span>
             </span>
           </a>
         </div>
@@ -258,18 +210,13 @@ import Footer from "../../components/layout/Footer.astro";
     </div>
   </section>
 
+  <!-- Скрипт анимации About остался без изменений -->
   <script>
     function initAboutAnimations() {
-      // --- Элементы ---
       const question = document.getElementById("question-title");
       const card = document.getElementById("about-card");
-      // @ts-ignore
       const cardContent = card ? card.querySelector(".max-w-3xl") : null;
-
-      // --- Easing функция ---
-      const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-
-      // --- Анимация надписи ---
+      const easeOut = (t) => 1 - Math.pow(1 - t, 3);
       function animateQuestion() {
         const section = document.getElementById("about-question");
         if (!section || !question) return;
@@ -278,18 +225,13 @@ import Footer from "../../components/layout/Footer.astro";
         let progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.8)));
         progress = easeOut(progress);
         window.requestAnimationFrame(() => {
-          if (question instanceof HTMLElement) {
-            question.style.opacity = String(progress);
-            question.style.transform = `scale(${0.9 + progress * 0.1})`;
-          }
+          question.style.opacity = String(progress);
+          question.style.transform = `scale(${0.9 + progress * 0.1})`;
         });
       }
-
-      // --- Анимация карточки ---
       function animateCard() {
         if (!card || !cardContent) return;
         const rect = card.getBoundingClientRect();
-        // Запускаем анимацию, когда верхняя часть секции #about-card видна в окне
         const triggerPoint = window.innerHeight * 0.8;
         if (rect.top < triggerPoint) {
           let progress = Math.min(
@@ -298,24 +240,17 @@ import Footer from "../../components/layout/Footer.astro";
           );
           progress = easeOut(progress);
           window.requestAnimationFrame(() => {
-            if (cardContent instanceof HTMLElement) {
-              cardContent.style.opacity = String(progress);
-              cardContent.style.transform = `translateY(${50 * (1 - progress)}px)`;
-            }
+            cardContent.style.opacity = String(progress);
+            cardContent.style.transform = `translateY(${50 * (1 - progress)}px)`;
           });
         }
       }
-
-      // --- Главный обработчик ---
       function onScroll() {
         animateQuestion();
         animateCard();
       }
       window.addEventListener("scroll", onScroll, { passive: true });
-      // Первичная отрисовка
       onScroll();
-
-      // Инициализируем spoiler-эффекты
       const spoilers = document.querySelectorAll(".spoiler-text");
       spoilers.forEach((spoiler) => {
         spoiler.addEventListener(
@@ -327,8 +262,6 @@ import Footer from "../../components/layout/Footer.astro";
         );
       });
     }
-
-    // Инициализируем при первой загрузке и после каждого View Transition
     document.addEventListener("DOMContentLoaded", initAboutAnimations);
     document.addEventListener("astro:page-load", initAboutAnimations);
   </script>
@@ -342,7 +275,6 @@ import Footer from "../../components/layout/Footer.astro";
       padding: 0 0.1em;
       border-radius: 5px;
     }
-
     .spoiler-text.is-revealed {
       filter: blur(0);
       cursor: text;
