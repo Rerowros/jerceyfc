@@ -32,9 +32,8 @@
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
         
-        <!-- ЛЕВАЯ КОЛОНКА: ТЕКСТ -->
-        <div class="flex flex-col gap-6 items-start">
-            
+        <!-- ЛЕВАЯ КОЛОНКА: ТЕКСТ (обновлено) -->
+        <div class="flex flex-col gap-6 items-center text-center lg:items-start lg:text-left">
           <!-- Бейдж -->
           <div class="scroll-animate inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 shadow-[0_0_10px_rgba(var(--color-primary),0.2)]">
             <span class="relative flex h-2 w-2">
@@ -66,7 +65,7 @@
           </div>
 
           <!-- Описание -->
-          <p class="scroll-animate text-base text-[var(--color-muted-foreground)] max-w-lg leading-relaxed" style="transition-delay: 200ms;">
+          <p class="scroll-animate text-base text-[var(--color-muted-foreground)] max-w-lg leading-relaxed mx-auto lg:mx-0" style="transition-delay: 200ms;">
             <span class="lang-ru">
               Превращаю хаос в структуру. Специализируюсь на создании высокопроизводительных веб-систем, Telegram-ботов и сложных десктопных решений.
             </span>
@@ -76,7 +75,7 @@
           </p>
 
           <!-- Кнопки -->
-          <div class="scroll-animate flex flex-wrap gap-4 mt-2" style="transition-delay: 300ms;">
+          <div class="scroll-animate flex flex-wrap justify-center lg:justify-start gap-4 mt-2" style="transition-delay: 300ms;">
             <a href="#projects" class="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)]/90 overflow-hidden">
                 <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"></div>
                 <span class="relative z-20 flex items-center gap-2">
@@ -145,56 +144,63 @@
     if (!card) return;
 
     let bounds = card.getBoundingClientRect();
-    let isTicking = false;
-
-    // Обновляем границы только при скролле и ресайзе, а не при каждом движении мыши!
-    // Это ключевое исправление лага.
+    
+    // Функция обновления границ
     function updateBounds() {
       bounds = card.getBoundingClientRect();
     }
     window.addEventListener("scroll", updateBounds, { passive: true });
     window.addEventListener("resize", updateBounds, { passive: true });
 
-    // Обработчик движения мыши
-    card.addEventListener("mousemove", (e) => {
-      // Если анимационный кадр еще не запрошен
-      if (!isTicking) {
-        window.requestAnimationFrame(() => {
-          // Вычисляем координаты относительно кэшированных границ
-          const x = e.clientX - bounds.left;
-          const y = e.clientY - bounds.top;
-          
-          card.style.setProperty("--mouse-x", `${x}px`);
-          card.style.setProperty("--mouse-y", `${y}px`);
-          
-          isTicking = false;
-        });
-        isTicking = true;
+    // --- ЛОГИКА ДЛЯ ДЕСКТОПА (МЫШЬ) ---
+    const onMouseMove = (e) => {
+      window.requestAnimationFrame(() => {
+        const x = e.clientX - bounds.left;
+        const y = e.clientY - bounds.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      });
+    };
+
+    // --- ЛОГИКА ДЛЯ МОБИЛЬНЫХ (АВТО-АНИМАЦИЯ) ---
+    let autoAnimationId;
+    
+    function startAutoAnimation() {
+      const startTime = Date.now();
+      
+      function frame() {
+        const time = (Date.now() - startTime) / 1000; // время в секундах
+        // Движение по "восьмерке" или кругу
+        // Радиус зависит от размеров карточки
+        const radiusX = bounds.width * 0.5; 
+        const radiusY = bounds.height * 0.5;
+        
+        // Центр карточки
+        const centerX = bounds.width / 2;
+        const centerY = bounds.height / 2;
+
+        // Вычисляем координаты (движение по кругу)
+        const x = centerX + Math.cos(time) * radiusX;
+        const y = centerY + Math.sin(time) * radiusY;
+
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+        
+        autoAnimationId = requestAnimationFrame(frame);
       }
-    }, { passive: true });
+      frame();
+    }
+
+    // Проверка устройства
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      startAutoAnimation();
+    } else {
+      card.addEventListener("mousemove", onMouseMove, { passive: true });
+    }
   }
 
-  // Запуск
   document.addEventListener("astro:page-load", initHero);
   document.addEventListener("DOMContentLoaded", initHero);
 </script>
-
-<style>
-    @keyframes shimmer {
-        100% { transform: translateX(100%); }
-    }
-    .animate-gradient-x {
-        background-size: 200% 200%;
-        animation: gradient-x 4s ease infinite;
-    }
-    @keyframes gradient-x {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    /* Оптимизация производительности */
-    .transform-gpu {
-        transform: translateZ(0);
-    }
-</style>

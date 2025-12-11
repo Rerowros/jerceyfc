@@ -1,16 +1,18 @@
 ---
-import TelegramIcon from '../../public/TelegramIcon.astro';
+import TelegramIcon from "../../components/icons/TelegramIcon.astro";
 ---
+
 <!-- ИЗМЕНЕНИЕ: Добавили <style> для анимации дочерних элементов -->
 <style>
   /* Базовое состояние для элементов, которые будут анимироваться */
   .animated-child {
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition:
+      opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
-  
+
   /* Когда родительский блок становится видимым, запускаем анимацию для детей с задержкой */
   .is-visible .animated-child {
     opacity: 1;
@@ -18,24 +20,53 @@ import TelegramIcon from '../../public/TelegramIcon.astro';
   }
 
   /* Задержки для последовательного появления */
-  .is-visible .animated-child:nth-child(1) { transition-delay: 0.2s; } /* Заголовок */
-  .is-visible .animated-child:nth-child(2) { transition-delay: 0.35s; } /* Параграф */
-  .is-visible .animated-child:nth-child(3) { transition-delay: 0.5s; } /* Кнопка */
+  .is-visible .animated-child:nth-child(1) {
+    transition-delay: 0.2s;
+  } /* Заголовок */
+  .is-visible .animated-child:nth-child(2) {
+    transition-delay: 0.35s;
+  } /* Параграф */
+  .is-visible .animated-child:nth-child(3) {
+    transition-delay: 0.5s;
+  } /* Кнопка */
 </style>
 
-<section id="contact" class="sticky-contact h-screen w-full top-0 bg-primary text-primary-foreground flex items-center justify-center" style="position: sticky;">
-  <div id="contact-inner" class="flex flex-col items-center text-center p-8 transition-transform duration-300 ease-out">
-    
+<section
+  id="contact"
+  class="sticky-contact h-screen w-full top-0 bg-primary text-primary-foreground flex items-center justify-center overflow-x-hidden"
+  style="position: sticky;"
+>
+  <div
+    id="contact-inner"
+    class="flex flex-col items-center text-center px-6 sm:px-8 py-8 transition-transform duration-300 ease-out max-w-[100vw]"
+    style="box-sizing: border-box;"
+  >
     <!-- ИЗМЕНЕНИЕ: Добавили класс 'animated-child' к элементам -->
-    <h2 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight animated-child">
+    <h2
+      class="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 tracking-tight animated-child leading-tight break-words whitespace-normal px-2"
+    >
       <span class="lang-ru">Готовы к сотрудничеству?</span>
       <span class="lang-en">Ready to Collaborate?</span>
     </h2>
-    <p class="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto animated-child">
-      <span class="lang-ru">У вас есть идея для проекта? Я открыт для предложений и готов помочь в ее реализации. Давайте создадим что-то выдающееся вместе.</span>
-      <span class="lang-en">Have a project in mind? I'm open to opportunities and ready to help bring your ideas to life. Let's build something great together.</span>
+    <p
+      class="text-base sm:text-lg text-primary-foreground/80 mb-8 max-w-[90vw] md:max-w-xl mx-auto animated-child leading-relaxed break-words px-2"
+    >
+      <span class="lang-ru"
+        >У вас есть идея для проекта? Я открыт для предложений и готов помочь в
+        ее реализации. Давайте создадим что-то выдающееся вместе.</span
+      >
+      <span class="lang-en"
+        >Have a project in mind? I'm open to opportunities and ready to help
+        bring your ideas to life. Let's build something great together.</span
+      >
     </p>
-    <a href="https://t.me/jerseyfc" target="_blank" rel="noopener noreferrer" class="btn inline-flex items-center text-lg transition-colors duration-200 animated-child">
+    <a
+      href="https://t.me/jerseyfc"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn inline-flex items-center text-lg transition-colors duration-200 animated-child max-w-[90vw] px-3"
+      style="justify-content: center;"
+    >
       <TelegramIcon class="w-6 h-6" />
       <span class="lang-ru">Связаться в Telegram</span>
       <span class="lang-en">Contact me on Telegram</span>
@@ -45,23 +76,24 @@ import TelegramIcon from '../../public/TelegramIcon.astro';
 
 <script>
   function initializeStickyContact() {
-    const MAX_BLUR = 8; 
-    const BLUR_START_OFFSET = 0.3; 
-    const LINGER_DURATION_VH = 0.25; 
-    
+    const MAX_BLUR = 8;
+    const BLUR_START_OFFSET = 0.3;
+    const LINGER_DURATION_VH = 0.25;
+
     // ИЗМЕНЕНИЕ: Добавляем константу для силы параллакса
     const PARALLAX_STRENGTH = 60; // На сколько пикселей сдвинется контент вверх
 
-    const contactSection = document.getElementById('contact');
-    const contactInner = document.getElementById('contact-inner');
-    const stickyContainer = contactSection.parentElement;
-    const mainContent = document.getElementById('main-content-wrapper');
+    const contactSection = document.getElementById("contact");
+    const contactInner = document.getElementById("contact-inner");
+    const stickyContainer = contactSection?.parentElement;
+    const mainContent = document.getElementById("main-content-wrapper");
 
-    if (!contactSection || !contactInner || !stickyContainer || !mainContent) return;
+    if (!contactSection || !contactInner || !stickyContainer || !mainContent)
+      return;
 
-    contactInner.style.transform = 'scale(0.9)';
-    contactInner.style.opacity = '0';
-    mainContent.style.filter = 'blur(0px)';
+    contactInner.style.transform = "scale(0.9)";
+    contactInner.style.opacity = "0";
+    mainContent.style.filter = "blur(0px)";
 
     const animateOnScroll = () => {
       const rect = stickyContainer.getBoundingClientRect();
@@ -70,16 +102,19 @@ import TelegramIcon from '../../public/TelegramIcon.astro';
 
       if (top > 0) {
         const entryProgress = Math.min(1, Math.max(0, (vh - top) / vh));
-        const blurProgress = Math.max(0, (entryProgress - BLUR_START_OFFSET) / (1 - BLUR_START_OFFSET));
+        const blurProgress = Math.max(
+          0,
+          (entryProgress - BLUR_START_OFFSET) / (1 - BLUR_START_OFFSET)
+        );
         const scale = 0.9 + entryProgress * 0.1;
         const opacity = entryProgress;
         const blurAmount = blurProgress * MAX_BLUR;
-        
+
         // ИЗМЕНЕНИЕ: Добавляем/убираем класс для запуска анимации текста
         if (opacity > 0.2) {
-            contactInner.classList.add('is-visible');
+          contactInner.classList.add("is-visible");
         } else {
-            contactInner.classList.remove('is-visible');
+          contactInner.classList.remove("is-visible");
         }
 
         window.requestAnimationFrame(() => {
@@ -96,23 +131,26 @@ import TelegramIcon from '../../public/TelegramIcon.astro';
 
       if (Math.abs(top) < lingerDistance) {
         window.requestAnimationFrame(() => {
-          contactInner.style.transform = 'scale(1) translateY(0px)'; // Фиксируем позицию во время паузы
-          contactInner.style.opacity = '1';
+          contactInner.style.transform = "scale(1) translateY(0px)"; // Фиксируем позицию во время паузы
+          contactInner.style.opacity = "1";
           mainContent.style.filter = `blur(${MAX_BLUR}px)`;
-          contactInner.classList.add('is-visible'); // Убедимся, что класс на месте
+          contactInner.classList.add("is-visible"); // Убедимся, что класс на месте
         });
         return;
       }
 
       const distanceScrolledAfterLinger = Math.abs(top) - lingerDistance;
       const animationDuration = stickyDuration - lingerDistance;
-      const exitProgress = Math.min(1, distanceScrolledAfterLinger / animationDuration);
+      const exitProgress = Math.min(
+        1,
+        distanceScrolledAfterLinger / animationDuration
+      );
 
       const scale = 1 - exitProgress * 0.2;
       const opacity = 1 - exitProgress;
       // ИЗМЕНЕНИЕ: Добавляем расчет сдвига для параллакса
       const translateY = -exitProgress * PARALLAX_STRENGTH;
-      
+
       window.requestAnimationFrame(() => {
         // ИЗМЕНЕНИЕ: Комбинируем scale и translateY для эффекта параллакса при исчезновении
         contactInner.style.transform = `scale(${scale}) translateY(${translateY}px)`;
@@ -124,22 +162,22 @@ import TelegramIcon from '../../public/TelegramIcon.astro';
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          window.addEventListener('scroll', animateOnScroll, { passive: true });
+          window.addEventListener("scroll", animateOnScroll, { passive: true });
         } else {
-          window.removeEventListener('scroll', animateOnScroll);
+          window.removeEventListener("scroll", animateOnScroll);
           // Сброс стилей, если пользователь быстро проскроллил мимо секции
-          mainContent.style.filter = 'blur(0px)';
+          mainContent.style.filter = "blur(0px)";
         }
       },
-      { rootMargin: '200px 0px 200px 0px' } // Начинаем слушать чуть раньше/позже
+      { rootMargin: "200px 0px 200px 0px" } // Начинаем слушать чуть раньше/позже
     );
 
     observer.observe(stickyContainer);
   }
 
   // Инициализируем при загрузке страницы
-  document.addEventListener('DOMContentLoaded', initializeStickyContact);
-  
+  document.addEventListener("DOMContentLoaded", initializeStickyContact);
+
   // Переинициализируем при переходах Astro
-  document.addEventListener('astro:page-load', initializeStickyContact);
+  document.addEventListener("astro:page-load", initializeStickyContact);
 </script>

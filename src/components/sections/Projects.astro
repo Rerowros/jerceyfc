@@ -1,7 +1,7 @@
 ---
-// src/components/Projects.astro
-import { projects } from "../data/projects.ts";
-import ProjectCard from "./ProjectCard.astro";
+// src/components/sections/Projects.astro
+import { getCollection } from "astro:content";
+import ProjectCard from "../ui/ProjectCard.astro";
 
 interface Props {
   limit?: number;
@@ -11,17 +11,27 @@ interface Props {
 
 const { limit, showViewAll = false, showFeaturedOnly = false } = Astro.props;
 
-// Фильтруем и ограничиваем проекты
-let displayProjects = showFeaturedOnly
-  ? projects.filter((p) => p.featured)
-  : projects;
-displayProjects = limit ? displayProjects.slice(0, limit) : displayProjects;
+// 1. Получаем проекты из коллекции
+const allProjects = await getCollection("projects");
+
+// 2. Сортируем и фильтруем
+let displayProjects = allProjects.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+if (showFeaturedOnly) {
+  displayProjects = displayProjects.filter((p) => p.data.featured);
+}
+
+if (limit) {
+  displayProjects = displayProjects.slice(0, limit);
+}
 ---
 
-<section id="projects" class="py-20 px-4">
+<section id="projects" class="py-12 md:py-20 px-4">
   <div class="max-w-7xl mx-auto">
     <!-- Заголовок секции -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-10 md:mb-16">
       <p class="section-title scroll-animate">
         <span class="lang-ru">Портфолио</span>
         <span class="lang-en">Portfolio</span>
@@ -34,7 +44,7 @@ displayProjects = limit ? displayProjects.slice(0, limit) : displayProjects;
         <span class="lang-en">Featured Work</span>
       </h2>
       <p
-        class="text-base md:text-lg text-[var(--color-muted-foreground)] mt-4 max-w-2xl mx-auto scroll-animate"
+        class="text-base md:text-lg text-[var(--color-muted-foreground)] mt-3 md:mt-4 max-w-2xl mx-auto scroll-animate"
         style="transition-delay: 200ms;"
       >
         <span class="lang-ru"
@@ -66,7 +76,7 @@ displayProjects = limit ? displayProjects.slice(0, limit) : displayProjects;
     {
       showViewAll && (
         <div
-          class="text-center mt-14 scroll-animate"
+          class="text-center mt-10 md:mt-14 scroll-animate"
           style="transition-delay: 600ms;"
         >
           <a
