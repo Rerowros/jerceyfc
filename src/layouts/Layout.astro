@@ -42,12 +42,12 @@ const {
     
     <title>{title}</title>
 
-    <link rel="canonical" href={`https://jerceyfc.me${pathname}`} />
+    <link rel="canonical" href={`https://jerseyfc.me.me${pathname}`} />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={`https://jerceyfc.me${pathname}`} />
+    <meta property="og:url" content={`https://jerseyfc.me.me${pathname}`} />
     <meta property="og:image" content="/J.png" />
     
     <meta name="twitter:card" content="summary_large_image" />
@@ -63,19 +63,36 @@ const {
           {
             "@type": "Person",
             "name": "Jersey",
-            "url": "https://jerceyfc.me/",
+            "url": "https://jerseyfc.me.me/",
             "sameAs": ["https://t.me/jerseyfc", "https://github.com/Rerowros"],
             "jobTitle": "Full-Stack Web Developer",
+            "makesOffer": 
+            [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Разработка Telegram-ботов"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Создание сайтов на React"
+                }
+              }
+            ],
             "knowsAbout": ["React", "TypeScript", "Python", "Next.js", "Telegram API"],
             "description": "Разработчик веб-приложений и Telegram-ботов с фокусом на React и Python."
           },
           {
             "@type": "WebSite",
             "name": "Jersey — Portfolio",
-            "url": "https://jerceyfc.me/",
+            "url": "https://jerseyfc.me/",
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "https://jerceyfc.me/?s={search_term_string}",
+              "target": "https://jerseyfc.me/?s={search_term_string}",
               "query-input": "required name=search_term_string"
             }
           }

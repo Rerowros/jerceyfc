@@ -1,4 +1,4 @@
 User-agent: *
-Disallow:
+Allow: /
 
-Sitemap: https://jerceyfc.me/sitemap-index.xml
+Sitemap: https://jerseyfc.me/sitemap-index.xml
