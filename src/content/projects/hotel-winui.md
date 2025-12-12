@@ -17,7 +17,6 @@ pubDate: 2024-02-01
 featured: true
 status: "completed"
 type: "desktop"
-repoUrl: "https://github.com/your-repo"
 ---
 
 Здесь можно написать полное описание проекта, которое появится на детальной странице.

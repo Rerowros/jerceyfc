@@ -5,8 +5,10 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/layout/Header.astro";
 import Footer from "../../components/layout/Footer.astro";
 import GitHubIcon from "../../components/icons/GitHubIcon.astro";
+import TelegramIcon from "../../components/icons/TelegramIcon.astro"; // Импортируем иконку
 import { slide } from "astro:transitions";
 import { Image } from "astro:assets";
+
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
   return projects.map((project) => ({
@@ -21,6 +23,7 @@ interface Props {
 
 const { project } = Astro.props;
 const { data } = project;
+const { Content } = await project.render();
 
 const coverImage = data.coverImage;
 const hasImage = !!coverImage;
@@ -91,8 +94,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
               d="M15 19l-7-7 7-7"></path></svg
           >
         </div>
-        <span class="lang-ru">Назад к проектам</span>
-        <span class="lang-en">Back to Projects</span>
+        <span class="lang-ru">Назад в портфолио</span>
+        <span class="lang-en">Back to Portfolio</span>
       </a>
 
       <!-- Заголовок и Мета -->
@@ -139,7 +142,7 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
           </p>
         </div>
 
-        <!-- Кнопки действий -->
+        <!-- Кнопки действий (Hero) -->
         <div class="flex flex-wrap gap-4 mt-2 lg:mt-0">
           {
             data.demoUrl && (
@@ -149,8 +152,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
                 rel="noopener noreferrer"
                 class="btn-primary flex items-center gap-2 shadow-xl shadow-[var(--color-primary)]/20 w-full sm:w-auto justify-center"
               >
-                <span class="lang-ru">Открыть проект</span>
-                <span class="lang-en">Open Project</span>
+                <span class="lang-ru">Открыть Live Demo</span>
+                <span class="lang-en">Live Demo</span>
                 <svg
                   class="w-5 h-5"
                   fill="none"
@@ -176,8 +179,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
                 class="btn bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-foreground)] flex items-center gap-2 w-full sm:w-auto justify-center"
               >
                 <GitHubIcon class="w-5 h-5" />
-                <span class="lang-ru">Код</span>
-                <span class="lang-en">Code</span>
+                <span class="lang-ru">Исходный код</span>
+                <span class="lang-en">Source Code</span>
               </a>
             )
           }
@@ -222,8 +225,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
             <h3
               class="text-xl md:text-2xl font-bold text-[var(--color-foreground)] mb-4 md:mb-6 font-cinzel"
             >
-              <span class="lang-ru">О проекте</span>
-              <span class="lang-en">About Project</span>
+              <span class="lang-ru">Задача и Решение</span>
+              <span class="lang-en">The Challenge & Solution</span>
             </h3>
             <p
               class="whitespace-pre-line text-base md:text-lg text-[var(--color-muted-foreground)] leading-loose"
@@ -242,8 +245,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
           data.gallery && data.gallery.length > 0 && (
             <div class="space-y-6">
               <h3 class="text-xl md:text-2xl font-bold font-cinzel text-glow">
-                <span class="lang-ru">Галерея скриншотов</span>
-                <span class="lang-en">Screenshots Gallery</span>
+                <span class="lang-ru">Интерфейс</span>
+                <span class="lang-en">Interface Gallery</span>
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {data.gallery.map((img) => (
@@ -266,7 +269,7 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
         }
       </div>
 
-      <!-- ПРАВАЯ КОЛОНКА -->
+      <!-- ПРАВАЯ КОЛОНКА (SIDEBAR) -->
       <aside class="space-y-6">
         <div
           class="glass-card rounded-2xl p-6 border border-[var(--color-border)] sticky top-24"
@@ -274,15 +277,15 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
           <h4
             class="text-sm font-bold uppercase tracking-wider text-[var(--color-muted-foreground)] mb-6 border-b border-[var(--color-border)] pb-4"
           >
-            <span class="lang-ru">Информация</span>
-            <span class="lang-en">Project Info</span>
+            <span class="lang-ru">Техническое досье</span>
+            <span class="lang-en">Technical Brief</span>
           </h4>
 
           <div class="space-y-6">
             <div>
               <div class="text-xs text-[var(--color-muted-foreground)] mb-1">
-                <span class="lang-ru">Платформа</span><span class="lang-en"
-                  >Platform</span
+                <span class="lang-ru">Категория</span><span class="lang-en"
+                  >Category</span
                 >
               </div>
               <div
@@ -316,10 +319,10 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
                 !data.demoUrl && !data.repoUrl && (
                   <div class="p-3 rounded-lg bg-[var(--color-background)]/50 border border-[var(--color-border)] text-center text-sm text-[var(--color-muted-foreground)]">
                     <span class="lang-ru">
-                      Ссылки недоступны (Приватный проект)
+                      Проект под NDA (Приватный репозиторий)
                     </span>
                     <span class="lang-en">
-                      Links unavailable (Private Project)
+                      NDA Protected (Private Repository)
                     </span>
                   </div>
                 )
@@ -331,9 +334,68 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
     </div>
   </main>
 
-  <Footer />
+  <!-- 3. CTA SECTION -->
+  <section class="container max-w-4xl mx-auto px-4 py-16 md:py-24">
+    <div
+      class="glass-card relative overflow-hidden rounded-3xl p-8 md:p-12 text-center border border-[var(--color-primary)]/30"
+    >
+      <!-- Background Effects -->
+      <div
+        class="absolute top-0 right-0 w-64 h-64 bg-[var(--color-primary)]/10 blur-[80px] rounded-full pointer-events-none"
+      >
+      </div>
+      <div
+        class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full pointer-events-none"
+      >
+      </div>
 
-  <script>
-    const state = { left: 0, top: 0 };
-  </script>
+      <div class="relative z-10 flex flex-col items-center">
+        <h2 class="text-3xl md:text-5xl font-bold font-cinzel mb-4 text-glow">
+          <span class="lang-ru">Нужен подобный проект?</span>
+          <span class="lang-en">Need something like this?</span>
+        </h2>
+        <p
+          class="text-lg md:text-xl text-[var(--color-muted-foreground)] max-w-2xl mb-8"
+        >
+          <span class="lang-ru">
+            Я могу адаптировать это решение под ваши задачи или разработать
+            что-то совершенно новое. Давайте обсудим детали.
+          </span>
+          <span class="lang-en">
+            I can adapt this solution to your needs or build something entirely
+            new from scratch. Let's discuss the details.
+          </span>
+        </p>
+
+        <a
+          href="https://t.me/jerseyfc"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary flex items-center gap-3 text-lg px-8 py-4 group"
+        >
+          <TelegramIcon class="w-6 h-6" />
+          <span class="lang-ru">Написать в Telegram</span>
+          <span class="lang-en">Contact via Telegram</span>
+          <svg
+            class="w-5 h-5 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+        <p class="mt-4 text-sm text-[var(--color-muted-foreground)] opacity-60">
+          <span class="lang-ru">Отвечаю в течение пары часов</span>
+          <span class="lang-en">Typical response time: 2 hours</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
 </Layout>

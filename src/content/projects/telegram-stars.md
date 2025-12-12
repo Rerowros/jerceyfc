@@ -1,19 +1,16 @@
 ---
 title:
-  ru: "Telegram Stars: покупка звёзд"
-  en: "Telegram Stars: Buy Stars"
+  ru: "Telegram Stars: Платежный шлюз"
+  en: "Telegram Stars: Payment Gateway"
 description:
-  ru: "Веб-сервис для быстрой покупки Telegram Stars — внутренней валюты Telegram для оплаты цифровых товаров и услуг в ботах и мини-приложениях."
-  en: "Web service for fast purchase of Telegram Stars — the internal currency for digital goods and services in Telegram bots and mini-apps."
+  ru: "Сервис для автоматизированной покупки и продажи Telegram Stars через CryptoBot."
+  en: "Automated service for buying/selling Telegram Stars via CryptoBot API."
 details:
-  ru: "Веб-сервис для быстрой покупки Telegram Stars — внутренней валюты Telegram для оплаты цифровых товаров и услуг в ботах и мини-приложениях. Мгновенная доставка, поддержка криптовалюты, удобные тарифы, поддержка 24/7."
-  en: "Web service for fast purchase of Telegram Stars — the internal currency for digital goods and services in Telegram bots and mini-apps. Instant delivery, crypto support, flexible pricing, 24/7 support."
-tags: ["Next.js", "TypeScript", "Telegram", "E-commerce", "Crypto", "Web"]
-coverImage: "../../assets/project/telegram-stars.png"
-pubDate: 2024-01-01
-featured: true
+  ru: "Разработал полностью автоматизированный сервис по продаже внутренней валюты Telegram. Ключевая особенность — надежность финансовых операций. Используя Prisma Transactions, я добился полной атомарности: списание средств и начисление 'звезд' происходят как единое целое, исключая ситуации, когда деньги ушли, а товар не выдан. \n\n Фронтенд на Next.js 14 использует Server Actions для безопасного взаимодействия с БД, минимизируя векторы атак. Интеграция с CryptoBot включает валидацию подписей вебхуков через crypto модуль. Реализовал умную систему инвентаризации: сервис проверяет наличие товара до создания инвойса, полностью предотвращая оверселлинг."
+  en: "Designed a high-security automated marketplace for Telegram Stars. The focus was on financial integrity. I leveraged Prisma Transactions to ensure atomicity for every order—inventory deduction and status updates happen in lockstep, eliminating race conditions common in crypto payments. \n\n Built on Next.js 14 App Router, the application uses Server Actions to keep business logic strictly backend-side. The CryptoBot integration is fortified with cryptographic signature verification for all incoming webhooks. I also implemented a singleton pattern for the Telegram API to reduce connection overhead, making user validation distinctively fast."
+tags: ["Next.js", "Prisma", "CryptoBot", "Telegram API", "FinTech"]
+pubDate: 2024-01-20
 status: "completed"
 type: "web"
-repoUrl: "https://github.com/Rerowros/7245927860"
 demoUrl: "https://7245927860.vercel.app/"
 ---
