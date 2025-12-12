@@ -13,6 +13,7 @@ import '../styles/lang-animate.css';
 import { ClientRouter } from 'astro:transitions';
 import Background from '../components/ui/Background.astro';
 import MobileHint from '../components/ui/MobileHint.astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   title?: string;
@@ -124,6 +125,8 @@ const {
   document.addEventListener('astro:page-load', initMagneticButtons);
   document.addEventListener('DOMContentLoaded', initMagneticButtons);
   </script>
+
+  <SpeedInsights />
 
 </body>
 </html>
