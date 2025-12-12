@@ -1,0 +1,169 @@
+---
+// src/components/sections/Hero.astro
+import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем иконку (убедитесь, что она есть в components/icons)
+
+---
+
+<section class="relative min-h-[90vh] flex items-center justify-center px-4 py-20 overflow-hidden">
+  <div
+    id="hero-card"
+    class="group relative w-full max-w-6xl rounded-3xl bg-[var(--color-card)] border border-[var(--color-border)] p-2 transition-colors duration-500 will-change-transform"
+  >
+    <!-- Эффекты подсветки остались без изменений -->
+    <div
+      class="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(129, 140, 248, 0.1), transparent 40%); z-index: 0;"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--color-primary), transparent 40%); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; z-index: 0;"
+    >
+    </div>
+
+    <div class="relative h-full rounded-[20px] bg-[var(--color-card)]/95 p-8 md:p-12 overflow-hidden z-10">
+      <div class="absolute -top-24 -right-24 w-64 h-64 bg-[var(--color-primary)]/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+        
+        <!-- ЛЕВАЯ КОЛОНКА -->
+        <div class="flex flex-col gap-6 items-center text-center lg:items-start lg:text-left">
+          <div class="scroll-animate inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 shadow-[0_0_10px_rgba(var(--color-primary),0.2)]">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
+            </span>
+            <span class="text-xs font-semibold tracking-wide uppercase text-[var(--color-primary)]">
+              <span class="lang-ru">Открыт к предложениям</span>
+              <span class="lang-en">Available for work</span>
+            </span>
+          </div>
+
+          <div class="hero-animate">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight font-cinzel">
+              <span class="lang-ru">
+                Привет, я <br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-400 animate-gradient-x">Ярослав</span>
+              </span>
+              <span class="lang-en">
+                Hi, I'm <br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-400 animate-gradient-x">Yaroslav</span>
+              </span>
+            </h1>
+            <p class="text-xl md:text-2xl text-[var(--color-muted-foreground)] font-light mt-4">
+              <span class="lang-ru">Full-Stack Разработчик</span>
+              <span class="lang-en">Full-Stack Web Developer</span>
+            </p>
+          </div>
+
+          <p class="scroll-animate text-base text-[var(--color-muted-foreground)] max-w-lg leading-relaxed mx-auto lg:mx-0" style="transition-delay: 200ms;">
+            <span class="lang-ru">
+              Специализируюсь на создании современных веб-интерфейсов на React и TypeScript, а также разработке функциональных Telegram-ботов и скриптов на Python.
+            </span>
+            <span class="lang-en">
+              Specializing in building modern web interfaces with React and TypeScript, as well as developing functional Telegram bots and automation scripts using Python.
+            </span>
+          </p>
+
+          <div class="scroll-animate flex flex-wrap justify-center lg:justify-start gap-4 mt-2" style="transition-delay: 300ms;">
+            <a href="#projects" class="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)]/90 overflow-hidden">
+                <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"></div>
+                <span class="relative z-20 flex items-center gap-2">
+                    <span class="lang-ru">Смотреть проекты</span>
+                    <span class="lang-en">View Projects</span>
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </span>
+            </a>
+            
+            <a href="/about" class="inline-flex items-center justify-center px-8 py-3 font-semibold text-[var(--color-foreground)] transition-all duration-200 bg-transparent border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-card)] hover:border-[var(--color-primary)]">
+              <span class="lang-ru">Обо мне</span>
+              <span class="lang-en">About Me</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: CODE BLOCK -->
+        <div class="hidden lg:block will-change-transform" style="animation-delay: 400ms; animation-fill-mode: backwards;">
+            <div class="relative group/code transition-transform duration-500 hover:-translate-y-2 hover:rotate-1 transform-gpu">
+                <div class="absolute -inset-1 bg-gradient-to-r from-[var(--color-primary)] to-purple-600 rounded-xl blur opacity-20 group-hover/code:opacity-40 transition duration-500"></div>
+                
+                <div class="relative rounded-xl bg-[#0f1117] border border-[var(--color-border)] shadow-2xl overflow-hidden">
+                    <div class="flex items-center justify-between px-4 py-3 bg-[#1e293b]/50 border-b border-[var(--color-border)]">
+                        <div class="flex space-x-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-mono">stack.ts</div>
+                    </div>
+                    
+                    <!-- Обновленный код в примере -->
+                    <div class="p-6 overflow-x-auto">
+                        <pre class="font-mono text-sm leading-relaxed">
+<span class="text-purple-400">interface</span> <span class="text-yellow-400">Developer</span> <span class="text-purple-400">{</span>
+  <span class="text-sky-300">frontend</span>: <span class="text-yellow-400">string</span><span class="text-purple-400">[];</span>
+  <span class="text-sky-300">backend</span>: <span class="text-yellow-400">string</span><span class="text-purple-400">[];</span>
+<span class="text-purple-400">}</span>
+
+<span class="text-purple-400">const</span> <span class="text-blue-400">jersey</span>: <span class="text-yellow-400">Developer</span> = <span class="text-purple-400">{</span>
+  <span class="text-sky-300">frontend</span>: <span class="text-purple-400">[</span>
+    <span class="text-green-400">"TypeScript"</span>, 
+    <span class="text-green-400">"React"</span>, 
+    <span class="text-green-400">"Next.js"</span>
+  <span class="text-purple-400">]</span>,
+  <span class="text-sky-300">backend</span>: <span class="text-purple-400">[</span>
+    <span class="text-green-400">"Python"</span>, <span class="text-gray-500">// Scripts & Bots</span>
+    <span class="text-green-400">"Node.js"</span>
+  <span class="text-purple-400">]</span>
+<span class="text-purple-400">};</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initHero() {
+    const card = document.getElementById("hero-card");
+    if (!card) return;
+    let bounds = card.getBoundingClientRect();
+    function updateBounds() { bounds = card.getBoundingClientRect(); }
+    window.addEventListener("scroll", updateBounds, { passive: true });
+    window.addEventListener("resize", updateBounds, { passive: true });
+    const onMouseMove = (e) => {
+      window.requestAnimationFrame(() => {
+        const x = e.clientX - bounds.left;
+        const y = e.clientY - bounds.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      });
+    };
+    let autoAnimationId;
+    function startAutoAnimation() {
+      const startTime = Date.now();
+      function frame() {
+        const time = (Date.now() - startTime) / 1000;
+        const radiusX = bounds.width * 0.5; 
+        const radiusY = bounds.height * 0.5;
+        const centerX = bounds.width / 2;
+        const centerY = bounds.height / 2;
+        const x = centerX + Math.cos(time) * radiusX;
+        const y = centerY + Math.sin(time) * radiusY;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+        autoAnimationId = requestAnimationFrame(frame);
+      }
+      frame();
+    }
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) { startAutoAnimation(); } else { card.addEventListener("mousemove", onMouseMove, { passive: true }); }
+  }
+  document.addEventListener("astro:page-load", initHero);
+  document.addEventListener("DOMContentLoaded", initHero);
+</script>

@@ -1,9 +1,54 @@
-/* Стили для плавности анимации текста при смене языка */
-.lang-ru, .lang-en {
-  transition: color 0.5s, text-shadow 0.5s;
+/* Базовая настройка переключения */
+.lang-ru,
+.lang-en {
+  /* По умолчанию скрываем через display, как и было */
+  display: none;
 }
 
-.lang-ru.animated, .lang-en.animated {
-  color: #a3e635;
-  text-shadow: 0 0 8px #bef264;
+html[lang="ru"] .lang-ru {
+  display: inline-block; /* Или block, зависит от контекста */
+  animation: focusIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+html[lang="en"] .lang-en {
+  display: inline-block;
+  animation: focusIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Глобальный класс, который вешает скрипт на body во время смены */
+body.language-switching .lang-ru,
+body.language-switching .lang-en,
+body.language-switching h1,
+body.language-switching h2,
+body.language-switching p,
+body.language-switching span {
+  /* Мы размываем текст при уходе */
+  animation: blurOut 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+/* Анимации */
+@keyframes blurOut {
+  0% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    filter: blur(12px);
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes focusIn {
+  0% {
+    filter: blur(12px);
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+    transform: scale(1);
+  }
 }

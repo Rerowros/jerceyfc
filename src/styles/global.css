@@ -136,6 +136,12 @@ body {
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.5s ease, color 0.5s ease;
 }
+/* Добавьте в начало global.css */
+
+.optimize-rendering {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px; /* Примерная высота контента, чтобы скроллбар не прыгал */
+}
 
 /* Скрываем скроллбар */
 ::-webkit-scrollbar {
@@ -170,18 +176,24 @@ body {
   pointer-events: none;
   z-index: 1;
   mix-blend-mode: overlay;
-  opacity: 0.035;
+  opacity: 0;
+  animation: showNoise 0.5s ease 0.8s forwards; /* Задержка 0.8 сек, появляется после LCP */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
+@keyframes showNoise {
+  to {
+    opacity: 0.035;
+  }
+}
 /* ========================================
    GLASSMORPHISM КАРТОЧКИ
    ======================================== */
 
 .glass-card {
   background: var(--color-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -208,6 +220,7 @@ h6,
   font-family: "Unbounded", sans-serif; /* Было 'Cinzel' */
   letter-spacing: -0.03em;
   font-weight: 900; /* Unbounded лучше смотрится в жирном начертании */
+  font-display: swap;
 }
 
 /* Дополнительный твик для очень крупных заголовков (как на Hero) */
@@ -315,6 +328,11 @@ h1 {
   transition: opacity 0.4s, transform 0.4s;
 }
 
+.menu-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
 /* ========================================
    VIEW TRANSITIONS
    ======================================== */
@@ -448,4 +466,80 @@ body {
   letter-spacing: 0.15em;
   color: var(--color-primary);
   margin-bottom: 0.5rem;
+}
+
+/* === УТИЛИТЫ ДЛЯ КАРТОЧЕК === */
+
+/* 1. Глобальная сетка (как на фоне сайта, но адаптированная для блоков) */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+/* 2. Анимация переливающегося градиента */
+@keyframes shimmer-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-shimmer {
+  background-size: 300% 300%; /* Увеличиваем размер фона, чтобы было чему двигаться */
+  animation: shimmer-gradient 8s ease infinite;
+}
+
+@keyframes mobile-glare {
+  0% {
+    transform: translateX(-150%) skewX(-15deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.mobile-glare-animate {
+  animation: mobile-glare 2s ease-out forwards;
+}
+
+/* Анимация для первого экрана (без JS) */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  animation: fade-in-up 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* Для пользователей, которые отключили анимации в системе - показываем сразу */
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
 }

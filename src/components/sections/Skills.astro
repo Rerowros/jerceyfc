@@ -1,0 +1,191 @@
+---
+// src/components/sections/Skills.astro
+---
+
+<section id="skills" class="py-12 md:py-20 px-4">
+  <div class="max-w-7xl mx-auto">
+    <!-- Заголовок секции -->
+    <div class="text-center mb-10 md:mb-16">
+      <p class="section-title hero-animate">
+        <span class="lang-ru">Экспертиза</span>
+        <span class="lang-en">Expertise</span>
+      </p>
+      <h2
+        class="text-3xl md:text-5xl font-bold font-cinzel text-glow hero-animate"
+        style="transition-delay: 100ms;"
+      >
+        <span class="lang-ru">Основной Стек</span>
+        <span class="lang-en">Main Tech Stack</span>
+      </h2>
+    </div>
+
+    <!-- Обновленная сетка навыков -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- 1. Frontend & Main Work (Главный акцент) -->
+      <div
+        class="group relative overflow-hidden rounded-2xl bg-[var(--color-card)] border border-[var(--color-border)] p-6 md:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/50 h-full"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        >
+        </div>
+        <div class="relative z-10 flex flex-col h-full">
+          <div
+            class="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+          >
+            <!-- React/Atom Icon -->
+            <svg
+              class="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl md:text-2xl font-bold font-cinzel">
+            <span class="lang-ru">Современный Web</span>
+            <span class="lang-en">Modern Web</span>
+          </h3>
+          <p class="text-sm text-[var(--color-muted-foreground)] mb-4">
+            <span class="lang-ru"
+              >Основное направление работы. Создание сложных SPA и SSR
+              приложений.</span
+            >
+            <span class="lang-en"
+              >Primary focus. Building complex SPA and SSR applications.</span
+            >
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            {
+              [
+                "TypeScript",
+                "React",
+                "Next.js",
+                "Astro",
+                "Tailwind CSS",
+                "Node.js",
+              ].map((tech) => (
+                <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
+                  {tech}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Python & Automation (Боты и скрипты) -->
+      <div
+        class="group relative overflow-hidden rounded-2xl bg-[var(--color-card)] border border-[var(--color-border)] p-6 md:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/50 h-full hero-animate"
+        style="transition-delay: 200ms;"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        >
+        </div>
+        <div class="relative z-10 flex flex-col h-full">
+          <div
+            class="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+          >
+            <!-- Terminal/Bot Icon -->
+            <svg
+              class="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl md:text-2xl font-bold font-cinzel">
+            <span class="lang-ru">Python и Боты</span>
+            <span class="lang-en">Python & Bots</span>
+          </h3>
+          <p class="text-sm text-[var(--color-muted-foreground)] mb-4">
+            <span class="lang-ru"
+              >Разработка Telegram-ботов, парсеров и скриптов автоматизации.</span
+            >
+            <span class="lang-en"
+              >Developing Telegram bots, parsers, and automation scripts.</span
+            >
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            {
+              ["Python", "Telegram API", "Aiogram", "Telethon", "AsyncIO"].map(
+                (tech) => (
+                  <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
+                    {tech}
+                  </span>
+                )
+              )
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Tools & DevOps (Инструменты) -->
+      <div
+        class="group relative overflow-hidden rounded-2xl bg-[var(--color-card)] border border-[var(--color-border)] p-6 md:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/50 h-full hero-animate"
+        style="transition-delay: 300ms;"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        >
+        </div>
+        <div class="relative z-10 flex flex-col h-full">
+          <div
+            class="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+          >
+            <!-- Server/Tools Icon -->
+            <svg
+              class="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl md:text-2xl font-bold font-cinzel">
+            <span class="lang-ru">Инструменты</span>
+            <span class="lang-en">Tools & DevOps</span>
+          </h3>
+          <p class="text-sm text-[var(--color-muted-foreground)] mb-4">
+            <span class="lang-ru"
+              >Технологии для развертывания, контроля версий и работы с данными.</span
+            >
+            <span class="lang-en"
+              >Technologies for deployment, version control, and data
+              management.</span
+            >
+          </p>
+          <div class="flex flex-wrap gap-2 mt-auto">
+            {
+              ["Git", "Docker", "Linux", "PostgreSQL", "Nginx"].map((tech) => (
+                <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
+                  {tech}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -2,7 +2,6 @@
 dist/
 # generated types
 .astro/
-.github/
 .vscode/
 # dependencies
 node_modules/
@@ -23,3 +22,4 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+repomix-output.xml
