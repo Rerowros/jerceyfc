@@ -1,5 +1,6 @@
 ---
 // src/layouts/Layout.astro
+import  SpeedInsights  from "@vercel/speed-insights/astro"
 
 import '@fontsource/manrope/400.css';
 import '@fontsource/manrope/500.css';
@@ -99,6 +100,7 @@ const {
     <slot />
   </main>
     <MobileHint />
+  <SpeedInsights />
 
   
   <script>

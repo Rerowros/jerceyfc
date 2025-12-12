@@ -136,6 +136,12 @@ body {
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.5s ease, color 0.5s ease;
 }
+/* Добавьте в начало global.css */
+
+.optimize-rendering {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px; /* Примерная высота контента, чтобы скроллбар не прыгал */
+}
 
 /* Скрываем скроллбар */
 ::-webkit-scrollbar {
@@ -170,10 +176,16 @@ body {
   pointer-events: none;
   z-index: 1;
   mix-blend-mode: overlay;
-  opacity: 0.035;
+  opacity: 0;
+  animation: showNoise 0.5s ease 0.8s forwards; /* Задержка 0.8 сек, появляется после LCP */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
+@keyframes showNoise {
+  to {
+    opacity: 0.035;
+  }
+}
 /* ========================================
    GLASSMORPHISM КАРТОЧКИ
    ======================================== */
