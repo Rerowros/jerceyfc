@@ -1,13 +1,32 @@
 // src/scripts/background.ts
 
 export function initBackgroundAnimation() {
+  // Cleanup previous run (important with ClientRouter navigation)
+  const w = window as unknown as {
+    __bgCleanup?: () => void;
+  };
+  w.__bgCleanup?.();
+
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+  const isCoarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
+
+  // На мобильных/в reduced-motion отключаем «живой» follower и частицы.
+  if (prefersReducedMotion || isCoarsePointer) {
+    const container = document.getElementById('particles-container');
+    if (container) container.innerHTML = '';
+    const follower = document.getElementById('mouse-follower');
+    if (follower) follower.style.display = 'none';
+    w.__bgCleanup = undefined;
+    return;
+  }
+
   const container = document.getElementById("particles-container");
   if (!container) return;
   
   // Очищаем, чтобы не дублировать частицы при навигации
   container.innerHTML = "";
 
-  const particleCount = 20;
+  const particleCount = 12;
 
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement("div");
@@ -32,8 +51,7 @@ export function initBackgroundAnimation() {
 
 
   const follower = document.getElementById("mouse-follower");
-  
-  // Убираем проверку window.innerWidth, чтобы работало и на мобильных
+
   if (follower) {
     let targetX = 0, targetY = 0;
     let currentX = 0, currentY = 0;
@@ -44,26 +62,24 @@ export function initBackgroundAnimation() {
       targetY = e.clientY - 200;
     };
 
-    // Логика для тача (НОВОЕ)
-    const onTouchMove = (e: TouchEvent) => {
-       if (e.touches.length > 0) {
-         targetX = e.touches[0].clientX - 200;
-         targetY = e.touches[0].clientY - 200;
-       }
-    };
-    
     document.addEventListener("mousemove", onMouseMove);
-    // Добавляем слушатель касаний с passive: true для производительности скролла
-    document.addEventListener("touchmove", onTouchMove, { passive: true });
 
+    let rafId = 0;
     function animate() {
       if (!document.getElementById("mouse-follower")) return;
       
       currentX += (targetX - currentX) * 0.1;
       currentY += (targetY - currentY) * 0.1;
       follower.style.transform = `translate(${currentX}px, ${currentY}px)`;
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     }
     animate();
+
+    w.__bgCleanup = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+      // Восстанавливаем display, если понадобится
+      follower.style.display = '';
+    };
   }
 }

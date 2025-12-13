@@ -131,6 +131,21 @@
     animation: float-up linear infinite;
   }
 
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .blob {
+      animation: none !important;
+      filter: blur(60px);
+    }
+
+    #mouse-follower {
+      display: none;
+    }
+
+    .grid-overlay {
+      opacity: 0.6;
+    }
+  }
+
   /* Следование за мышью */
   #mouse-follower {
     position: fixed;

@@ -19,6 +19,10 @@ export function applyTheme() {
 
 // 2. Инициализация контролов (кнопки переключения)
 export function initThemeControls() {
+  const w = window as unknown as {
+    __paletteOutsideClick?: (e: MouseEvent) => void;
+  };
+
   // Логика Темы (Dark/Light)
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {
@@ -45,13 +49,17 @@ export function initThemeControls() {
       paletteToggle.classList.toggle("text-[var(--color-primary)]");
     };
 
-    // Закрытие при клике вне
-    document.addEventListener('click', (e) => {
+    // Закрытие при клике вне (один глобальный обработчик)
+    if (w.__paletteOutsideClick) {
+      document.removeEventListener('click', w.__paletteOutsideClick);
+    }
+    w.__paletteOutsideClick = (e: MouseEvent) => {
       if (!paletteMenu.contains(e.target as Node) && !paletteToggle.contains(e.target as Node)) {
         paletteMenu.classList.remove("menu-visible");
         paletteToggle.classList.remove("text-[var(--color-primary)]");
       }
-    });
+    };
+    document.addEventListener('click', w.__paletteOutsideClick);
 
     // Кнопки цветов
     const updateActiveColorButton = () => {

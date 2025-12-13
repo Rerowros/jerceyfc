@@ -1,13 +1,9 @@
 ---
 // src/layouts/Layout.astro
-import  SpeedInsights  from "@vercel/speed-insights/astro"
+import SpeedInsights from "@vercel/speed-insights/astro";
 
-import '@fontsource/manrope/400.css';
-import '@fontsource/manrope/500.css';
-import '@fontsource/manrope/800.css';
-import '@fontsource/unbounded/400.css';
-import '@fontsource/unbounded/700.css';
-import '@fontsource/unbounded/900.css';
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/unbounded";
 
 import '../styles/global.css';
 import '../styles/lang-animate.css';
@@ -26,6 +22,9 @@ const {
   description = 'Jersey — Full-Stack разработчик (React, TypeScript, Python). Создание современных веб-приложений и автоматизация через Telegram-ботов.', 
   pathname = '/' 
 } = Astro.props;
+
+const enableSpeedInsights = import.meta.env.PUBLIC_SPEED_INSIGHTS === '1';
+const enableClientRouter = import.meta.env.PUBLIC_CLIENT_ROUTER !== '0';
 ---
 
 <!doctype html>
@@ -42,12 +41,12 @@ const {
     
     <title>{title}</title>
 
-    <link rel="canonical" href={`https://jerseyfc.me.me${pathname}`} />
+    <link rel="canonical" href={`https://jerseyfc.me${pathname}`} />
     <meta property="og:locale" content="ru_RU" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={`https://jerseyfc.me.me${pathname}`} />
+    <meta property="og:url" content={`https://jerseyfc.me${pathname}`} />
     <meta property="og:image" content="/J.png" />
     
     <meta name="twitter:card" content="summary_large_image" />
@@ -63,7 +62,7 @@ const {
           {
             "@type": "Person",
             "name": "Jersey",
-            "url": "https://jerseyfc.me.me/",
+            "url": "https://jerseyfc.me/",
             "sameAs": ["https://t.me/jerseyfc", "https://github.com/Rerowros"],
             "jobTitle": "Full-Stack Web Developer",
             "makesOffer": 
@@ -103,7 +102,7 @@ const {
     <link rel="icon" type="image/png" href="/J.png" />
 
     <meta name="view-transition" content="same-origin" />
-    <ClientRouter />
+    {enableClientRouter && <ClientRouter />}
 
     <script>
       import { applyTheme } from '../scripts/theme';
@@ -111,13 +110,13 @@ const {
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
   </head>
-<body class="font-['Inter'] antialiased selection:bg-primary/30">
+<body class="font-sans antialiased selection:bg-primary/30">
   <Background />
   <main class="relative z-10 w-full overflow-x-hidden">
     <slot />
   </main>
     <MobileHint />
-  <SpeedInsights />
+  {enableSpeedInsights && <SpeedInsights />}
 
   
   <script>

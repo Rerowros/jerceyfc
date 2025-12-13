@@ -200,6 +200,13 @@ body {
   transition: all 0.3s ease;
 }
 
+@media (max-width: 768px) {
+  .glass-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 .glass-card:hover {
   border-color: var(--color-primary);
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 30px var(--glow-color),
@@ -388,19 +395,6 @@ html[data-astro-transition="back"]::view-transition-new(root) {
 /* ========================================
    ЯЗЫКОВЫЕ ПЕРЕКЛЮЧАТЕЛИ
    ======================================== */
-
-.lang-ru,
-.lang-en {
-  display: none;
-}
-
-html[lang="ru"] .lang-ru {
-  display: initial;
-}
-
-html[lang="en"] .lang-en {
-  display: initial;
-}
 
 /* ========================================
    КОНТЕЙНЕР

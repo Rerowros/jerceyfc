@@ -132,6 +132,12 @@ import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем 
   function initHero() {
     const card = document.getElementById("hero-card");
     if (!card) return;
+
+    // Cleanup previous init (ClientRouter)
+    const w = window;
+    // @ts-ignore
+    if (w.__heroCleanup) w.__heroCleanup();
+
     let bounds = card.getBoundingClientRect();
     function updateBounds() { bounds = card.getBoundingClientRect(); }
     window.addEventListener("scroll", updateBounds, { passive: true });
@@ -144,25 +150,25 @@ import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем 
         card.style.setProperty("--mouse-y", `${y}px`);
       });
     };
-    let autoAnimationId;
-    function startAutoAnimation() {
-      const startTime = Date.now();
-      function frame() {
-        const time = (Date.now() - startTime) / 1000;
-        const radiusX = bounds.width * 0.5; 
-        const radiusY = bounds.height * 0.5;
-        const centerX = bounds.width / 2;
-        const centerY = bounds.height / 2;
-        const x = centerX + Math.cos(time) * radiusX;
-        const y = centerY + Math.sin(time) * radiusY;
-        card.style.setProperty("--mouse-x", `${x}px`);
-        card.style.setProperty("--mouse-y", `${y}px`);
-        autoAnimationId = requestAnimationFrame(frame);
-      }
-      frame();
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+    const isFinePointer = window.matchMedia?.('(pointer: fine)')?.matches ?? false;
+
+    // На мобилках/тач-устройствах делаем эффект статичным (без вечного rAF).
+    if (!prefersReducedMotion && isFinePointer) {
+      card.addEventListener("mousemove", onMouseMove, { passive: true });
+    } else {
+      // Центрируем подсветку один раз
+      card.style.setProperty("--mouse-x", `${bounds.width / 2}px`);
+      card.style.setProperty("--mouse-y", `${bounds.height / 2}px`);
     }
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) { startAutoAnimation(); } else { card.addEventListener("mousemove", onMouseMove, { passive: true }); }
+
+    // @ts-ignore
+    w.__heroCleanup = () => {
+      window.removeEventListener('scroll', updateBounds);
+      window.removeEventListener('resize', updateBounds);
+      card.removeEventListener('mousemove', onMouseMove);
+    };
   }
   document.addEventListener("astro:page-load", initHero);
   document.addEventListener("DOMContentLoaded", initHero);
