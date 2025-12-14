@@ -1,13 +1,25 @@
 // src/scripts/background.ts
 
 export function initBackgroundAnimation() {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isLowPerfDevice =
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+    // @ts-ignore deviceMemory is not in all browsers
+    (navigator.deviceMemory && navigator.deviceMemory <= 4);
+
+  // Для слабых устройств или пользователей с reduce-motion оставляем фон статичным
+  if (prefersReducedMotion) return;
+
   const container = document.getElementById("particles-container");
   if (!container) return;
   
-  // Очищаем, чтобы не дублировать частицы при навигации
-  container.innerHTML = "";
+  // ОПТИМИЗАЦИЯ: Если частицы уже есть (при возврате или SPA-навигации), не пересоздаём их
+  if (container.children.length > 0) {
+    return;
+  }
 
-  const particleCount = 20;
+  // Уменьшаем количество частиц на слабых ПК
+  const particleCount = isLowPerfDevice ? 10 : 20;
 
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement("div");
@@ -32,38 +44,76 @@ export function initBackgroundAnimation() {
 
 
   const follower = document.getElementById("mouse-follower");
-  
-  // Убираем проверку window.innerWidth, чтобы работало и на мобильных
-  if (follower) {
-    let targetX = 0, targetY = 0;
-    let currentX = 0, currentY = 0;
 
-    // Логика для мыши
-    const onMouseMove = (e: MouseEvent) => {
-      targetX = e.clientX - 200; 
-      targetY = e.clientY - 200;
-    };
+  // Отключаем «хвост» на слабых машинах, чтобы убрать лишний rAF
+  if (isLowPerfDevice) return;
 
-    // Логика для тача (НОВОЕ)
-    const onTouchMove = (e: TouchEvent) => {
-       if (e.touches.length > 0) {
-         targetX = e.touches[0].clientX - 200;
-         targetY = e.touches[0].clientY - 200;
-       }
-    };
-    
-    document.addEventListener("mousemove", onMouseMove);
-    // Добавляем слушатель касаний с passive: true для производительности скролла
-    document.addEventListener("touchmove", onTouchMove, { passive: true });
+  // Инициализируем фолловер только один раз
+  if (follower && !follower.dataset.init) {
+    follower.dataset.init = "true";
 
-    function animate() {
-      if (!document.getElementById("mouse-follower")) return;
-      
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let rafId: number | null = null;
+    let lastMoveTs = 0;
+
+    const step = () => {
+      // Если элемент удален из DOM — прекращаем цикл
+      if (!document.getElementById("mouse-follower")) {
+        rafId = null;
+        return;
+      }
+
       currentX += (targetX - currentX) * 0.1;
       currentY += (targetY - currentY) * 0.1;
       follower.style.transform = `translate(${currentX}px, ${currentY}px)`;
-      requestAnimationFrame(animate);
-    }
-    animate();
+
+      const isSettled =
+        Math.abs(targetX - currentX) < 0.5 && Math.abs(targetY - currentY) < 0.5;
+      const idleTooLong = performance.now() - lastMoveTs > 200;
+
+      if (isSettled && idleTooLong) {
+        rafId = null;
+        return;
+      }
+
+      rafId = requestAnimationFrame(step);
+    };
+
+    const ensureAnimation = () => {
+      lastMoveTs = performance.now();
+      if (rafId === null) {
+        rafId = requestAnimationFrame(step);
+      }
+    };
+
+    // Логика для мыши
+    const onMouseMove = (e: MouseEvent) => {
+      targetX = e.clientX - 200;
+      targetY = e.clientY - 200;
+      ensureAnimation();
+    };
+
+    // Логика для тача
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        targetX = e.touches[0].clientX - 200;
+        targetY = e.touches[0].clientY - 200;
+        ensureAnimation();
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden && rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("touchmove", onTouchMove, { passive: true });
+    document.addEventListener("visibilitychange", onVisibilityChange);
   }
 }

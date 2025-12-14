@@ -1,7 +1,7 @@
 ---
 // src/pages/projects/index.astro
 import { getCollection } from "astro:content";
-import { slide } from "astro:transitions";
+import { fade } from "astro:transitions";
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/layout/Header.astro";
 import ProjectCard from "../../components/ui/ProjectCard.astro";
@@ -25,7 +25,7 @@ const sortedProjects = allProjects.sort((a, b) => {
   <Header />
   <main
     class="container pt-24 md:pt-32 pb-16 min-h-screen"
-    transition:animate={slide({ duration: "0.3s" })}
+    transition:animate={fade({ duration: "0.2s" })}
   >
     <!-- Заголовок -->
     <div class="text-center mb-20 relative">
@@ -59,7 +59,9 @@ const sortedProjects = allProjects.sort((a, b) => {
 
     <!-- Сетка -->
     <!-- Убрали явную типизацию (p: CollectionEntry...) внутри HTML шаблона, чтобы не ломать парсер -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 gap-y-12">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 gap-y-12 render-optimization"
+    >
       {
         sortedProjects.map((p, index) => (
           <div
@@ -93,4 +95,16 @@ const sortedProjects = allProjects.sort((a, b) => {
   .animate-gradient {
     animation: gradient 6s ease infinite;
   }
+
+  .render-optimization {
+    /* Значительно ускоряет начальную отрисовку длинных списков */
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 400px; /* Примерная высота ряда карточек, чтобы скроллбар не скакал */
+  }
 </style>
+<script>
+  // Помечаем, что мы действительно были в списке проектов
+  document.addEventListener("astro:page-load", () => {
+    sessionStorage.setItem("from-projects-list", "true");
+  });
+</script>
