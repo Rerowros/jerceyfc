@@ -8,6 +8,7 @@ import GitHubIcon from "../../components/icons/GitHubIcon.astro";
 import TelegramIcon from "../../components/icons/TelegramIcon.astro"; // Импортируем иконку
 import { slide } from "astro:transitions";
 import { Image } from "astro:assets";
+import { marked } from "marked"; // <--- ДОБАВЛЯЕМ ЭТО
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -36,6 +37,14 @@ const typeGradients: Record<string, string> = {
 };
 // @ts-ignore
 const bgAccent = typeGradients[data.type] || "bg-indigo-600";
+
+const detailsRuHTML = data.details?.ru
+  ? await marked.parse(data.details.ru)
+  : await marked.parse(data.description.ru);
+
+const detailsEnHTML = data.details?.en
+  ? await marked.parse(data.details.en)
+  : await marked.parse(data.description.en);
 ---
 
 <Layout
@@ -77,7 +86,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
     >
       <a
         href="/projects"
-        class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors mb-4 md:mb-8 group"
+        id="back-link"
+        class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors mb-4 md:mb-8 group cursor-pointer"
       >
         <div
           class="w-8 h-8 rounded-full border border-[var(--color-border)] flex items-center justify-center bg-[var(--color-card)] group-hover:border-[var(--color-primary)] transition-colors"
@@ -87,15 +97,17 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            ><path
+          >
+            <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M15 19l-7-7 7-7"></path></svg
-          >
+              d="M15 19l-7-7 7-7"></path>
+          </svg>
         </div>
-        <span class="lang-ru">Назад в портфолио</span>
-        <span class="lang-en">Back to Portfolio</span>
+        <span class="lang-ru">Назад</span>
+        <!-- Можно сократить текст для чистоты -->
+        <span class="lang-en">Back</span>
       </a>
 
       <!-- Заголовок и Мета -->
@@ -196,10 +208,7 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
       <div class="space-y-8 md:space-y-12">
         {
           hasImage && coverImage && (
-            <div
-              class="rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-2xl bg-[#050505]"
-              transition:name={`img-${project.slug}`}
-            >
+            <div class="rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-2xl bg-[#050505]">
               <Image
                 src={coverImage}
                 alt={data.title.en}
@@ -208,6 +217,8 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
                 height={800}
                 format="webp"
                 quality={90}
+                alt={data.title.en}
+                class="w-full h-auto"
               />
             </div>
           )
@@ -228,16 +239,13 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
               <span class="lang-ru">Задача и Решение</span>
               <span class="lang-en">The Challenge & Solution</span>
             </h3>
-            <p
-              class="whitespace-pre-line text-base md:text-lg text-[var(--color-muted-foreground)] leading-loose"
+            <div
+              class="text-base md:text-lg text-[var(--color-muted-foreground)] leading-loose markdown-container"
             >
-              <span class="lang-ru"
-                >{data.details?.ru || data.description.ru}</span
-              >
-              <span class="lang-en"
-                >{data.details?.en || data.description.en}</span
-              >
-            </p>
+              <!-- set:html вставляет готовый HTML, который сгенерировал marked -->
+              <div class="lang-ru" set:html={detailsRuHTML} />
+              <div class="lang-en" set:html={detailsEnHTML} />
+            </div>
           </div>
         </div>
 
@@ -399,3 +407,46 @@ const bgAccent = typeGradients[data.type] || "bg-indigo-600";
 
   <Footer />
 </Layout>
+<style is:global>
+  /* Стили для Markdown внутри контейнера */
+  .markdown-container ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+  }
+  .markdown-container ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+  }
+  .markdown-container strong {
+    color: var(--color-foreground); /* Делаем жирный текст светлее/ярче */
+    font-weight: 700;
+  }
+  .markdown-container p {
+    margin-bottom: 1em;
+  }
+  /* Убираем отступ у последнего элемента */
+  .markdown-container *:last-child {
+    margin-bottom: 0;
+  }
+</style>
+
+<script>
+  function initBackLink() {
+    const link = document.getElementById("back-link");
+    if (!link) return;
+
+    link.addEventListener("click", (e) => {
+      // Пытаемся использовать нативный возврат, чтобы попасть в BFCache (Back-Forward Cache),
+      // если браузер и Astro это позволят.
+      if (window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+      // Если истории нет, сработает стандартный href="/projects"
+    });
+  }
+
+  document.addEventListener("astro:page-load", initBackLink);
+</script>
