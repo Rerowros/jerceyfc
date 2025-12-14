@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jerseyfc.me/sitemap-index.xml
+Sitemap: https://rerowros.ru/sitemap-index.xml

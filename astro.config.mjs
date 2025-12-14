@@ -37,6 +37,6 @@ export default defineConfig({
       prefixDefaultLocale: false, 
     },
   },
-  site: 'https://jerseyfc.me',
+  site: 'https://rerowros.ru',
   integrations: [sitemap(), react()],
 });
