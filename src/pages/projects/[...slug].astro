@@ -404,8 +404,93 @@ const detailsEnHTML = data.details?.en
       </div>
     </div>
   </section>
-
   <Footer />
+
+  <!-- Modal for image zoom -->
+  <div
+    id="image-modal"
+    class="image-modal hidden"
+    aria-hidden="true"
+    role="dialog"
+  >
+    <div id="modal-backdrop" class="image-modal-backdrop"></div>
+    <button id="modal-close" class="image-modal-close" aria-label="Close image"
+      >×</button
+    >
+    <img id="modal-img" class="image-modal-img" alt="" />
+  </div>
+
+  <script>
+    function initImageModal() {
+      const modal = document.getElementById("image-modal");
+      if (!modal) return;
+      const modalImg = document.getElementById("modal-img");
+      const closeBtn = document.getElementById("modal-close");
+
+      function open(src, alt) {
+        // reset any closing state and show with animation
+        modalImg.src = src;
+        modalImg.alt = alt || "";
+        modal.classList.remove("closing");
+        modal.classList.remove("hidden");
+        // force a reflow to ensure animation restarts
+        void modal.offsetWidth;
+        modal.classList.add("image-modal-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function close() {
+        // debounce if already closing
+        if (modal.classList.contains("closing")) return;
+        modal.classList.remove("image-modal-open");
+        modal.classList.add("closing");
+
+        const finish = () => {
+          modal.classList.add("hidden");
+          modal.classList.remove("closing");
+          modal.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+          modalImg.src = "";
+          modalImg.alt = "";
+        };
+
+        // wait for animationend, fallback to timeout
+        const onAnimEnd = (ev) => {
+          // ensure we respond to our hide animation
+          if (ev && ev.animationName && ev.animationName !== "modal-hide")
+            return;
+          modal.removeEventListener("animationend", onAnimEnd);
+          clearTimeout(timeout);
+          finish();
+        };
+
+        modal.addEventListener("animationend", onAnimEnd);
+        const timeout = setTimeout(() => {
+          modal.removeEventListener("animationend", onAnimEnd);
+          finish();
+        }, 300);
+      }
+
+      // Delegate clicks from gallery images
+      document.querySelectorAll(".grid img").forEach((img) => {
+        img.style.cursor = "zoom-in";
+        img.addEventListener("click", (e) => {
+          open(img.src, img.alt || "");
+        });
+      });
+
+      closeBtn.addEventListener("click", close);
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal || e.target.id === "modal-backdrop") close();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") close();
+      });
+    }
+
+    document.addEventListener("astro:page-load", initImageModal);
+  </script>
 </Layout>
 <style is:global>
   /* Стили для Markdown внутри контейнера */
@@ -429,6 +514,48 @@ const detailsEnHTML = data.details?.en
   /* Убираем отступ у последнего элемента */
   .markdown-container *:last-child {
     margin-bottom: 0;
+  }
+
+  /* Lightbox / modal styles */
+  .image-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 2rem;
+    backdrop-filter: blur(6px);
+  }
+  .image-modal.hidden {
+    display: none;
+  }
+  .image-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .image-modal-img {
+    max-width: 92%;
+    max-height: 92%;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    transition: transform 200ms ease;
+  }
+  .image-modal-open .image-modal-img {
+    transform: scale(1);
+  }
+  .image-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2010;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
   }
 </style>
 

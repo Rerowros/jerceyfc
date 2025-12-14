@@ -26,6 +26,10 @@ details:
     The result is a zero-touch system where users get access 5 seconds after payment.
 tags:
   ["Next.js", "Architecture", "CI/CD", "DevOps", "Telegram WebApp", "Billing"]
+coverImage: "../../assets/project/bpn1.jpg"
+gallery:
+  - "../../assets/project/bpn1.jpg"
+  - "../../assets/project/bpn2.png"
 pubDate: 2024-04-05
 featured: true
 status: "completed"
