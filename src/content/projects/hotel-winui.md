@@ -13,6 +13,7 @@ coverImage: "../../assets/project/hotel2.png"
 gallery:
   - "../../assets/project/hotel1.png"
   - "../../assets/project/hotel3.png"
+  - "../../assets/project/hotel4.png"
 pubDate: 2024-02-01
 featured: true
 status: "completed"

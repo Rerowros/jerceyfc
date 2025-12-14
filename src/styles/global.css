@@ -300,6 +300,65 @@ h1 {
   transform: translateY(0);
 }
 
+/* Modal (lightbox) animations */
+@keyframes modal-show {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modal-hide {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98) translateY(8px);
+  }
+}
+
+.image-modal {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.image-modal.image-modal-open {
+  animation: modal-show 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: auto;
+}
+
+.image-modal.closing {
+  animation: modal-hide 180ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+
+.image-modal-backdrop {
+  transition: opacity 200ms ease;
+  opacity: 0;
+}
+.image-modal.image-modal-open .image-modal-backdrop {
+  opacity: 1;
+}
+.image-modal.closing .image-modal-backdrop {
+  opacity: 0;
+}
+
+.image-modal-img {
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), opacity 220ms ease;
+}
+.image-modal.image-modal-open .image-modal-img {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
 /* ========================================
    ПЕРЕКЛЮЧАТЕЛИ ТЕМЫ
    ======================================== */
