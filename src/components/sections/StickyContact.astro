@@ -121,7 +121,8 @@ import TelegramIcon from "../../components/icons/TelegramIcon.astro";
           // ИЗМЕНЕНИЕ: Убираем translateY из фазы появления, т.к. текст анимируется через CSS
           contactInner.style.transform = `scale(${scale})`;
           contactInner.style.opacity = `${opacity}`;
-          mainContent.style.filter = `blur(${blurAmount}px)`;
+          // ОПТИМИЗАЦИЯ: Отключаем blur. Это слишком дорого для Main Thread и GPU.
+          // mainContent.style.filter = `blur(${blurAmount}px)`;
         });
         return;
       }
@@ -133,7 +134,8 @@ import TelegramIcon from "../../components/icons/TelegramIcon.astro";
         window.requestAnimationFrame(() => {
           contactInner.style.transform = "scale(1) translateY(0px)"; // Фиксируем позицию во время паузы
           contactInner.style.opacity = "1";
-          mainContent.style.filter = `blur(${MAX_BLUR}px)`;
+          // ОПТИМИЗАЦИЯ: Отключаем blur
+          // mainContent.style.filter = `blur(${MAX_BLUR}px)`;
           contactInner.classList.add("is-visible"); // Убедимся, что класс на месте
         });
         return;
@@ -155,7 +157,8 @@ import TelegramIcon from "../../components/icons/TelegramIcon.astro";
         // ИЗМЕНЕНИЕ: Комбинируем scale и translateY для эффекта параллакса при исчезновении
         contactInner.style.transform = `scale(${scale}) translateY(${translateY}px)`;
         contactInner.style.opacity = `${opacity}`;
-        mainContent.style.filter = `blur(${MAX_BLUR}px)`;
+        // ОПТИМИЗАЦИЯ: Отключаем blur
+        // mainContent.style.filter = `blur(${MAX_BLUR}px)`;
       });
     };
 
@@ -165,8 +168,8 @@ import TelegramIcon from "../../components/icons/TelegramIcon.astro";
           window.addEventListener("scroll", animateOnScroll, { passive: true });
         } else {
           window.removeEventListener("scroll", animateOnScroll);
-          // Сброс стилей, если пользователь быстро проскроллил мимо секции
-          mainContent.style.filter = "blur(0px)";
+          // ОПТИМИЗАЦИЯ: Отключаем сброс blur
+          // mainContent.style.filter = "blur(0px)";
         }
       },
       { rootMargin: "200px 0px 200px 0px" } // Начинаем слушать чуть раньше/позже
