@@ -3,7 +3,6 @@ import { defineCollection, z } from 'astro:content';
 
 const projectsCollection = defineCollection({
   type: 'content',
-  // ИЗМЕНЕНИЕ ЗДЕСЬ: Превращаем schema в функцию, которая принимает { image }
   schema: ({ image }) => z.object({
     title: z.object({
       ru: z.string(),
