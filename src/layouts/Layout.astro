@@ -110,35 +110,44 @@ const {
     </script>
   </head>
 <body class="font-['Inter'] antialiased selection:bg-primary/30">
-  <Background />
+  <div transition:persist>
+    <Background />
+  </div>
+
   <main class="relative z-10 w-full overflow-x-hidden">
     <slot />
   </main>
-    <MobileHint />
   
-  <script>
+  <div transition:persist>
+    <MobileHint />
+  </div>
+  
+<script>
     function initScrollObserver() {
-      const animatedElements = document.querySelectorAll('.scroll-animate');
+      // ОПТИМИЗАЦИЯ: Используем один Observer на все
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
+        // ОПТИМИЗАЦИЯ: Оборачиваем изменения DOM в requestAnimationFrame,
+        // чтобы не блокировать Main Thread во время скролла/загрузки
+        window.requestAnimationFrame(() => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
         });
-      }, { threshold: 0.1 });
+      }, { 
+        threshold: 0.1,
+        rootMargin: "50px" // Начинаем анимировать чуть заранее
+      });
+
+      const animatedElements = document.querySelectorAll('.scroll-animate');
       animatedElements.forEach(element => observer.observe(element));
     }
     
     document.addEventListener('astro:page-load', initScrollObserver);
     document.addEventListener('DOMContentLoaded', initScrollObserver);
-  </script>
-
-  <script>
-  import { initMagneticButtons } from '../scripts/magnetic';
-  document.addEventListener('astro:page-load', initMagneticButtons);
-  document.addEventListener('DOMContentLoaded', initMagneticButtons);
-  </script>
+</script>
 
 </body>
 </html>
