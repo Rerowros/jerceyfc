@@ -602,3 +602,108 @@ body {
     transform: none;
   }
 }
+
+/* Стиль для блоков кода внутри prose */
+.prose pre {
+  background: rgba(10, 10, 15, 0.6) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollbar внутри кода */
+.prose pre::-webkit-scrollbar {
+  height: 8px;
+}
+.prose pre::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+/* Заголовки */
+.prose h2,
+.prose h3 {
+  position: relative;
+  display: inline-block;
+}
+
+/* Декоративная черта под заголовками */
+.prose h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 40px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+/* Blog page styles (scoped to .post-page) */
+.post-page .text-glow {
+  text-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.post-page .btn-share {
+  @apply inline-flex items-center justify-center rounded-xl font-semibold text-sm transition-all shadow-sm;
+  gap: 0.5rem; /* equivalent to Tailwind's gap-2 */
+  padding: 0.75rem 1.5rem; /* py-3 px-6 fallback */
+
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+}
+.post-page .btn-share:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.post-page .custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.post-page .custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.post-page .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 10px;
+}
+.post-page .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: var(--color-muted-foreground);
+}
+
+.post-page .toc-link.active {
+  @apply font-medium;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.post-page .article-content code {
+  @apply px-1.5 py-0.5 rounded-md font-mono text-sm border;
+  background-color: color-mix(in srgb, var(--color-border) 50%, transparent);
+  color: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-border) 50%, transparent);
+}
+
+.post-page .article-content pre code {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  padding: 0;
+}
+
+/* Force sidebar and toc into normal document flow (prevent accidental sticky/fixed behavior) */
+.post-page #toc-nav {
+  position: static !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+.post-page .glass-card {
+  position: relative !important;
+}
+.post-page .btn-share,
+.post-page .copy-link-btn {
+  position: static !important;
+}

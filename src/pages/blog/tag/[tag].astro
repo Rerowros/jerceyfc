@@ -1,0 +1,140 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import Header from "../../../components/layout/Header.astro";
+import Footer from "../../../components/layout/Footer.astro";
+import { fade } from "astro:transitions";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  const uniqueTags = [...new Set(allPosts.flatMap((post) => post.data.tags))];
+
+return uniqueTags.map((tag) => {
+const filteredPosts = allPosts
+.filter((post) => post.data.tags.includes(tag))
+.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+
+});
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+
+---
+
+<Layout title={`Blog: #${tag} | Jersey`} description={`Статьи по теме ${tag}`} pathname={`/blog/tag/${tag}`}>
+  <Header />
+
+  <main class="container pt-32 pb-20 min-h-screen px-4" transition:animate={fade({ duration: "0.2s" })}>
+    <div class="max-w-4xl mx-auto">
+      <div class="mb-12">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-2 text-sm text-[var(--color-muted-foreground)] hover:text-[var(--color-primary)] transition-colors mb-4 group"
+        >
+            <div class="w-8 h-8 rounded-full border border-[var(--color-border)] flex items-center justify-center bg-[var(--color-card)] group-hover:border-[var(--color-primary)] transition-colors">
+                <svg
+                    class="w-4 h-4 transition-transform group-hover:-translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </div>
+          <span class="lang-ru">Все статьи</span>
+          <span class="lang-en">All posts</span>
+        </a>
+        <h1 class="text-3xl md:text-5xl font-extrabold font-cinzel mb-4">
+          <span class="text-[var(--color-primary)] text-glow">#{tag}</span>
+        </h1>
+        <p class="text-xl text-[var(--color-muted-foreground)]">
+          <span class="lang-ru">Найдено статей: {posts.length}</span>
+          <span class="lang-en">Posts found: {posts.length}</span>
+        </p>
+      </div>
+
+      <div class="grid gap-8">
+        {
+          posts.map((post, index) => (
+            <div
+                class="scroll-animate group block p-6 md:p-8 rounded-2xl glass-card border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-all hover:shadow-lg hover:shadow-[var(--color-primary)]/10 relative overflow-hidden"
+                style={`transition-delay: ${index * 100}ms`}
+            >
+                <!-- Noise Texture -->
+                 <div
+                 class="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-soft-light"
+                 style='background-image: url("data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.8\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E");'
+               >
+               </div>
+
+              <div class="relative z-10 flex flex-col md:flex-row gap-4 md:items-center justify-between mb-4">
+                <div class="flex gap-2">
+                  {post.data.tags.slice(0, 3).map((t) => (
+                    <span
+                      class={`text-xs font-mono px-2 py-1 rounded bg-[var(--color-background)] border ${t === tag ? "border-[var(--color-primary)] text-[var(--color-primary)]" : "border-[var(--color-border)] text-[var(--color-muted-foreground)]"}`}
+                    >
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+                <time class="text-xs text-[var(--color-muted-foreground)] font-mono opacity-80">
+                  {post.data.pubDate.toLocaleDateString("ru-RU", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+              </div>
+
+              <a href={`/blog/${post.slug}`} class="relative z-10 block">
+                <h2 class="text-2xl font-bold font-cinzel mb-3 group-hover:text-[var(--color-primary)] transition-colors leading-tight">
+                  <span class="lang-ru">{post.data.title.ru}</span>
+                  <span class="lang-en">{post.data.title.en || post.data.title.ru}</span>
+                </h2>
+              </a>
+
+              <p class="relative z-10 text-[var(--color-muted-foreground)] line-clamp-3 leading-relaxed mb-4 text-base">
+                <span class="lang-ru">{post.data.excerpt.ru}</span>
+                <span class="lang-en">{post.data.excerpt.en || post.data.excerpt.ru}</span>
+              </p>
+
+              <a
+                href={`/blog/${post.slug}`}
+                class="relative z-10 inline-flex items-center text-sm font-medium text-[var(--color-primary)]"
+              >
+                <span class="lang-ru">Читать статью</span>
+                <span class="lang-en">Read article</span>
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+  </main>
+
+  <Footer />
+</Layout>

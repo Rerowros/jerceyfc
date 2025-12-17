@@ -1,0 +1,215 @@
+---
+title:
+  ru: "Технический анализ новых алгоритмов фильтрации трафика ТСПУ (2024-2025)"
+  en: "Technical Analysis of New TSPU Traffic Filtering Algorithms (2024-2025)"
+description:
+  ru: "Исследование аномалий «лимит 13 КБ» на зарубежных хостингах и эффекта «blackholing» внутри РФ. Разбор механики работы DPI и ML-анализа."
+  en: "Investigation of the '13KB limit' anomaly on foreign hosts and the 'blackholing' effect within Russia. Mechanics of DPI and ML-analysis."
+tags: ["Network Analysis", "DPI", "TSPU", "VPS", "Cybersecurity"]
+pubDate: 2025-01-15
+type: "web"
+excerpt:
+  ru: "В этой статье мы рассматриваем новые методы фильтрации интернет-трафика, используемые в России в 2024-2025 годах, включая анализ аномалий на зарубежных и российских хостингах."
+  en: "This article explores new internet traffic filtering methods used in Russia during 2024-2025, including analysis of anomalies on foreign and Russian hosts."
+---
+
+<Lang val="ru">
+# Технический анализ аномалий связности VPS и новых алгоритмов ТСПУ
+
+В период с конца 2024 года по начало 2025 года сетевые инженеры и администраторы хостинг-провайдеров столкнулись с резким изменением паттернов фильтрации интернет-трафика в России. Наблюдается переход от блокировок по IP/доменам к комплексному анализу поведения (Behavioral Analysis) с использованием машинного обучения.
+
+В этом отчете мы разберем два ключевых феномена: «проблему 13 КБ» на зарубежных каналах и тактику «выжженной земли» (blackholing) на российских серверах.
+
+<Callout type="warning" title="Дисклеймер">
+  Данный материал носит исключительно исследовательский характер. Цель статьи —
+  помочь системным администраторам диагностировать причины потери связности с
+  серверами и отличить технические сбои от фильтрации на уровне магистральных
+  провайдеров.
+</Callout>
+
+## 1. Проблема на зарубежных хостингах: «Лимит 13 КБ»
+
+Одной из самых массовых аномалий стала невозможность установления HTTPS-соединения с серверами, расположенными в ЕС и США (популярные локации: Aeza, Hetzner, DigitalOcean), через крупных российских провайдеров (Ростелеком, Дом.ру, региональные операторы).
+
+### Симптоматика
+
+Администраторы наблюдают следующую картину:
+
+- **ICMP (Ping):** Проходит успешно.
+- **SSH (Port 22):** Работает стабильно.
+- **HTTPS (Port 443):** Соединение устанавливается (TCP Handshake проходит), но зависает на этапе передачи данных.
+
+При попытке загрузить данные (например, через `curl`), соединение обрывается после получения приблизительно **13–16 КБ** информации.
+
+Типичная ошибка в логах:
+
+```bash
+Operation timed out after 10000 milliseconds with 16134 out of 56865 bytes received
+```
+
+### Техническое объяснение
+
+Согласно анализу PCAP-дампов (Wireshark), проблема возникает на этапе **TLS Handshake** (обмен ключами шифрования).
+
+1. **ClientHello** отправляется успешно.
+2. **ServerHello** и передача сертификата начинаются.
+3. Как только объем переданных данных достигает критического порога (около 13 КБ), система ТСПУ (Технические средства противодействия угрозам) переходит в режим анализа.
+
+Если ранее блокировка осуществлялась через отправку RST-пакета (разрыв соединения), то теперь применяется метод **"Silent Drop"** или **"Freeze"**. DPI просто перестает пропускать пакеты от сервера к клиенту, оставляя TCP-сессию открытой до таймаута. Это создает иллюзию «медленного» интернета или проблем на стороне хостера.
+
+Предположительно, 13 КБ — это точка насыщения буфера анализатора, необходимая для классификации трафика нейросетью, если явные сигнатуры (например, SNI запрещенного ресурса) не найдены.
+
+---
+
+## 2. Аномалии на российских хостингах: «Blackholing»
+
+Ситуация с российскими провайдерами (Timeweb, Selectel, Beget) в локациях СПб/Мск развивается по другому сценарию. Здесь система реагирует агрессивнее, но избирательнее.
+
+### Механизм блокировки
+
+Начиная с ноября 2025 года (по сообщениям пользователей), фиксируется следующий алгоритм:
+
+1. **Детекция:** Система анализирует исходящий трафик с VPS.
+2. **Триггер:** Если в потоке данных обнаруживаются признаки туннелирования или VPN-протоколов (WireGuard, OpenVPN, и даже замаскированные протоколы), срабатывает триггер.
+3. **Реакция:** IP-адрес сервера не просто блокируется по конкретному порту, а отправляется в **полный «blackhole» (черную дыру)**.
+4. **Последствия:** Сервер становится полностью недоступен (включая SSH и Ping) на период **от 10 до 15 минут**. После истечения тайм-аута доступ восстанавливается до следующего обнаружения подозрительного пакета.
+
+### Отличие от зарубежного сценария
+
+| Параметр    | Зарубежные хосты (EU/USA)             | Российские хосты (RU)               |
+| :---------- | :------------------------------------ | :---------------------------------- |
+| **Метод**   | Селективный дроп пакетов (Throttling) | Полная блокировка IP (Null routing) |
+| **Триггер** | Любой HTTPS трафик (TLS Handshake)    | Только при детекции VPN-протоколов  |
+| **Симптом** | Зависание на 13 КБ                    | Полная недоступность на 10-15 мин   |
+
+---
+
+## 3. Эволюция технологий: От сигнатур к ML
+
+Исследования (OONI, Cloudflare, отчеты Net4People) указывают на фундаментальный сдвиг в архитектуре цензуры.
+
+### Старый подход (Static Signatures)
+
+Ранее блокировки строились на статических правилах:
+
+- Конкретные IP-адреса и подсети.
+- Доменные имена (SNI) в открытом виде.
+- «Магические байты» в заголовках пакетов.
+
+### Новый подход (Behavioral ML-Analysis)
+
+Текущие аномалии указывают на внедрение **ML-моделей (Machine Learning)**, которые анализируют:
+
+- **Временные задержки (Timing):** Интервалы между пакетами.
+- **Размеры пакетов:** Специфическое распределение размеров payload'а, характерное для определенных протоколов.
+- **Энтропию:** Степень "случайности" данных (отличие зашифрованного трафика от обычного HTTPS).
+
+Это объясняет, почему блокируются даже "чистые" протоколы, если их поведение отклоняется от профиля "обычный браузер открывает обычный сайт". Система ТСПУ теперь "обучается" на лету, выявляя аномалии, а не просто сверяется со списком.
+
+## Выводы для инженеров
+
+1. **Диагностика:** Если ваш сервис недоступен, первым делом проверьте размер переданных данных перед разрывом (`curl -v`). Остановка на ~16KB — признак фильтрации на магистрали, а не проблемы софта.
+2. **Мониторинг:** На российских хостингах необходимо внедрять мониторинг доступности. Внезапные "падения" на 10 минут с полным восстановлением — признак срабатывания активных зондов ТСПУ.
+3. **Коллатеральный ущерб:** Под раздачу попадает легитимный HTTPS-трафик, особенно если используются нестандартные реализации TLS или ECH (Encrypted Client Hello), которые система пока не умеет корректно инспектировать и предпочитает блокировать "на всякий случай".
+
+</Lang>
+
+<Lang val="en">
+# Technical Analysis of VPS Connectivity Anomalies and New TSPU Algorithms
+
+From late 2024 to early 2025, network engineers and hosting providers observed a sharp shift in traffic filtering patterns within Russia. There is a transition from simple IP/domain blocking to complex Behavioral Analysis using Machine Learning.
+
+This report analyzes two key phenomena: the "13 KB limit" on foreign channels and the "blackholing" tactic on Russian servers.
+
+<Callout type="warning" title="Disclaimer">
+  This material is for research purposes only. The goal is to help system
+  administrators diagnose connectivity issues and distinguish technical failures
+  from ISP-level filtering.
+</Callout>
+
+## 1. The Foreign Hosting Issue: "13 KB Limit"
+
+One of the most widespread anomalies is the inability to establish HTTPS connections with servers located in the EU and USA (Aeza, Hetzner, DigitalOcean) via major Russian ISPs (Rostelecom, Dom.ru).
+
+### Symptoms
+
+Admins observe the following:
+
+- **ICMP (Ping):** Successful.
+- **SSH (Port 22):** Stable.
+- **HTTPS (Port 443):** Connection established (TCP Handshake OK), but hangs during data transfer.
+
+Attempts to fetch data (e.g., via `curl`) result in a timeout after receiving approximately **13–16 KB** of data.
+
+Typical log error:
+
+```bash
+Operation timed out after 10000 milliseconds with 16134 out of 56865 bytes received
+```
+
+### Technical Explanation
+
+Based on PCAP analysis (Wireshark), the issue occurs during the **TLS Handshake**.
+
+1. **ClientHello** is sent successfully.
+2. **ServerHello** and certificate transmission begin.
+3. Once the transferred data reaches the critical threshold (~13 KB), the TSPU system switches to analysis mode.
+
+Instead of sending an RST packet (connection reset), the DPI system now uses a **"Silent Drop"** or **"Freeze"** method. It simply stops forwarding packets, leaving the TCP session open until it times out.
+
+Presumably, 13 KB is the buffer saturation point required for the neural network to classify the traffic if no obvious signatures (like a banned SNI) are found.
+
+---
+
+## 2. Anomalies on Russian Hosts: "Blackholing"
+
+The situation with domestic providers (Timeweb, Selectel) in St. Petersburg/Moscow follows a different scenario. The reaction here is more aggressive but targeted.
+
+### Blocking Mechanism
+
+Starting November 2025 (according to user reports), the following algorithm is observed:
+
+1. **Detection:** The system analyzes outbound traffic from the VPS.
+2. **Trigger:** If traffic signatures match tunneling or VPN protocols (WireGuard, OpenVPN, etc.), a trigger is activated.
+3. **Reaction:** The server IP is not just blocked on a specific port but sent into a **complete "blackhole"**.
+4. **Consequences:** The server becomes unreachable (including SSH and Ping) for **10 to 15 minutes**. Access is restored automatically after the timeout.
+
+### Comparison
+
+| Parameter   | Foreign Hosts (EU/USA)             | Russian Hosts (RU)                  |
+| :---------- | :--------------------------------- | :---------------------------------- |
+| **Method**  | Selective packet drop (Throttling) | Full IP block (Null routing)        |
+| **Trigger** | Any HTTPS traffic (TLS Handshake)  | Only upon VPN protocol detection    |
+| **Symptom** | Freeze at ~13 KB                   | Total unreachability for 10-15 mins |
+
+---
+
+## 3. Technology Evolution: From Signatures to ML
+
+Research (OONI, Cloudflare, Net4People) indicates a fundamental shift in censorship architecture.
+
+### Old Approach (Static Signatures)
+
+Previously, blocking relied on:
+
+- Specific IP addresses/subnets.
+- Clear-text Domain Names (SNI).
+- "Magic bytes" in packet headers.
+
+### New Approach (Behavioral ML-Analysis)
+
+Current anomalies point to **ML models** analyzing:
+
+- **Timing:** Intervals between packets.
+- **Packet Sizes:** Specific distribution of payload sizes typical for certain protocols.
+- **Entropy:** The degree of data randomness.
+
+This explains why even "clean" protocols get blocked if their behavior deviates from the profile of "a standard browser visiting a standard site." The TSPU system is "learning" on the fly.
+
+## Conclusions for Engineers
+
+1. **Diagnostics:** If your service is unreachable, check the data transfer size before the disconnect (`curl -v`). A stall at ~16KB is a sign of backbone filtering.
+2. **Monitoring:** Implement availability monitoring for Russian VPS. Sudden 10-minute drops with full recovery are a sign of active TSPU probes.
+3. **Collateral Damage:** Legitimate HTTPS traffic suffers, especially if using non-standard TLS implementations or ECH (Encrypted Client Hello), which the system cannot inspect properly and blocks "just in case."
+
+</Lang>

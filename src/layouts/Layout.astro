@@ -49,7 +49,7 @@ const {
     <meta property="og:image" content="/J.png" />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:creator" content="@jerseyfc" />
+    <meta name="twitter:creator" content="" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="/J.png" />
@@ -62,7 +62,7 @@ const {
             "@type": "Person",
             "name": "Jersey",
             "url": "https://rerowros.ru/",
-            "sameAs": ["https://t.me/jerseyfc", "https://github.com/Rerowros"],
+            "sameAs": ["https://t.me/rerowros", "https://github.com/Rerowros"],
             "jobTitle": "Full-Stack Web Developer",
             "makesOffer": 
             [
@@ -123,6 +123,8 @@ const {
   </div>
   
 <script>
+  import { initMagneticButtons } from '../scripts/magnetic';
+
     function initScrollObserver() {
       // ОПТИМИЗАЦИЯ: Используем один Observer на все
       const observer = new IntersectionObserver((entries) => {
@@ -144,9 +146,17 @@ const {
       const animatedElements = document.querySelectorAll('.scroll-animate');
       animatedElements.forEach(element => observer.observe(element));
     }
-    
-    document.addEventListener('astro:page-load', initScrollObserver);
-    document.addEventListener('DOMContentLoaded', initScrollObserver);
+
+    // Инициализация магнитных кнопок (глобально)
+    document.addEventListener('astro:page-load', () => {
+      initScrollObserver();
+      initMagneticButtons();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initScrollObserver();
+      initMagneticButtons();
+    });
 </script>
 
 </body>
