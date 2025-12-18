@@ -1,37 +1,27 @@
 ---
 // src/components/Contact.astro
-import TelegramIcon from "../../components/icons/TelegramIcon.astro";
+import TelegramIcon from '../../components/icons/TelegramIcon.astro';
 ---
 
-<section
-  id="contact"
-  class="flex flex-col items-center justify-center gap-6 text-center"
->
-  <h2
-    class="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight text-foreground"
-  >
+<section id="contact" class="flex flex-col items-center justify-center gap-6 text-center">
+  <h2 class="text-foreground mb-2 text-4xl font-extrabold tracking-tight md:text-5xl">
     <span class="lang-ru">Давайте работать вместе</span>
     <span class="lang-en">Let's build something great</span>
   </h2>
-  <p class="text-lg text-muted-foreground mb-4 max-w-xl">
+  <p class="text-muted-foreground mb-4 max-w-xl text-lg">
     <span class="lang-ru"
-      >У вас есть идея для проекта? Я открыт для предложений и готов помочь в ее
-      реализации. Самый быстрый способ связаться — через Telegram.</span
+      >У вас есть идея для проекта? Я открыт для предложений и готов помочь в ее реализации. Самый
+      быстрый способ связаться — через Telegram.</span
     >
     <span class="lang-en"
-      >Have a project in mind? I'm open to opportunities and ready to help bring
-      your ideas to life. The fastest way to reach me is on Telegram.</span
+      >Have a project in mind? I'm open to opportunities and ready to help bring your ideas to life.
+      The fastest way to reach me is on Telegram.</span
     >
   </p>
 
   <!-- Main CTA with emphasis on Telegram -->
-  <a
-    href="https://t.me/Rerowros"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="btn"
-  >
-    <TelegramIcon class="w-6 h-6" />
+  <a href="https://t.me/Rerowros" target="_blank" rel="noopener noreferrer" class="btn">
+    <TelegramIcon class="h-6 w-6" />
     <span class="lang-ru">Написать в Telegram</span>
     <span class="lang-en">Contact me on Telegram</span>
   </a>

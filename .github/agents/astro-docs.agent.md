@@ -2,7 +2,7 @@
 name: AstroDocs
 description: Эксперт по документации Astro.
 model: Raptor mini (Preview)
-tools: ["astro-docs/*"]
+tools: ['astro-docs/*']
 infer: true
 handoffs:
   - label: 🛠 Реализовать это в коде

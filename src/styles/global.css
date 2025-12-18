@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ========================================
    ПЕРЕМЕННЫЕ И ТЕМЫ
@@ -51,70 +51,70 @@ html.light {
 /* === ЦВЕТОВЫЕ ПАЛИТРЫ === */
 
 /* Indigo (по умолчанию) */
-:root[data-theme="indigo"] {
+:root[data-theme='indigo'] {
   --color-primary: #818cf8;
   --blob-color-1: rgba(124, 58, 237, 0.4);
   --blob-color-2: rgba(79, 70, 229, 0.35);
   --blob-color-3: rgba(139, 92, 246, 0.2);
   --glow-color: rgba(129, 140, 248, 0.4);
 }
-html.light[data-theme="indigo"] {
+html.light[data-theme='indigo'] {
   --color-primary: #6366f1;
   --blob-color-1: rgba(99, 102, 241, 0.25);
   --blob-color-2: rgba(168, 85, 247, 0.2);
 }
 
 /* Lavender */
-:root[data-theme="lavender"] {
+:root[data-theme='lavender'] {
   --color-primary: #c084fc;
   --blob-color-1: rgba(192, 132, 252, 0.4);
   --blob-color-2: rgba(168, 85, 247, 0.35);
   --blob-color-3: rgba(217, 70, 239, 0.2);
   --glow-color: rgba(192, 132, 252, 0.4);
 }
-html.light[data-theme="lavender"] {
+html.light[data-theme='lavender'] {
   --color-primary: #a855f7;
   --blob-color-1: rgba(168, 85, 247, 0.25);
   --blob-color-2: rgba(192, 132, 252, 0.2);
 }
 
 /* Mint */
-:root[data-theme="mint"] {
+:root[data-theme='mint'] {
   --color-primary: #34d399;
   --blob-color-1: rgba(52, 211, 153, 0.4);
   --blob-color-2: rgba(16, 185, 129, 0.35);
   --blob-color-3: rgba(5, 150, 105, 0.2);
   --glow-color: rgba(52, 211, 153, 0.4);
 }
-html.light[data-theme="mint"] {
+html.light[data-theme='mint'] {
   --color-primary: #10b981;
   --blob-color-1: rgba(16, 185, 129, 0.25);
   --blob-color-2: rgba(52, 211, 153, 0.2);
 }
 
 /* Sunny */
-:root[data-theme="sunny"] {
+:root[data-theme='sunny'] {
   --color-primary: #fbbf24;
   --blob-color-1: rgba(251, 191, 36, 0.4);
   --blob-color-2: rgba(245, 158, 11, 0.35);
   --blob-color-3: rgba(217, 119, 6, 0.2);
   --glow-color: rgba(251, 191, 36, 0.4);
 }
-html.light[data-theme="sunny"] {
+html.light[data-theme='sunny'] {
   --color-primary: #f59e0b;
   --blob-color-1: rgba(245, 158, 11, 0.25);
   --blob-color-2: rgba(251, 191, 36, 0.2);
 }
 
 /* Rose */
-:root[data-theme="rose"] {
+:root[data-theme='rose'] {
   --color-primary: #fb7185;
   --blob-color-1: rgba(251, 113, 133, 0.4);
   --blob-color-2: rgba(244, 63, 94, 0.35);
   --blob-color-3: rgba(225, 29, 72, 0.2);
   --glow-color: rgba(251, 113, 133, 0.4);
 }
-html.light[data-theme="rose"] {
+html.light[data-theme='rose'] {
   --color-primary: #f43f5e;
   --blob-color-1: rgba(244, 63, 94, 0.25);
   --blob-color-2: rgba(251, 113, 133, 0.2);
@@ -128,13 +128,15 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
 
-  font-family: "Manrope", sans-serif;
+  font-family: 'Manrope', sans-serif;
   line-height: 1.6;
 
   overflow-x: hidden;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
 }
 /* Добавьте в начало global.css */
 
@@ -195,14 +197,17 @@ body {
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 30px var(--glow-color),
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.15),
+    0 0 30px var(--glow-color),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -217,7 +222,7 @@ h4,
 h5,
 h6,
 .font-cinzel {
-  font-family: "Unbounded", sans-serif; /* Было 'Cinzel' */
+  font-family: 'Unbounded', sans-serif; /* Было 'Cinzel' */
   letter-spacing: -0.03em;
   font-weight: 900; /* Unbounded лучше смотрится в жирном начертании */
   font-display: swap;
@@ -257,7 +262,9 @@ h1 {
   padding: 0.75rem 2rem;
   font-weight: 500;
   font-size: 1.125rem;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
   cursor: pointer;
 }
 
@@ -291,7 +298,8 @@ h1 {
 .scroll-animate {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.8s ease-out,
+  transition:
+    opacity 0.8s ease-out,
     transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -352,7 +360,9 @@ h1 {
 .image-modal-img {
   transform: translateY(8px) scale(0.98);
   opacity: 0;
-  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), opacity 220ms ease;
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms ease;
 }
 .image-modal.image-modal-open .image-modal-img {
   transform: translateY(0) scale(1);
@@ -366,25 +376,33 @@ h1 {
 .theme-sun-enter {
   opacity: 1;
   transform: rotate(0deg) scale(1);
-  transition: opacity 0.4s, transform 0.4s;
+  transition:
+    opacity 0.4s,
+    transform 0.4s;
 }
 
 .theme-sun-leave {
   opacity: 0;
   transform: rotate(180deg) scale(0.5);
-  transition: opacity 0.4s, transform 0.4s;
+  transition:
+    opacity 0.4s,
+    transform 0.4s;
 }
 
 .theme-moon-enter {
   opacity: 1;
   transform: rotate(0deg) scale(1);
-  transition: opacity 0.4s, transform 0.4s;
+  transition:
+    opacity 0.4s,
+    transform 0.4s;
 }
 
 .theme-moon-leave {
   opacity: 0;
   transform: rotate(-180deg) scale(0.5);
-  transition: opacity 0.4s, transform 0.4s;
+  transition:
+    opacity 0.4s,
+    transform 0.4s;
 }
 
 .menu-visible {
@@ -402,17 +420,17 @@ h1 {
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-html[data-astro-transition="forward"]::view-transition-old(root) {
+html[data-astro-transition='forward']::view-transition-old(root) {
   animation-name: slide-to-left;
 }
-html[data-astro-transition="forward"]::view-transition-new(root) {
+html[data-astro-transition='forward']::view-transition-new(root) {
   animation-name: slide-from-right;
 }
 
-html[data-astro-transition="back"]::view-transition-old(root) {
+html[data-astro-transition='back']::view-transition-old(root) {
   animation-name: slide-to-right;
 }
-html[data-astro-transition="back"]::view-transition-new(root) {
+html[data-astro-transition='back']::view-transition-new(root) {
   animation-name: slide-from-left;
 }
 
@@ -453,11 +471,11 @@ html[data-astro-transition="back"]::view-transition-new(root) {
   display: none;
 }
 
-html[lang="ru"] .lang-ru {
+html[lang='ru'] .lang-ru {
   display: initial;
 }
 
-html[lang="en"] .lang-en {
+html[lang='en'] .lang-en {
   display: initial;
 }
 
@@ -532,11 +550,8 @@ body {
 /* 1. Глобальная сетка (как на фоне сайта, но адаптированная для блоков) */
 .bg-grid-pattern {
   background-size: 40px 40px;
-  background-image: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px
-    ),
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -629,7 +644,7 @@ body {
 
 /* Декоративная черта под заголовками */
 .prose h2::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   bottom: -5px;
@@ -645,7 +660,7 @@ body {
 }
 
 .post-page .btn-share {
-  @apply inline-flex items-center justify-center rounded-xl font-semibold text-sm transition-all shadow-sm;
+  @apply inline-flex items-center justify-center rounded-xl text-sm font-semibold shadow-sm transition-all;
   gap: 0.5rem; /* equivalent to Tailwind's gap-2 */
   padding: 0.75rem 1.5rem; /* py-3 px-6 fallback */
 
@@ -681,7 +696,7 @@ body {
 }
 
 .post-page .article-content code {
-  @apply px-1.5 py-0.5 rounded-md font-mono text-sm border;
+  @apply rounded-md border px-1.5 py-0.5 font-mono text-sm;
   background-color: color-mix(in srgb, var(--color-border) 50%, transparent);
   color: var(--color-primary);
   border-color: color-mix(in srgb, var(--color-border) 50%, transparent);

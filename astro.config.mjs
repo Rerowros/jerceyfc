@@ -19,7 +19,7 @@ export default defineConfig({
     defaultLocale: 'ru',
     locales: ['ru', 'en'],
     routing: {
-      prefixDefaultLocale: false, 
+      prefixDefaultLocale: false,
     },
   },
 
@@ -29,23 +29,23 @@ export default defineConfig({
     remarkPlugins: [remarkGfm],
     // Плагины для обработки HTML (ID для заголовков + ссылки)
     rehypePlugins: [
-      rehypeSlug, 
+      rehypeSlug,
       [
-        rehypeAutolinkHeadings, 
-        { behavior: 'wrap' } // Оборачивает заголовок в ссылку
-      ]
+        rehypeAutolinkHeadings,
+        { behavior: 'wrap' }, // Оборачивает заголовок в ссылку
+      ],
     ],
     // Подсветка кода
     shikiConfig: {
       theme: 'dracula',
-      wrap: true
-    }
+      wrap: true,
+    },
   },
 
   integrations: [
     mdx(), // Включаем поддержку .mdx файлов
-    sitemap(), 
-    react()
+    sitemap(),
+    react(),
   ],
 
   // Ваша конфигурация Vite + Tailwind
@@ -56,17 +56,17 @@ export default defineConfig({
           darkMode: 'class',
           content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
           theme: {
-            extend: { 
+            extend: {
               backgroundImage: {
                 'theme-gradient': `radial-gradient(at 20% 10%, hsl(var(--primary-hsl)/.1), transparent 50%),
                                    radial-gradient(at 80% 20%, hsl(var(--muted-hsl)/.1), transparent 50%),
                                    radial-gradient(at 50% 80%, hsl(var(--primary-hsl)/.05), transparent 50%)`,
-              }
-            }
+              },
+            },
           },
           plugins: [],
-        }
-      })
-    ]
+        },
+      }),
+    ],
   },
 });

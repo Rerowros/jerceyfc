@@ -1,11 +1,11 @@
 ---
 // src/pages/about/index.astro
-import { fade } from "astro:transitions";
-import Layout from "../../layouts/Layout.astro";
-import Header from "../../components/layout/Header.astro";
-import EmailIcon from "../../components/icons/EmailIcon.astro";
-import TelegramIcon from "../../components/icons/TelegramIcon.astro";
-import Footer from "../../components/layout/Footer.astro";
+import { fade } from 'astro:transitions';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+import EmailIcon from '../../components/icons/EmailIcon.astro';
+import TelegramIcon from '../../components/icons/TelegramIcon.astro';
+import Footer from '../../components/layout/Footer.astro';
 ---
 
 <Layout
@@ -17,11 +17,11 @@ import Footer from "../../components/layout/Footer.astro";
 
   <section
     id="about-question"
-    class="min-h-[60vh] md:min-h-[70vh] w-full flex items-center justify-center bg-primary text-primary-foreground relative overflow-hidden"
+    class="bg-primary text-primary-foreground relative flex min-h-[60vh] w-full items-center justify-center overflow-hidden md:min-h-[70vh]"
   >
     <h2
       id="question-title"
-      class="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight opacity-0 scale-100 transition-all duration-700 text-center px-6 leading-tight"
+      class="scale-100 px-6 text-center text-3xl leading-tight font-extrabold tracking-tight opacity-0 transition-all duration-700 sm:text-4xl md:text-6xl"
     >
       <span class="lang-ru">Вам действительно это интересно?</span>
       <span class="lang-en">Are you really interested?</span>
@@ -31,105 +31,89 @@ import Footer from "../../components/layout/Footer.astro";
   <!-- Основной контент страницы -->
   <section
     id="about-card"
-    class="w-full bg-background py-12 md:py-24"
-    transition:animate={fade({ duration: "0.2s" })}
+    class="bg-background w-full py-12 md:py-24"
+    transition:animate={fade({ duration: '0.2s' })}
   >
     <div
-      class="max-w-3xl mx-auto px-6 md:px-8 py-8 opacity-0 scale-100 transition-all duration-700 space-y-12"
+      class="mx-auto max-w-3xl scale-100 space-y-12 px-6 py-8 opacity-0 transition-all duration-700 md:px-8"
     >
       <div>
-        <h3
-          class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6"
-        >
+        <h3 class="text-foreground mb-4 text-2xl font-extrabold md:mb-6 md:text-4xl">
           <span class="lang-ru">Мой подход к работе</span>
           <span class="lang-en">My Approach to Work</span>
         </h3>
-        <div class="text-base md:text-lg text-muted-foreground space-y-4">
+        <div class="text-muted-foreground space-y-4 text-base md:text-lg">
           <p>
             <span class="lang-ru">
-              Я специализируюсь на веб-разработке (React, TypeScript) и создании
-              Telegram-ботов (Python). Для меня код — это инструмент решения
-              бизнес-задач.
+              Я специализируюсь на веб-разработке (React, TypeScript) и создании Telegram-ботов
+              (Python). Для меня код — это инструмент решения бизнес-задач.
             </span>
             <span class="lang-en">
-              I specialize in web development (React, TypeScript) and creating
-              Telegram bots (Python). For me, code is a tool for solving
-              business problems.
+              I specialize in web development (React, TypeScript) and creating Telegram bots
+              (Python). For me, code is a tool for solving business problems.
             </span>
           </p>
           <p>
             <span class="lang-ru">
-              Стремлюсь писать чистый, поддерживаемый код, который легко
-              масштабировать. Если это веб-приложение — оно должно быть быстрым
-              и отзывчивым. Если бот — он должен работать без сбоев.
+              Стремлюсь писать чистый, поддерживаемый код, который легко масштабировать. Если это
+              веб-приложение — оно должно быть быстрым и отзывчивым. Если бот — он должен работать
+              без сбоев.
             </span>
             <span class="lang-en">
-              I strive to write clean, maintainable code that is easy to scale.
-              If it's a web app, it must be fast and responsive. If it's a bot,
-              it must run flawlessly.
+              I strive to write clean, maintainable code that is easy to scale. If it's a web app,
+              it must be fast and responsive. If it's a bot, it must run flawlessly.
             </span>
           </p>
 
           <!-- Новая секция: Почему со мной надежно / Why me -->
           <div>
-            <h4 class="text-xl md:text-2xl font-bold text-foreground mb-4">
-              <span class="lang-ru"
-                >Почему я, а не школьник с фриланс-биржи?</span
-              >
+            <h4 class="text-foreground mb-4 text-xl font-bold md:text-2xl">
+              <span class="lang-ru">Почему я, а не школьник с фриланс-биржи?</span>
               <span class="lang-en">Why me?</span>
             </h4>
-            <div class="text-base md:text-lg text-muted-foreground space-y-6">
+            <div class="text-muted-foreground space-y-6 text-base md:text-lg">
               <p>
                 <span class="lang-ru">
-                  Я работаю не в вакууме. В текущих коммерческих проектах мой
-                  код проходит жесткое
-                  <strong
-                    >Code Review от Senior-инженера из VK (Big Tech)</strong
-                  >.
+                  Я работаю не в вакууме. В текущих коммерческих проектах мой код проходит жесткое
+                  <strong>Code Review от Senior-инженера из VK (Big Tech)</strong>.
                 </span>
                 <span class="lang-en">
                   I don't work in a vacuum. My code undergoes strict
-                  <strong
-                    >Code Review by a Senior Engineer from VK (Big Tech)</strong
-                  >.
+                  <strong>Code Review by a Senior Engineer from VK (Big Tech)</strong>.
                 </span>
               </p>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                <div class="p-4 rounded-xl bg-card border border-border">
-                  <h5 class="font-bold text-foreground mb-2">
+              <div class="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div class="bg-card border-border rounded-xl border p-4">
+                  <h5 class="text-foreground mb-2 font-bold">
                     <span class="lang-ru">Python & Bots</span>
                     <span class="lang-en">Python & Bots</span>
                   </h5>
                   <p class="text-sm">
                     <span class="lang-ru">
-                      Пишу по стандартам Enterprise-разработки. Это значит, что
-                      бот не упадет, когда в него зайдут 1000 человек разом, и
-                      его легко поддерживать.
+                      Пишу по стандартам Enterprise-разработки. Это значит, что бот не упадет, когда
+                      в него зайдут 1000 человек разом, и его легко поддерживать.
                     </span>
                     <span class="lang-en">
-                      Enterprise-grade standards. Scalable, maintainable,
-                      crash-proof.
+                      Enterprise-grade standards. Scalable, maintainable, crash-proof.
                     </span>
                   </p>
                 </div>
 
-                <div class="p-4 rounded-xl bg-card border border-border">
-                  <h5 class="font-bold text-foreground mb-2">
+                <div class="bg-card border-border rounded-xl border p-4">
+                  <h5 class="text-foreground mb-2 font-bold">
                     <span class="lang-ru">Web & Architecture</span>
                     <span class="lang-en">Web & Architecture</span>
                   </h5>
                   <p class="text-sm">
                     <span class="lang-ru">
-                      В проектах вроде VPN-сервиса я выступаю как <strong
-                        >Lead Developer</strong
-                      >. Сам проектирую базу, настраиваю CI/CD и деплой. Вы
-                      получаете готовый продукт под ключ, а не просто набор
-                      файлов.
+                      В проектах вроде VPN-сервиса я выступаю как <strong>Lead Developer</strong>.
+                      Сам проектирую базу, настраиваю CI/CD и деплой. Вы получаете готовый продукт
+                      под ключ, а не просто набор файлов.
                     </span>
                     <span class="lang-en">
-                      Acting as Lead Developer: Architecture, CI/CD, Deployment.
-                      You get a turnkey product.
+                      Acting as Lead Developer: Architecture, CI/CD, Deployment. You get a turnkey
+                      product.
                     </span>
                   </p>
                 </div>
@@ -138,17 +122,15 @@ import Footer from "../../components/layout/Footer.astro";
           </div>
 
           <div>
-            <h3
-              class="text-2xl md:text-4xl font-extrabold text-foreground mb-4 md:mb-6"
-            >
+            <h3 class="text-foreground mb-4 text-2xl font-extrabold md:mb-6 md:text-4xl">
               <span class="lang-ru">Мои принципы</span>
               <span class="lang-en">My Principles</span>
             </h3>
-            <div class="text-base md:text-lg text-muted-foreground space-y-4">
-              <ul class="space-y-4 list-inside">
+            <div class="text-muted-foreground space-y-4 text-base md:text-lg">
+              <ul class="list-inside space-y-4">
                 <li class="flex items-start">
                   <svg
-                    class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0"
+                    class="text-primary mt-1 mr-3 h-6 w-6 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -160,22 +142,17 @@ import Footer from "../../components/layout/Footer.astro";
                   >
                   <span>
                     <strong class="text-foreground"
-                      ><span class="lang-ru">Честность.</span><span
-                        class="lang-en">Honesty.</span
+                      ><span class="lang-ru">Честность.</span><span class="lang-en">Honesty.</span
                       ></strong
                     >
                     <br class="md:hidden" />
-                    <span class="lang-ru"
-                      >Говорить прямо о проблемах и сроках.</span
-                    >
-                    <span class="lang-en"
-                      >To speak directly about problems and deadlines.</span
-                    >
+                    <span class="lang-ru">Говорить прямо о проблемах и сроках.</span>
+                    <span class="lang-en">To speak directly about problems and deadlines.</span>
                   </span>
                 </li>
                 <li class="flex items-start">
                   <svg
-                    class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0"
+                    class="text-primary mt-1 mr-3 h-6 w-6 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -187,77 +164,61 @@ import Footer from "../../components/layout/Footer.astro";
                   >
                   <span>
                     <strong class="text-foreground"
-                      ><span class="lang-ru">Качество.</span><span
-                        class="lang-en">Quality.</span
+                      ><span class="lang-ru">Качество.</span><span class="lang-en">Quality.</span
                       ></strong
                     >
                     <br class="md:hidden" />
-                    <span class="lang-ru"
-                      >Делать так, чтобы потом не пришлось переделывать.</span
-                    >
-                    <span class="lang-en"
-                      >Do it right so you don't have to redo it later.</span
-                    >
+                    <span class="lang-ru">Делать так, чтобы потом не пришлось переделывать.</span>
+                    <span class="lang-en">Do it right so you don't have to redo it later.</span>
                   </span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div
-            class="border-l-4 border-primary pl-4 md:pl-6 py-2 bg-primary/5 rounded-r-xl"
-          >
+          <div class="border-primary bg-primary/5 rounded-r-xl border-l-4 py-2 pl-4 md:pl-6">
             <!-- Добавил фон -->
-            <h4 class="text-xl md:text-3xl font-bold text-foreground mb-3">
+            <h4 class="text-foreground mb-3 text-xl font-bold md:text-3xl">
               <span class="lang-ru" data-no-animate>
                 <span>За деньги — да. </span>
-                <span
-                  class="spoiler-text font-cinzel text-primary"
-                  title="Нажмите, чтобы увидеть">Но не хуйню.</span
+                <span class="spoiler-text font-cinzel text-primary" title="Нажмите, чтобы увидеть"
+                  >Но не хуйню.</span
                 >
               </span>
               <span class="lang-en" data-no-animate>
                 <span>For money — yes. </span>
-                <span class="spoiler-text" title="Click to reveal"
-                  >But I don't ship garbage.</span
-                >
+                <span class="spoiler-text" title="Click to reveal">But I don't ship garbage.</span>
               </span>
             </h4>
-            <p class="text-base md:text-lg text-muted-foreground">
+            <p class="text-muted-foreground text-base md:text-lg">
               <span class="lang-ru">
-                Я ценю своё время и опыт. Но я не буду участвовать в проектах
-                без чёткой цели или там, где от меня ждут халтуры. Моя работа —
-                создавать ценность, а не просто выставлять счета.
+                Я ценю своё время и опыт. Но я не буду участвовать в проектах без чёткой цели или
+                там, где от меня ждут халтуры. Моя работа — создавать ценность, а не просто
+                выставлять счета.
               </span>
               <span class="lang-en">
-                I value my time and expertise. But I won't participate in
-                projects without a clear purpose or where shoddy work is
-                expected. My job is to create value, not just to bill hours.
+                I value my time and expertise. But I won't participate in projects without a clear
+                purpose or where shoddy work is expected. My job is to create value, not just to
+                bill hours.
               </span>
             </p>
           </div>
 
-          <div class="text-center pt-12 md:pt-16">
-            <h3 class="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          <div class="pt-12 text-center md:pt-16">
+            <h3 class="text-foreground mb-4 text-2xl font-bold md:text-3xl">
               <span class="lang-ru">Готовы к диалогу?</span>
               <span class="lang-en">Ready to talk?</span>
             </h3>
-            <p class="text-muted-foreground mb-8 max-w-xl mx-auto">
-              <span class="lang-ru"
-                >Пишите в Telegram — это самый быстрый способ связи.</span
-              >
-              <span class="lang-en"
-                >Message me on Telegram — it's the fastest way to connect.</span
-              >
+            <p class="text-muted-foreground mx-auto mb-8 max-w-xl">
+              <span class="lang-ru">Пишите в Telegram — это самый быстрый способ связи.</span>
+              <span class="lang-en">Message me on Telegram — it's the fastest way to connect.</span>
             </p>
-            <div
-              class="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
+            <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a
                 href="mailto:rerowros@gmail.com"
-                class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200"
+                class="btn group flex w-full items-center justify-center gap-3 px-6 py-3 transition-all duration-200 sm:w-auto"
               >
-                <EmailIcon class="w-6 h-6" />
+                <EmailIcon class="h-6 w-6" />
                 <span class="font-semibold">
                   <span class="lang-ru">Email</span>
                   <span class="lang-en">Email</span>
@@ -267,9 +228,9 @@ import Footer from "../../components/layout/Footer.astro";
                 href="https://t.me/rerowros"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="btn group w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 transition-all duration-200"
+                class="btn group flex w-full items-center justify-center gap-3 px-6 py-3 transition-all duration-200 sm:w-auto"
               >
-                <TelegramIcon class="w-6 h-6" />
+                <TelegramIcon class="h-6 w-6" />
                 <span class="font-semibold">
                   <span class="lang-ru">Telegram</span>
                   <span class="lang-en">Telegram</span>
@@ -283,25 +244,18 @@ import Footer from "../../components/layout/Footer.astro";
       <!-- Скрипт анимации About остался без изменений -->
       <script>
         function initAboutAnimations() {
-          const question = document.getElementById(
-            "question-title"
-          ) as HTMLElement | null;
-          const card = document.getElementById(
-            "about-card"
-          ) as HTMLElement | null;
+          const question = document.getElementById('question-title') as HTMLElement | null;
+          const card = document.getElementById('about-card') as HTMLElement | null;
           const cardContent = card
-            ? (card.querySelector(".max-w-3xl") as HTMLElement | null)
+            ? (card.querySelector('.max-w-3xl') as HTMLElement | null)
             : null;
           const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
           function animateQuestion() {
-            const section = document.getElementById("about-question");
+            const section = document.getElementById('about-question');
             if (!section || !question) return;
             const rect = section.getBoundingClientRect();
             const vh = window.innerHeight;
-            let progress = Math.min(
-              1,
-              Math.max(0, (vh - rect.top) / (vh * 0.8))
-            );
+            let progress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.8)));
             progress = easeOut(progress);
             window.requestAnimationFrame(() => {
               question.style.opacity = String(progress);
@@ -315,10 +269,7 @@ import Footer from "../../components/layout/Footer.astro";
             if (rect.top < triggerPoint) {
               let progress = Math.min(
                 1,
-                Math.max(
-                  0,
-                  (triggerPoint - rect.top) / (window.innerHeight * 0.5)
-                )
+                Math.max(0, (triggerPoint - rect.top) / (window.innerHeight * 0.5))
               );
               progress = easeOut(progress);
               window.requestAnimationFrame(() => {
@@ -331,21 +282,21 @@ import Footer from "../../components/layout/Footer.astro";
             animateQuestion();
             animateCard();
           }
-          window.addEventListener("scroll", onScroll, { passive: true });
+          window.addEventListener('scroll', onScroll, { passive: true });
           onScroll();
-          const spoilers = document.querySelectorAll(".spoiler-text");
+          const spoilers = document.querySelectorAll('.spoiler-text');
           spoilers.forEach((spoiler) => {
             spoiler.addEventListener(
-              "click",
+              'click',
               () => {
-                spoiler.classList.add("is-revealed");
+                spoiler.classList.add('is-revealed');
               },
               { once: true }
             );
           });
         }
-        document.addEventListener("DOMContentLoaded", initAboutAnimations);
-        document.addEventListener("astro:page-load", initAboutAnimations);
+        document.addEventListener('DOMContentLoaded', initAboutAnimations);
+        document.addEventListener('astro:page-load', initAboutAnimations);
       </script>
 
       <style>

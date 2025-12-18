@@ -3,7 +3,7 @@
 export function initMagneticButtons() {
   const buttons = document.querySelectorAll<HTMLElement>('.btn, .icon-btn, .magnetic');
 
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     btn.addEventListener('mousemove', (e: MouseEvent) => {
       const rect = btn.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;

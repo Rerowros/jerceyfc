@@ -1,15 +1,15 @@
 ---
 // src/pages/index.astro
 // ИСПРАВЛЕНИЕ: Убран импорт global.css, так как он уже есть в Layout
-import { slide } from "astro:transitions";
+import { slide } from 'astro:transitions';
 
-import Layout from "../layouts/Layout.astro";
-import Header from "../components/layout/Header.astro";
-import Hero from "../components/sections/Hero.astro";
-import Skills from "../components/sections/Skills.astro";
-import Projects from "../components/sections/Projects.astro";
-import StickyContact from "../components/sections/StickyContact.astro";
-import Footer from "../components/layout/Footer.astro";
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/layout/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import Skills from '../components/sections/Skills.astro';
+import Projects from '../components/sections/Projects.astro';
+import StickyContact from '../components/sections/StickyContact.astro';
+import Footer from '../components/layout/Footer.astro';
 ---
 
 <Layout
@@ -19,11 +19,7 @@ import Footer from "../components/layout/Footer.astro";
 >
   <Header />
   <div>
-    <div
-      id="main-content-wrapper"
-      class="flex flex-col"
-      style="transition: filter 0.4s ease-out;"
-    >
+    <div id="main-content-wrapper" class="flex flex-col" style="transition: filter 0.4s ease-out;">
       <!-- Hero секция -->
       <Hero />
 
@@ -34,10 +30,7 @@ import Footer from "../components/layout/Footer.astro";
     </div>
 
     <!-- Sticky Contact -->
-    <div
-      class="sticky-parent-container"
-      style="height: 200vh; position: relative;"
-    >
+    <div class="sticky-parent-container" style="height: 200vh; position: relative;">
       <StickyContact />
     </div>
   </div>

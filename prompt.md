@@ -85,6 +85,7 @@ Proceeding to fetch project info (Astro version, UI frameworks, Tailwind presenc
 // src/layouts/Layout.astro
 import { ClientRouter } from 'astro:transitions';
 ---
+
 <html>
   <head>
     <ClientRouter />
@@ -106,6 +107,7 @@ import { ClientRouter } from 'astro:transitions';
 ---
 // src/pages/index.astro
 ---
+
 <a href="/about">About</a>
 <section class="hero">Главный блок</section>
 ```
@@ -114,6 +116,7 @@ import { ClientRouter } from 'astro:transitions';
 ---
 // src/pages/about.astro
 ---
+
 <a href="/">Home</a>
 <section class="hero">About block</section>
 ```
@@ -156,6 +159,7 @@ export default function Hero() {
 ---
 import Hero from '../components/Hero.jsx';
 ---
+
 <Hero client:load />
 ```
 
@@ -171,10 +175,10 @@ import Hero from '../components/Hero.jsx';
 function navigateToAbout() {
   if (document.startViewTransition) {
     document.startViewTransition(() => {
-      location.href = "/about";
+      location.href = '/about';
     });
   } else {
-    location.href = "/about";
+    location.href = '/about';
   }
 }
 ```
@@ -190,8 +194,8 @@ function navigateToAbout() {
 - **Поддержка браузеров:** Chromium (Chrome/Edge) — стабильно; Safari/Firefox — частично или отсутствует (на 2025). Всегда проверяйте `if (document.startViewTransition)` и делайте fallback.
 - **Полифилл:** можно подключить (например, пакет view-transitions-polyfill) и подгружать лениво:
   ```js
-  if (!("startViewTransition" in document)) {
-    import("view-transitions-polyfill");
+  if (!('startViewTransition' in document)) {
+    import('view-transitions-polyfill');
   }
   ```
 - **SEO:** не ломает SEO, если страницы доступны обычными ссылками (SSR/SSG).

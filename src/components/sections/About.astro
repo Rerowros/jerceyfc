@@ -1,54 +1,50 @@
 ---
 // src/components/About.astro
-import GitHubIcon from "../../components/icons/GitHubIcon.astro";
-import LinkedInIcon from "../../components/icons/LinkedInIcon.astro";
+import GitHubIcon from '../../components/icons/GitHubIcon.astro';
+import LinkedInIcon from '../../components/icons/LinkedInIcon.astro';
 ---
 
 <div
-  class="bg-card/70 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-xl flex flex-col h-full transition-all duration-300 hover:border-primary/50 hover:shadow-primary/10"
+  class="bg-card/70 border-border hover:border-primary/50 hover:shadow-primary/10 flex h-full flex-col rounded-2xl border p-8 shadow-xl backdrop-blur-sm transition-all duration-300"
 >
-  <h2 class="text-3xl font-extrabold tracking-tight text-foreground mb-4">
+  <h2 class="text-foreground mb-4 text-3xl font-extrabold tracking-tight">
     <span class="lang-ru">Обо мне</span>
     <span class="lang-en">About Me</span>
   </h2>
   <p class="text-muted-foreground mb-6 flex-grow">
     <span class="lang-ru">
-      Веб-разработчик, который превращает бизнес-задачи в элегантные и
-      производительные цифровые продукты. Моя цель — создавать интерфейсы,
-      которые не только отлично выглядят, но и интуитивно понятны для
-      пользователей и легко поддерживаются другими разработчиками.
+      Веб-разработчик, который превращает бизнес-задачи в элегантные и производительные цифровые
+      продукты. Моя цель — создавать интерфейсы, которые не только отлично выглядят, но и интуитивно
+      понятны для пользователей и легко поддерживаются другими разработчиками.
     </span>
     <span class="lang-en">
-      A web developer who transforms business objectives into elegant and
-      high-performance digital products. My goal is to create interfaces that
-      not only look great but are also intuitive for users and easily
-      maintainable for fellow developers.
+      A web developer who transforms business objectives into elegant and high-performance digital
+      products. My goal is to create interfaces that not only look great but are also intuitive for
+      users and easily maintainable for fellow developers.
     </span>
   </p>
-  <h2 class="text-3xl font-extrabold tracking-tight text-foreground mb-4">
+  <h2 class="text-foreground mb-4 text-3xl font-extrabold tracking-tight">
     <span class="lang-ru">Моя Философия</span>
     <span class="lang-en">My Philosophy</span>
   </h2>
-  <div class="text-muted-foreground space-y-4 flex-grow">
+  <div class="text-muted-foreground flex-grow space-y-4">
     <p>
       <span class="lang-ru">
-        Я верю, что лучший код — это результат инженерной дисциплины и эмпатии.
-        Дисциплина в написании чистого, масштабируемого кода. Эмпатия к
-        конечному пользователю продукта и к коллеге, который будет с этим кодом
-        работать.
+        Я верю, что лучший код — это результат инженерной дисциплины и эмпатии. Дисциплина в
+        написании чистого, масштабируемого кода. Эмпатия к конечному пользователю продукта и к
+        коллеге, который будет с этим кодом работать.
       </span>
       <span class="lang-en">
-        I believe the best code is a result of engineering discipline and
-        empathy. Discipline in writing clean, scalable code. Empathy for the
-        end-user of the product and for the colleague who will work with that
-        code next.
+        I believe the best code is a result of engineering discipline and empathy. Discipline in
+        writing clean, scalable code. Empathy for the end-user of the product and for the colleague
+        who will work with that code next.
       </span>
     </p>
   </div>
   <div class="mt-auto flex items-center justify-between pt-6">
     <!-- Левая часть: Социальные сети -->
     <div class="flex items-center gap-4">
-      <span class="font-semibold text-muted-foreground">
+      <span class="text-muted-foreground font-semibold">
         <span class="lang-ru">Найти меня на:</span>
         <span class="lang-en">Find me on:</span>
       </span>
@@ -59,7 +55,7 @@ import LinkedInIcon from "../../components/icons/LinkedInIcon.astro";
         class="text-muted-foreground hover:text-primary transition-colors"
         aria-label="GitHub"
       >
-        <GitHubIcon class="w-6 h-6" />
+        <GitHubIcon class="h-6 w-6" />
       </a>
       <a
         href="https://linkedin.com/in/your-profile"
@@ -68,25 +64,21 @@ import LinkedInIcon from "../../components/icons/LinkedInIcon.astro";
         class="text-muted-foreground hover:text-primary transition-colors"
         aria-label="LinkedIn"
       >
-        <LinkedInIcon class="w-6 h-6" />
+        <LinkedInIcon class="h-6 w-6" />
       </a>
     </div>
 
     <!-- Правая часть: Кнопка "Подробнее" -->
-    <a
-      href="/about"
-      class="group flex items-center btn transition-all duration-200"
-    >
+    <a href="/about" class="group btn flex items-center transition-all duration-200">
       <span class="lang-ru">Подробнее</span>
       <span class="lang-en">Learn more</span>
       <svg
-        class="w-5 h-5 group-hover:translate-x-1 transition-transform"
+        class="h-5 w-5 transition-transform group-hover:translate-x-1"
         fill="none"
         stroke="currentColor"
         stroke-width="2"
         viewBox="0 0 24 24"
-        ><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"
-        ></path></svg
+        ><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg
       >
     </a>
   </div>

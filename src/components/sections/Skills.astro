@@ -2,16 +2,16 @@
 // src/components/sections/Skills.astro
 ---
 
-<section id="skills" class="py-12 md:py-20 px-4">
-  <div class="max-w-7xl mx-auto">
+<section id="skills" class="px-4 py-12 md:py-20">
+  <div class="mx-auto max-w-7xl">
     <!-- Заголовок секции -->
-    <div class="text-center mb-10 md:mb-16">
+    <div class="mb-10 text-center md:mb-16">
       <p class="section-title hero-animate">
         <span class="lang-ru">Экспертиза</span>
         <span class="lang-en">Expertise</span>
       </p>
       <h2
-        class="text-3xl md:text-5xl font-bold font-cinzel text-glow hero-animate"
+        class="font-cinzel text-glow hero-animate text-3xl font-bold md:text-5xl"
         style="transition-delay: 100ms;"
       >
         <span class="lang-ru">Основной Стек</span>
@@ -20,26 +20,21 @@
     </div>
 
     <!-- Обновленная сетка навыков -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
       <!-- 1. Frontend & Main Work (Главный акцент) -->
       <div
-        class="group relative overflow-hidden rounded-2xl bg-[var(--color-card)] border border-[var(--color-border)] p-6 md:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/50 h-full"
+        class="group relative h-full overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 transition-all duration-300 hover:border-[var(--color-primary)]/50 md:p-8"
       >
         <div
-          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         >
         </div>
-        <div class="relative z-10 flex flex-col h-full">
+        <div class="relative z-10 flex h-full flex-col">
           <div
-            class="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+            class="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
           >
             <!-- React/Atom Icon -->
-            <svg
-              class="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -48,29 +43,19 @@
               ></path>
             </svg>
           </div>
-          <h3 class="mb-2 text-xl md:text-2xl font-bold font-cinzel">
+          <h3 class="font-cinzel mb-2 text-xl font-bold md:text-2xl">
             <span class="lang-ru">Современный Web</span>
             <span class="lang-en">Modern Web</span>
           </h3>
-          <p class="text-sm text-[var(--color-muted-foreground)] mb-4">
+          <p class="mb-4 text-sm text-[var(--color-muted-foreground)]">
             <span class="lang-ru"
-              >Основное направление работы. Создание сложных SPA и SSR
-              приложений.</span
+              >Основное направление работы. Создание сложных SPA и SSR приложений.</span
             >
-            <span class="lang-en"
-              >Primary focus. Building complex SPA and SSR applications.</span
-            >
+            <span class="lang-en">Primary focus. Building complex SPA and SSR applications.</span>
           </p>
-          <div class="flex flex-wrap gap-2 mt-auto">
+          <div class="mt-auto flex flex-wrap gap-2">
             {
-              [
-                "TypeScript",
-                "React",
-                "Next.js",
-                "Astro",
-                "Tailwind CSS",
-                "Node.js",
-              ].map((tech) => (
+              ['TypeScript', 'React', 'Next.js', 'Astro', 'Tailwind CSS', 'Node.js'].map((tech) => (
                 <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
                   {tech}
                 </span>
@@ -82,24 +67,19 @@
 
       <!-- 2. Python & Automation (Боты и скрипты) -->
       <div
-        class="group relative overflow-hidden rounded-2xl bg-[var(--color-card)] border border-[var(--color-border)] p-6 md:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/50 h-full hero-animate"
+        class="group hero-animate relative h-full overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 transition-all duration-300 hover:border-[var(--color-primary)]/50 md:p-8"
         style="transition-delay: 200ms;"
       >
         <div
-          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         >
         </div>
-        <div class="relative z-10 flex flex-col h-full">
+        <div class="relative z-10 flex h-full flex-col">
           <div
-            class="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+            class="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
           >
             <!-- Terminal/Bot Icon -->
-            <svg
-              class="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -108,27 +88,23 @@
               ></path>
             </svg>
           </div>
-          <h3 class="mb-2 text-xl md:text-2xl font-bold font-cinzel">
+          <h3 class="font-cinzel mb-2 text-xl font-bold md:text-2xl">
             <span class="lang-ru">Python и Боты</span>
             <span class="lang-en">Python & Bots</span>
           </h3>
-          <p class="text-sm text-[var(--color-muted-foreground)] mb-4">
+          <p class="mb-4 text-sm text-[var(--color-muted-foreground)]">
             <span class="lang-ru"
               >Разработка Telegram-ботов, парсеров и скриптов автоматизации.</span
             >
-            <span class="lang-en"
-              >Developing Telegram bots, parsers, and automation scripts.</span
-            >
+            <span class="lang-en">Developing Telegram bots, parsers, and automation scripts.</span>
           </p>
-          <div class="flex flex-wrap gap-2 mt-auto">
+          <div class="mt-auto flex flex-wrap gap-2">
             {
-              ["Python", "Telegram API", "Aiogram", "Telethon", "AsyncIO"].map(
-                (tech) => (
-                  <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
-                    {tech}
-                  </span>
-                )
-              )
+              ['Python', 'Telegram API', 'Aiogram', 'Telethon', 'AsyncIO'].map((tech) => (
+                <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
+                  {tech}
+                </span>
+              ))
             }
           </div>
         </div>
@@ -136,24 +112,19 @@
 
       <!-- 3. Tools & DevOps (Инструменты) -->
       <div
-        class="group relative overflow-hidden rounded-2xl bg-[var(--color-card)] border border-[var(--color-border)] p-6 md:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/50 h-full hero-animate"
+        class="group hero-animate relative h-full overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 transition-all duration-300 hover:border-[var(--color-primary)]/50 md:p-8"
         style="transition-delay: 300ms;"
       >
         <div
-          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         >
         </div>
-        <div class="relative z-10 flex flex-col h-full">
+        <div class="relative z-10 flex h-full flex-col">
           <div
-            class="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+            class="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
           >
             <!-- Server/Tools Icon -->
-            <svg
-              class="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -162,22 +133,21 @@
               ></path>
             </svg>
           </div>
-          <h3 class="mb-2 text-xl md:text-2xl font-bold font-cinzel">
+          <h3 class="font-cinzel mb-2 text-xl font-bold md:text-2xl">
             <span class="lang-ru">Инструменты</span>
             <span class="lang-en">Tools & DevOps</span>
           </h3>
-          <p class="text-sm text-[var(--color-muted-foreground)] mb-4">
+          <p class="mb-4 text-sm text-[var(--color-muted-foreground)]">
             <span class="lang-ru"
               >Технологии для развертывания, контроля версий и работы с данными.</span
             >
             <span class="lang-en"
-              >Technologies for deployment, version control, and data
-              management.</span
+              >Technologies for deployment, version control, and data management.</span
             >
           </p>
-          <div class="flex flex-wrap gap-2 mt-auto">
+          <div class="mt-auto flex flex-wrap gap-2">
             {
-              ["Git", "Docker", "Linux", "PostgreSQL", "Nginx"].map((tech) => (
+              ['Git', 'Docker', 'Linux', 'PostgreSQL', 'Nginx'].map((tech) => (
                 <span class="rounded-md bg-[var(--color-foreground)]/5 px-2.5 py-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)]">
                   {tech}
                 </span>
