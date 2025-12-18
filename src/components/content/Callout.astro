@@ -39,7 +39,9 @@ const styles = {
 const style = styles[type];
 ---
 
-<div class={`my-6 rounded-xl border p-4 overflow-hidden relative ${style.container}`}>
+<div
+  class={`my-6 rounded-xl border p-4 overflow-hidden relative callout-container ${style.container}`}
+>
   <div class="flex gap-3">
     <div class={`flex-shrink-0 w-6 h-6 mt-0.5 ${style.icon}`}>
       <svg
@@ -52,9 +54,30 @@ const style = styles[type];
     </div>
     <div class="flex-grow">
       {title && <h4 class={`mb-1 text-base font-bold ${style.title}`}>{title}</h4>}
-      <div class={`text-sm leading-relaxed ${style.text}`}>
+      <div class={`text-sm leading-relaxed ${style.text} callout-content`}>
         <slot />
       </div>
     </div>
   </div>
 </div>
+
+<style is:global>
+  /* Стили для ссылок внутри Callout */
+  .callout-content a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 700;
+    transition: opacity 0.2s ease;
+  }
+
+  .callout-content a:hover {
+    opacity: 0.8;
+  }
+
+  /* Для типа info ссылки могут быть чуть синее, но лучше оставить их контрастными */
+  .callout-container.bg-blue-500\/10 a {
+    color: inherit;
+    border-bottom: 1px solid currentColor;
+    text-decoration: none;
+  }
+</style>

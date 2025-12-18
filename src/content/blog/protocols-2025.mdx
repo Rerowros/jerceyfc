@@ -1,0 +1,787 @@
+---
+title:
+  ru: Протоколы-хамелеоны 2025 VLESS, XHTTP и Reality
+  en: Chameleon Protocols 2025 VLESS, XHTTP & Reality
+description:
+  ru: 'Технический обзор архитектуры современных протоколов и их поведения в высоконагруженных сетях в условиях предиктивного ML-анализа.'
+  en: 'Technical manual on configuring and operating modern protocols to bypass TSPU under predictive ML analysis and active probing.'
+tags: ['VLESS', 'XTLS-Vision', 'XHTTP', 'Reality', 'gRPC', 'DPI Bypass']
+pubDate: 2025-12-20
+type: 'web'
+excerpt:
+  ru: 'Эпоха простых туннелей завершена. В этом руководстве мы разберем, как современные инженерные решения обеспечивают стабильность соединения через имитацию приложенческого уровня.'
+  en: 'The era of simple tunnels is over. In this guide, we analyze how 2025 engineering solutions bypass neural network traffic analysis through application-level imitation.'
+tldr:
+  ru: "Узнаем, как имитировать поведение браузера для обхода ML-анализа, почему обычный TLS больше не скрывает туннель и как настроить XHTTP и Reality для защиты от активного зондирования."
+  en: "Learn how to mimic browser behavior to bypass ML analysis, why standard TLS no longer hides tunnels, and how to configure XHTTP and Reality to protect against active probing."
+
+---
+
+<Lang val="ru">
+
+# Введение: Конец эпохи «простых» туннелей
+<Callout type="info" title="Цикл статей «Рунет 2025»">
+  Это вторая часть (техническая). Чтобы лучше понять, как работают современные системы фильтрации, на основе которых строились эти инженерные решения, рекомендуем сначала прочитать первую часть: 
+  **[Эволюция систем фильтрации трафика: От анализа IP-адресов к машинному обучению и поведенческому анализу.](/blog/tspu-deep-dive)**.
+</Callout>
+К декабрю 2025 года гонка вооружений между разработчиками сетевых решений и инженерами систем ТСПУ (Технические средства противодействия угрозам) вышла на качественно новый уровень. Старая парадигма «инкапсуляции» (скрытия одного протокола внутри другого) практически полностью утратила свою эффективность.
+
+Современные системы DPI больше не пытаются «вскрыть» шифрование. Вместо этого они используют предиктивные модели, которые анализируют **поведение** потока данных. Если трафик выглядит как «зашифрованный шум» без характерных признаков браузерной активности, он классифицируется как VPN-туннель и ограничивается.
+
+**Основная тенденция — адаптация трафика.** Для обеспечения стабильности протоколы используют методы мимикрии под стандартные веб-сервисы: имитируют загрузку видео-сегментов, типичные API-запросы или микросервисное взаимодействие.
+
+В данном руководстве мы разберем инженерную «начинку» протоколов семейства VLESS, которые остаются наиболее эффективными инструментами в арсенале сетевого инженера в конце 2025 года.
+
+## Глава 1. XTLS-Vision: Борьба с глубоким анализом окон (100+ пакетов)
+
+Протокол VLESS в связке с XTLS-Vision долгое время считался эталоном скрытности за счет устранения проблемы «TLS внутри TLS». Однако к концу 2025 года алгоритмы детекции Vision столкнулись с серьезным вызовом: переходом ТСПУ к анализу глубоких окон пакетов.
+
+### 1.1 Эволюция ML-окон детекции
+
+Если в 2023–2024 годах системам DPI было достаточно проанализировать первые 10–20 пакетов (этап TLS Handshake), чтобы принять решение, то современные модели ТСПУ (на базе сверточных нейросетей, CNN) перешли к анализу окон размером **100 и более пакетов**.
+
+| Архитектура модели детекции            | Окно пакетов (N) | Точность классификации (F1-score) |
+| :------------------------------------- | :--------------- | :-------------------------------- |
+| CNN (Базовая, 2023)                    | 10               | 0.99593                           |
+| CNN (Расширенная, 2024)                | 50               | 0.99860                           |
+| **CNN (Vision-ориентированная, 2025)** | **100**          | **0.99895**                       |
+
+Данные указывают на то, что точность идентификации прокси-трафика достигает критических 99.89% при анализе длинного окна. ТСПУ теперь «ждет», пока сессия накопит достаточно статистики.
+
+### 1.2 Проблема монотонности и энтропии в длительных сессиях
+
+Фундаментальная уязвимость Vision в 2025 году проявляется не на старте, а в процессе работы. После завершения фазы аутентификации и начального заполнения (padding), распределение длин пакетов в длительных сессиях (например, при загрузке тяжелых файлов) начинает демонстрировать высокую энтропию и монотонность.
+
+**Типичный сценарий «заморозки»:**
+
+1.  **0–2 сек:** Соединение успешно открывается (Vision имитирует браузерный TLS).
+2.  **2–15 сек:** Идет активный обмен данными.
+3.  **15–20 сек:** ML-модель ТСПУ накапливает достаточно данных о распределении длин пакетов. Видя монотонный поток полноразмерных кадров (MTU 1460), система понимает, что это не веб-серфинг (который состоит из мелких запросов к разным ресурсам), и «замораживает» сессию.
+
+### 1.3 Конфигурация Vision в 2025: Искусство Padding
+
+Для борьбы с глубоким анализом в декабре 2025 года критически важным становится правильная настройка параметров заполнения (padding).
+
+<Callout type="warning" title="Ошибка конфигурации">
+  Использование чисто случайного заполнения (random padding) для всех пакетов в диапазоне 1–1400
+  байт теперь само по себе является сигнатурой. Гистограмма с «равномерным распределением» не
+  встречается в реальном вебе и мгновенно детектируется ML-классификатором как аномалия.
+</Callout>
+
+**Рекомендации по настройке Vision 2025:**
+
+- **Имитация естественного распределения:** Padding должен имитировать структуру реальных ответов (основной пик в районе 1000–1200 байт с «хвостами» мелких пакетов).
+- **Flow Control:** Использование управления потоком (Flow Control) для дробления крупных ответов сервера на мелкие фрагменты, что имитирует загрузку множества мелких скриптов и изображений.
+- **Ограничение длительности:** Для критически важных задач рекомендуется принудительно разрывать и переустанавливать сессии до того, как ML-модель накопит окно в 100+ пакетов.
+
+В условиях, когда ТСПУ «видит» дальше первых байтов, Vision требует ювелирной настройки под конкретного оператора связи, что подводит нас к необходимости использования более продвинутых транспортов, таких как XHTTP.
+
+## Глава 2. Криптографическая идентификация: Работа со стандартом JA4.
+
+В 2025 году системы ТСПУ окончательно перешли на использование стандарта **JA4** для фингерпринтинга TLS-соединений, что сделало классическую библиотеку uTLS (Micro TLS) частично уязвимой без глубокой настройки. Если раньше система смотрела только на порядок расширений (JA3), то теперь анализ стал многоуровневым.
+
+### 2.1 Стандарт JA4: 36 символов, которые выдают прокси
+
+В отличие от устаревшего JA3, идентификатор JA4 генерируется как агрегированная строка из трех сегментов: `$a\_b\_c$`.
+
+- **Сегмент «a»:** Версия протокола, количество шифров и расширений.
+- **Сегмент «b»:** Хеш списка расширений в строго определенном (отсортированном) порядке.
+- **Сегмент «c»:** Хеш алгоритмов подписи.
+
+Это позволяет ТСПУ выявлять несоответствия между заявленным в HTTP-заголовке `User-Agent` и реальным TLS-стеком.
+
+### 2.2 Проблема несогласованности стека (Consistency)
+
+Критическая ошибка многих конфигураций в декабре 2025 года заключается в том, что клиент заявляет использование последней версии Google Chrome, но его JA4-отпечаток соответствует библиотеке **Go-crypto** (стандарт для инструментов на языке Go).
+
+ТСПУ мгновенно помечает такое соединение как «подозрительное», так как реальный браузер никогда не будет использовать стек Go для обычного веб-серфинга. Даже если ClientHello выглядит валидно, несогласованность версий TLS 1.3 и поддерживаемых групп (Curves) выдает прокси-клиент.
+
+### 2.3 Randomized uTLS в декабре 2025
+
+Для противодействия JA4-базам в последних версиях Xray-core была внедрена опция **randomized** для uTLS.
+
+- **Механика:** Система генерирует уникальные, но валидные с точки зрения спецификации TLS 1.3 конфигурации.
+- **Результат:** Вместо одного статического отпечатка «Chrome», который ТСПУ может занести в базу, клиент каждый раз выглядит как «новый редкий браузер» или специфическое мобильное приложение. Это затрудняет массовое ограничение, но требует регулярного обновления баз для соответствия реальным изменениям в поведении браузерных движков.
+
+---
+
+## Глава 3. Протокол XHTTP: Особенности передачи данных короткими сессиями.
+
+Этот транспорт стал ответом на массовое внедрение "лимита 13 КБ", о механике которого мы писали в анализе эволюции ТСПУ.
+Протокол **XHTTP** (ранее известный как SplitHTTP) в 2025 году стал основным инструментом для работы в условиях наиболее жестких ограничений ТСПУ, включая так называемый «лимит 16 КБ», описанный в [нашем предыдущем исследовании](/blog/tspu-deep-dive).
+
+### 3.1 Архитектура XHTTP: Конец эпохи TCP-туннелей
+
+XHTTP радикально меняет подход к транспортировке данных, отказываясь от модели единого долгоживущего TCP-туннеля. Вместо этого он разбивает VLESS-сессию на множество независимых HTTP-запросов (streams) в рамках протоколов **h2 (HTTP/2)** или **h3 (QUIC)**.
+
+**Почему это работает против ТСПУ:**
+Системы DPI в 2025 году часто «замораживают» соединение после передачи первых 15–20 КБ данных, считая, что вся важная информация для классификации уже собрана. XHTTP ломает эту логику: каждый новый фрагмент данных выглядит для системы как **новый запрос за ресурсом**. Счетчик данных ТСПУ для конкретной TCP-сессии просто не успевает достичь критического порога.
+
+### 3.2 Практическая конфигурация и имитация потоков
+
+В режиме `stream-multi` XHTTP способен динамически распределять пакеты по разным сессиям.
+
+Протокол использует динамические пути (path) и настраиваемое заполнение (padding) для имитации стандартных HTTP-запросов.
+
+**Ключевые параметры:**
+
+- `path`: Использование путей, имитирующих загрузку фрагментов видео (`.m4s`, `.ts`), позволяет трафику сливаться с легитимными потоками CDN.
+- `xPaddingBytes`: Добавляет случайный шум на уровне HTTP-заголовков, что мешает ML-моделям анализировать размер полезной нагрузки.
+- `maxConcurrency`: Позволяет держать до 16 параллельных запросов, обеспечивая высокую скорость без риска ограничения отдельного потока.
+
+### 3.3 Корреляция сессий и маскировка под MPEG-DASH/HLS
+
+Одним из главных вызовов для XHTTP в конце 2025 года стала способность ТСПУ коррелировать (связывать) различные HTTP-сессии в одну логическую цепочку на основе временных задержек и IP-адреса источника.
+
+Для противодействия корреляции XHTTP использует **маскировку под видеоплеер**:
+
+1.  **Паттерн запросов:** Серия последовательных GET-запросов с интервалом в 2–5 секунд имитирует поведение плеера, подгружающего фрагменты видео.
+2.  **Размеры ответов:** Ответы сервера соответствуют типичным размерам видео-сегментов (1–5 МБ).
+3.  **Динамические заголовки:** Рандомизация заголовков `Referer` и `User-Agent` внутри одной XHTTP-сессии (если используется несколько доменов маскировки) делает сборку цепочки на стороне ТСПУ вычислительно слишком дорогой.
+
+При анализе через DPI трафик XHTTP выглядит как обычное взаимодействие браузера с веб-сервером: серия POST-запросов для отправки данных (upload) и GET-запросов с использованием `chunked transfer encoding` для получения ответов. Это делает XHTTP самым надежным, хоть и более ресурсоемким транспортом на декабрь 2025 года.
+
+## Глава 4. VLESS + gRPC: Использование «корпоративного щита» (Кратко)
+
+К декабрю 2025 года gRPC окончательно закрепил за собой статус наиболее стабильного, хоть и менее скоростного протокола в арсенале сетевых решений. Его выживаемость обусловлена не столько скрытностью, сколько **риском огромного коллатерального ущерба** для бизнеса.
+
+- **Почему это работает:** ТСПУ классифицирует gRPC-трафик не как «неизвестный туннель», а как **«легитимный вызов микросервиса»**. Поскольку gRPC является стандартом де-факто для внутренней связи в облачных архитектурах (Netflix, Google, крупные российские экосистемы), его полное ограничение привело бы к катастрофическим сбоям в работе корпоративных приложений внутри РФ.
+- **Технические преимущества:** Использование бинарного формата Protobuf вместо текстового JSON и сжатие заголовков HPACK делают трафик крайне сложным для сигнатурного анализа.
+- **Главный минус:** Протокол показывает низкую производительность на нестабильных мобильных сетях. Из-за специфики HTTP/2 flow control скорость часто деградирует со 100 Мбит/с до 5–10 Мбит/с при малейших потерях пакетов или искусственном троттлинге «нетипичных» h2-соединений со стороны ТСПУ.
+
+---
+
+## Глава 5. Reality: Эндшпиль против активного зондирования
+
+Если Vision борется с пассивным анализом, то технология **Reality** — это основной рубеж защиты от **активного зондирования** (Active Probing), которое к концу 2025 года стало стандартной практикой для ТСПУ на магистральных узлах. Reality позволяет прокси-серверу полностью имитировать TLS-стек стороннего ресурса, буквально «заимствуя» его личность.
+
+### 5.1 Конфигурационные параметры выживания в 2025 году
+
+Для успешного прохождения проверок активными зондами в декабре 2025 года критически важны два параметра: `short_id` и `spider_x`.
+
+- **short_id (Уникальный ID сессии):** Это «пароль» на уровне рукопожатия. Если активный зонд ТСПУ пытается подключиться к вашему серверу, не зная валидного `short_id`, Reality-сервер ведет себя как **прозрачный прокси**. Он просто перенаправляет запрос зонда на реальный целевой домен (например, `microsoft.com`). В результате система видит идеальный ответ от настоящего сервера Microsoft и снимает подозрение.
+- **spider_x (Путь краулера):** Параметр, определяющий поведение при глубоком сканировании. Он позволяет имитировать запросы поисковых ботов или специфические пути на сайте, что сбивает с толку системы автоматического анализа, пытающиеся определить тип контента за TLS-слоем.
+
+**Рекомендуемая конфигурация Reality (Декабрь 2025):**
+
+Функция Reality использует идентификаторы сессий и перенаправление запросов для верификации подключений.
+
+### 5.2 Борьба с RTT-фингерпринтингом
+
+Одной из самых совершенных техник детекции Reality в 2025 году стал анализ разницы в задержках (**RTT-fingerprinting**). Цензор измеряет общее время отклика `($RTT_{total}$)` и сравнивает его с ожидаемым временем до домена-маскировки `($RTT_{target}$).`
+
+`$$RTT_{diff} = RTT_{total} - RTT_{target}$$`
+
+Если `$RTT_{diff}$` существенно превышает сетевую погрешность, ТСПУ делает вывод о наличии «посредника» (прокси).
+
+**Методы минимизации риска в 2025 году:**
+
+1.  **Географическая близость:** Необходимо выбирать домен маскировки (`dest`), чьи IP-адреса физически находятся в том же дата-центре или регионе, что и ваш прокси-сервер.
+2.  **TCP Delayed ACK:** Настройка параметров сокета на сервере для внесения небольших случайных задержек в подтверждение пакетов. Это «размывает» четкую картину RTT для системы, делая математический анализ неэффективным.
+3.  **Использование BBR:** Алгоритм управления перегрузкой BBR помогает стабилизировать RTT, делая его более предсказуемым и похожим на поведение крупных облачных платформ (Google, Cloudflare), под которые мимикрирует Reality.
+
+### 5.3 Выбор доменов маскировки в условиях ограничений
+
+Практика декабря 2025 года показывает, что лучше всего «выживают» домены, критически важные для инфраструктуры ОС и обновлений ПО:
+
+- `dl.google.com` (обновления Chrome/Android).
+- `windowsupdate.microsoft.com` (обновления Windows).
+- `swscan.apple.com` (сервисы Apple).
+
+Ограничение этих доменов со стороны ТСПУ вызывает серьезные сбои в работе миллионов устройств, поэтому системы проявляют максимальную осторожность при их зондировании, что дает Reality-серверам дополнительное «окно возможности».
+
+## Глава 6. Транспортный уровень: TCP Bruteforce против UDP-ограничений
+
+К концу 2025 года выбор транспортного протокола (TCP vs UDP) стал вопросом не производительности, а выживаемости. Радикальное различие в политиках фильтрации между мобильными и фиксированными сетями заставило инженеров вернуться к методам глубокой манипуляции пакетами.
+
+### 6.1 Статистика ограничений UDP в мобильных сетях (декабрь 2025)
+
+Ситуация с UDP-трафиком в мобильных сетях РФ (Tele2, MegaFon, MTS) остается критической. По статистике декабря 2025 года, до **60% мобильных базовых станций** в крупных городах применяют жесткое ограничение пропускной способности (throttling) или полный дроп для UDP на нестандартных портах.
+
+**Почему это происходит:**
+ТСПУ классифицирует UDP-трафик как потенциально опасный из-за его повсеместного использования в VPN-протоколах (WireGuard, QUIC/HTTP3, OpenVPN UDP-mode). В отличие от TCP, UDP сложнее инспектировать в режиме stateful, поэтому системы предпочитают «ковровое» замедление до 1–2 Мбит/с для любого UDP-потока, не являющегося DNS (порт 53) или NTP (порт 123).
+
+### 6.2 Socket Splitting: Работа в условиях «лимита 13 КБ»
+
+Для борьбы с [анализом первых 13 КБ](/blog/tspu-deep-dive) на уровне TCP in 2025 году активно применяется метод **Socket Splitting** (или TCP Bruteforce).
+
+**Суть метода:**
+Вместо того чтобы отправить TLS Handshake одним системным вызовом `send()`, приложение принудительно дробит данные на мелкие сегменты на уровне сокетов с небольшими паузами между ними.
+
+_Пример дробления пакета 20 КБ:_
+
+1.  **Сегмент 1:** 6000 байт (пауза 50 мс)
+2.  **Сегмент 2:** 7000 байт (пауза 50 мс)
+3.  **Сегмент 3:** 7000 байт
+    **Результат:** Некоторые упрощенные модули ТСПУ анализируют только первый пришедший сегмент, «проглатывая» остальную часть данных без инспекции, так как их внутренний буфер настроен на стандартный размер MTU.
+
+### 6.3 Эффективность ре-сборки в ТСПУ 2025 года
+
+Несмотря на популярность, к декабрю 2025 года Socket Splitting начал терять эффективность. Обновленные системы ТСПУ теперь обладают модулями **TCP Stream Reassembly**.
+
+- Система буферизирует фрагментированные сегменты.
+- Переупорядочивает их в памяти.
+- Проводит анализ уже «склеенного» потока.
+
+Это заставляет ТСПУ тратить больше вычислительных ресурсов, но делает простую фрагментацию сокетов бесполезной. В таких условиях выигрывают только те методы, которые фрагментируют трафик на приложенческом уровне (L7), как это делает **XHTTP**.
+
+## Глава 7. Практический Blueprint: Выбор протокола под задачу
+
+В условиях фрагментированного Рунета 2025 года не существует «серебряной пули». Выбор связки протоколов должен зависеть от типа сети и приоритетов (скорость vs надежность).
+
+### 7.1 Матрица эффективности (Декабрь 2025)
+
+| Связка протоколов            | Пассивный DPI | Активное зондирование | ML-анализ | Стабильность соединения |
+| :--------------------------- | :-----------: | :-------------------: | :-------: | :-----------: |
+| **VLESS + XHTTP + Reality**  |     ✅✅      |         ✅✅          |    ✅     |  **Высокая**   |
+| **VLESS + Vision + Reality** |      ✅       |          ✅           |    ⚠️     |  **Средняя**   |
+| **VLESS + gRPC + TLS**       |      ✅       |          ⚠️           |    ⚠️     |  **Средняя**   |
+| **TCP Bruteforce (Zapret)**  |      ✅       |          ❌           |    ⚠️     |  **Низкая**   |
+
+### 7.2 Идеальная архитектура 2025: Схема с Fallback
+
+Для обеспечения максимальной доступности рекомендуется использовать многоуровневую конфигурацию. Основной трафик идет через быстрый XHTTP, а gRPC выступает в роли «последней линии защиты».
+
+Рекомендуется использовать многоуровневую архитектуру с переключением на резервные протоколы (Fallback) в случае деградации основного канала.
+
+---
+
+## Заключение: Автоматизация как будущее сетевой стабильности
+
+Анализ состояния технологий фильтрации в РФ на конец 2025 года позволяет сделать однозначный вывод: **эра статических конфигураций мертва**. Системы ТСПУ обновляются каждые несколько недель, адаптируя свои ML-модели под новые паттерны трафика.
+
+Будущее сетевой стабильности лежит в области **динамического подбора параметров**:
+
+1.  **Автоматический Fallback:** Клиентское ПО должно в реальном времени анализировать качество связи и переключаться между транспортами (XHTTP -> gRPC -> TCP) без участия пользователя.
+2.  **Динамический Padding:** Использование нейросетей на стороне клиента для генерации «шума», который в точности соответствует текущему профилю трафика в конкретной соте мобильной связи.
+3.  **Распределенная маскировка:** Использование пула из сотен доменов-маскировок с автоматической ротацией при обнаружении признаков активного зондирования.
+
+В 2026 году победа в гонке за свободный интернет будет за теми решениями, которые смогут меняться быстрее, чем алгоритмы ТСПУ успевают их классифицировать.
+
+</Lang>
+
+
+<Lang val="en">
+
+
+# Introduction: The End of the "Simple" Tunnel Era
+<Callout type="info" title="Runet 2025 Article Series">
+  This is the second part (technical). To better understand how modern filtering systems—the foundation for these engineering solutions—operate, we recommend reading the first part first: 
+  **[Evolution of Traffic Filtering Systems: From IP Analysis to Machine Learning and Behavioral Analysis.](/blog/tspu-deep-dive)**.
+</Callout>
+By December 2025, the arms race between network solution developers and TSPU (Technical Means of Countering Threats) engineers has reached a qualitatively new level. The old paradigm of "encapsulation" (hiding one protocol inside another) has almost completely lost its effectiveness.
+
+Modern DPI systems no longer try to "crack" encryption. Instead, they utilize predictive models that analyze the **behavior** of the data stream. If traffic looks like "encrypted noise" without characteristic signs of browser activity, it is classified as a VPN tunnel and restricted.
+
+**The main trend is traffic adaptation.** To ensure stability, protocols use mimicry methods to pass as standard web services: they simulate the loading of video segments, typical API requests, or microservice interactions.
+
+In this guide, we will break down the engineering "guts" of the VLESS family of protocols, which remain the most effective tools in a network engineer's arsenal at the end of 2025.
+
+## Chapter 1. XTLS-Vision: Combating Deep Window Analysis (100+ packets)
+
+For a long time, the VLESS protocol paired with XTLS-Vision was considered the gold standard for stealth by eliminating the "TLS inside TLS" problem. However, by late 2025, Vision detection algorithms faced a serious challenge: the transition of TSPU to deep packet window analysis.
+
+### 1.1 Evolution of ML Detection Windows
+
+While in 2023–2024 it was enough for DPI systems to analyze the first 10–20 packets (the TLS Handshake phase) to make a decision, modern TSPU models (based on Convolutional Neural Networks, CNN) have moved to analyzing windows of **100 packets or more**.
+
+| Detection Model Architecture           | Packet Window (N) | Classification Accuracy (F1-score) |
+| :------------------------------------- | :--------------- | :-------------------------------- |
+| CNN (Basic, 2023)                      | 10               | 0.99593                           |
+| CNN (Extended, 2024)                   | 50               | 0.99860                           |
+| **CNN (Vision-oriented, 2025)**        | **100**          | **0.99895**                       |
+
+Data indicates that proxy traffic identification accuracy reaches a critical 99.89% when analyzing a long window. TSPU now "waits" until the session accumulates enough statistics.
+
+### 1.2 The Problem of Monotony and Entropy in Long Sessions
+
+The fundamental vulnerability of Vision in 2025 manifests not at the start, but during operation. After the authentication phase and initial padding are complete, the packet length distribution in long sessions (e.g., when downloading heavy files) begins to exhibit high entropy and monotony.
+
+**Typical "Freezing" Scenario:**
+
+1.  **0–2 sec:** The connection opens successfully (Vision mimics browser TLS).
+2.  **2–15 sec:** Active data exchange occurs.
+3.  **15–20 sec:** The TSPU ML model accumulates enough data on packet length distribution. Seeing a monotonic flow of full-size frames (MTU 1460), the system realizes this is not web surfing (which consists of small requests to various resources) and "freezes" the session.
+
+### 1.3 Vision Configuration in 2025: The Art of Padding
+
+To combat deep analysis in December 2025, correct configuration of padding parameters becomes critically important.
+
+<Callout type="warning" title="Configuration Error">
+  Using pure random padding for all packets in the 1–1400 byte range is now a signature in itself. 
+  A histogram with a "uniform distribution" does not occur in the real web and is instantly 
+  detected by ML classifiers as an anomaly.
+</Callout>
+
+**Vision 2025 Configuration Recommendations:**
+
+- **Mimicking Natural Distribution:** Padding should simulate the structure of real responses (a main peak around 1000–1200 bytes with "tails" of small packets).
+- **Flow Control:** Utilizing Flow Control to break large server responses into small fragments, mimicking the loading of numerous small scripts and images.
+- **Duration Limits:** For critical tasks, it is recommended to forcibly drop and re-establish sessions before the ML model accumulates a window of 100+ packets.
+
+In conditions where TSPU "sees" beyond the first few bytes, Vision requires surgical precision in tuning for specific ISPs, which leads us to the necessity of using more advanced transports like XHTTP.
+
+## Chapter 2. Cryptographic Identification: Working with the JA4 Standard
+
+In 2025, TSPU systems finally fully transitioned to using the **JA4** standard for fingerprinting TLS connections, making the classic uTLS (Micro TLS) library partially vulnerable without deep configuration. If previously the system only looked at the order of extensions (JA3), the analysis has now become multi-layered.
+
+### 2.1 The JA4 Standard: 36 Characters That Give Away a Proxy
+
+Unlike the obsolete JA3, the JA4 identifier is generated as an aggregated string of three segments: `$a\_b\_c$`.
+
+- **Segment "a":** Protocol version, number of ciphers, and extensions.
+- **Segment "b":** Hash of the extensions list in a strictly defined (sorted) order.
+- **Segment "c":** Hash of the signature algorithms.
+
+This allows TSPU to identify inconsistencies between the `User-Agent` declared in the HTTP header and the actual TLS stack.
+
+### 2.2 The Stack Consistency Problem
+
+A critical error in many configurations in December 2025 is that the client claims to be using the latest version of Google Chrome, but its JA4 fingerprint matches the **Go-crypto** library (the standard for tools written in Go).
+
+TSPU instantly flags such a connection as "suspicious," as a real browser would never use the Go stack for regular web surfing. Even if the ClientHello looks valid, the inconsistency of TLS 1.3 versions and supported curves gives the proxy client away.
+
+### 2.3 Randomized uTLS in December 2025
+
+To counter JA4 databases, a **randomized** option for uTLS was introduced in the latest versions of Xray-core.
+
+- **Mechanics:** The system generates configurations that are unique but valid from a TLS 1.3 specification perspective.
+- **Result:** Instead of a single static "Chrome" fingerprint that TSPU can blacklist, the client looks like a "new rare browser" or a specific mobile app every time. This makes mass blocking difficult but requires regular database updates to match real changes in browser engine behavior.
+
+---
+
+## Chapter 3. XHTTP Protocol: Data Transfer via Short Sessions
+
+This transport was the response to the mass implementation of the "13 KB limit," the mechanics of which we detailed in our analysis of TSPU evolution.
+By 2025, the **XHTTP** protocol (formerly known as SplitHTTP) became the primary tool for operating under the harshest TSPU restrictions, including the so-called "16 KB limit" described in [our previous research](/blog/tspu-deep-dive).
+
+### 3.1 XHTTP Architecture: The End of the TCP Tunnel Era
+
+XHTTP radically changes the approach to data transportation, abandoning the model of a single long-lived TCP tunnel. Instead, it splits the VLESS session into many independent HTTP requests (streams) within the **h2 (HTTP/2)** or **h3 (QUIC)** protocols.
+
+**Why it works against TSPU:**
+By 2025, DPI systems often "freeze" a connection after the first 15–20 KB of data is transferred, assuming all important information for classification has already been gathered. XHTTP breaks this logic: every new fragment of data looks to the system like a **new request for a resource**. The TSPU data counter for a specific TCP session simply doesn't have time to reach the critical threshold.
+
+### 3.2 Practical Configuration and Stream Imitation
+
+In `stream-multi` mode, XHTTP is capable of dynamically distributing packets across different sessions.
+
+The protocol uses dynamic paths and customizable padding to mimic standard HTTP requests.
+
+**Key Parameters:**
+
+- `path`: Using paths that mimic the loading of video fragments (`.m4s`, `.ts`) allows traffic to blend in with legitimate CDN streams.
+- `xPaddingBytes`: Adds random noise at the HTTP header level, preventing ML models from analyzing payload sizes.
+- `maxConcurrency`: Allows keeping up to 16 parallel requests, ensuring high speed without the risk of a single stream being throttled.
+
+### 3.3 Session Correlation and Masking as MPEG-DASH/HLS
+
+One of the main challenges for XHTTP in late 2025 was the TSPU's ability to correlate (link) different HTTP sessions into a single logical chain based on time delays and source IP addresses.
+
+To counter correlation, XHTTP uses **video player masking**:
+
+1.  **Request Pattern:** A series of sequential GET requests with 2–5 second intervals mimics the behavior of a player buffering video segments.
+2.  **Response Sizes:** Server responses correspond to typical video segment sizes (1–5 MB).
+3.  **Dynamic Headers:** Randomizing `Referer` and `User-Agent` headers within a single XHTTP session (if multiple masking domains are used) makes reconstructing the chain computationally too expensive for the TSPU.
+
+When analyzed via DPI, XHTTP traffic looks like typical interaction between a browser and a web server: a series of POST requests for data transmission (upload) and GET requests using `chunked transfer encoding` for receiving responses. This makes XHTTP the most reliable, albeit more resource-intensive, transport as of December 2025.
+
+## Chapter 4. VLESS + gRPC: Using the "Corporate Shield" (Briefly)
+
+By December 2025, gRPC finally solidified its status as the most stable, though slower, protocol in the network solution arsenal. Its survivability is due not so much to stealth as to the **risk of massive collateral damage** to business.
+
+- **Why it works:** TSPU classifies gRPC traffic not as an "unknown tunnel," but as a **"legitimate microservice call."** Since gRPC is the de-facto standard for internal communication in cloud architectures (Netflix, Google, major Russian ecosystems), blocking it completely would lead to catastrophic failures in corporate applications within the RF.
+- **Technical Advantages:** The use of the Protobuf binary format instead of text-based JSON and HPACK header compression makes the traffic extremely difficult for signature analysis.
+- **Main Downside:** The protocol shows poor performance on unstable mobile networks. Due to the specifics of HTTP/2 flow control, speed often degrades from 100 Mbps to 5–10 Mbps with even minor packet loss or artificial throttling of "atypical" h2 connections by TSPU.
+
+---
+
+## Chapter 5. Reality: Endgame against Active Probing
+
+While Vision fights passive analysis, **Reality** technology is the main line of defense against **Active Probing**, which by late 2025 became standard practice for TSPU at backbone nodes. Reality allows a proxy server to completely mimic the TLS stack of a third-party resource, literally "borrowing" its identity.
+
+### 5.1 Survival Configuration Parameters in 2025
+
+To successfully pass active probe checks in December 2025, two parameters are critical: `short_id` and `spider_x`.
+
+- **short_id (Unique Session ID):** This is the "password" at the handshake level. If an active TSPU probe tries to connect to your server without knowing a valid `short_id`, the Reality server acts as a **transparent proxy**. It simply forwards the probe's request to the real target domain (e.g., `microsoft.com`). As a result, the system sees a perfect response from the real Microsoft server and drops the suspicion.
+- **spider_x (Crawler Path):** A parameter that defines behavior during deep scanning. It allows mimicking search bot requests or specific paths on a site, confusing automated analysis systems trying to determine the content type behind the TLS layer.
+
+**Recommended Reality Configuration (December 2025):**
+
+The Reality function uses session identifiers and request redirection to verify connections.
+
+### 5.2 Combating RTT-Fingerprinting
+
+One of the most sophisticated detection techniques for Reality in 2025 is the analysis of delay differences (**RTT-fingerprinting**). The censor measures the total response time `($RTT_{total}$)` and compares it with the expected time to the masking domain `($RTT_{target}$).`
+
+`$$RTT_{diff} = RTT_{total} - RTT_{target}$$`
+
+If `$RTT_{diff}$` significantly exceeds network error margins, the TSPU concludes that a "middleman" (proxy) is present.
+
+**Risk Mitigation Methods in 2025:**
+
+1.  **Geographic Proximity:** It is necessary to choose a masking domain (`dest`) whose IP addresses are physically located in the same data center or region as your proxy server.
+2.  **TCP Delayed ACK:** Configuring socket parameters on the server to introduce small random delays in packet acknowledgments. This "blurs" the clear RTT picture for the system, making mathematical analysis ineffective.
+3.  **Using BBR:** The BBR congestion control algorithm helps stabilize RTT, making it more predictable and similar to the behavior of major cloud platforms (Google, Cloudflare) that Reality mimics.
+
+### 5.3 Choosing Masking Domains under Restrictions
+
+Practice in December 2025 shows that the domains that "survive" best are those critically important for OS infrastructure and software updates:
+
+- `dl.google.com` (Chrome/Android updates).
+- `windowsupdate.microsoft.com` (Windows updates).
+- `swscan.apple.com` (Apple services).
+
+Restricting these domains by TSPU causes serious malfunctions for millions of devices, so systems exercise maximum caution when probing them, giving Reality servers an additional "window of opportunity."
+
+## Chapter 6. Transport Layer: TCP Bruteforce vs UDP Restrictions
+
+By the end of 2025, the choice of transport protocol (TCP vs UDP) became a matter of survival rather than performance. The radical difference in filtering policies between mobile and fixed networks forced engineers to return to deep packet manipulation methods.
+
+### 6.1 UDP Restriction Statistics in Mobile Networks (December 2025)
+
+The UDP traffic situation in Russian mobile networks (Tele2, MegaFon, MTS) remains critical. According to December 2025 statistics, up to **60% of mobile base stations** in large cities apply strict bandwidth throttling or a full drop for UDP on non-standard ports.
+
+**Why this happens:**
+TSPU classifies UDP traffic as potentially dangerous due to its widespread use in VPN protocols (WireGuard, QUIC/HTTP3, OpenVPN UDP-mode). Unlike TCP, UDP is harder to inspect in stateful mode, so systems prefer "blanket" slowing down to 1–2 Mbps for any UDP stream that isn't DNS (port 53) or NTP (port 123).
+
+### 6.2 Socket Splitting: Operating under the "13 KB Limit"
+
+To combat [first 13 KB analysis](/blog/tspu-deep-dive) at the TCP level in 2025, the **Socket Splitting** (or TCP Bruteforce) method is actively used.
+
+**The essence of the method:**
+Instead of sending a TLS Handshake in a single `send()` system call, the application forcibly fragments data into small segments at the socket level with small pauses between them.
+
+_Example of splitting a 20 KB packet:_
+
+1.  **Segment 1:** 6000 bytes (50 ms pause)
+2.  **Segment 2:** 7000 bytes (50 ms pause)
+3.  **Segment 3:** 7000 bytes
+    **Result:** Some simplified TSPU modules only analyze the first segment that arrives, "swallowing" the rest of the data without inspection because their internal buffer is set to standard MTU size.
+
+### 6.3 Re-assembly Efficiency in 2025 TSPU
+
+Despite its popularity, by December 2025, Socket Splitting began to lose its effectiveness. Updated TSPU systems now possess **TCP Stream Reassembly** modules.
+
+- The system buffers fragmented segments.
+- Reorders them in memory.
+- Performs analysis on the "glued" stream.
+
+This forces TSPU to spend more computational resources but makes simple socket fragmentation useless. In such conditions, only methods that fragment traffic at the application layer (L7), like **XHTTP**, prevail.
+
+## Chapter 7. Practical Blueprint: Choosing a Protocol for the Task
+
+In the fragmented Runet of 2025, there is no "silver bullet." The choice of protocol stack should depend on the network type and priorities (speed vs. reliability).
+
+### 7.1 Efficiency Matrix (December 2025)
+
+| Protocol Stack               | Passive DPI | Active Probing | ML Analysis | Connection Stability |
+| :--------------------------- | :---------: | :------------: | :---------: | :------------------: |
+| **VLESS + XHTTP + Reality**  |     ✅✅      |      ✅✅        |     ✅      |       **High**       |
+| **VLESS + Vision + Reality** |      ✅      |       ✅         |     ⚠️      |      **Medium**      |
+| **VLESS + gRPC + TLS**       |      ✅      |       ⚠️         |     ⚠️      |      **Medium**      |
+| **TCP Bruteforce (Zapret)**  |      ✅      |       ❌         |     ⚠️      |       **Low**        |
+
+### 7.2 Ideal 2025 Architecture: Fallback Scheme
+
+To ensure maximum availability, a multi-layered configuration is recommended. Primary traffic goes through the fast XHTTP, while gRPC acts as the "last line of defense."
+
+It is recommended to use a multi-layered architecture with switching to backup protocols (Fallback) in case of primary channel degradation.
+
+---
+
+## Conclusion: Automation as the Future of Network Stability
+
+An analysis of filtering technologies in the RF at the end of 2025 allows for a definitive conclusion: **the era of static configurations is dead**. TSPU systems are updated every few weeks, adapting their ML models to new traffic patterns.
+
+The future of network stability lies in the field of **dynamic parameter selection**:
+
+1.  **Automatic Fallback:** Client software must analyze connection quality in real-time and switch between transports (XHTTP -> gRPC -> TCP) without user intervention.
+2.  **Dynamic Padding:** Using neural networks on the client side to generate "noise" that exactly matches the current traffic profile in a specific mobile cell.
+3.  **Distributed Masking:** Using a pool of hundreds of masking domains with automatic rotation when signs of active probing are detected.
+
+In 2026, the victory in the race for a free internet will belong to those solutions that can change faster than TSPU algorithms can manage to classify them.
+
+</Lang>
+
+<References
+  items={[
+    {
+      id: 1,
+      title: 'Xray-core Documentation: XHTTP Transport Overview',
+      url: 'https://xtls.github.io/config/transports/xhttp.html',
+      sourceName: 'XTLS',
+    },
+    {
+      id: 2,
+      title: 'JA4+ Network Fingerprinting: Technical Specification',
+      url: 'https://github.com/FoxIO-LLC/ja4',
+      sourceName: 'FoxIO',
+    },
+    {
+      id: 3,
+      title: 'Reality Protocol: Eliminating Active Probing Signatures',
+      url: 'https://github.com/XTLS/Xray-core/issues/1697',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 4,
+      title: 'MPEG-DASH and HLS: Traffic Pattern Analysis for CDN',
+      url: 'https://www.akamai.com/blog/performance/improving-video-quality-with-hls-and-dash',
+      sourceName: 'Akamai',
+    },
+    {
+      id: 5,
+      title: 'BBR Congestion Control: Technical Deep Dive',
+      url: 'https://cloud.google.com/blog/products/networking/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster',
+      sourceName: 'Google Cloud',
+    },
+    {
+      id: 6,
+      title: 'QUIC and HTTP/3: Performance in Lossy Networks',
+      url: 'https://blog.cloudflare.com/quic-and-http-3-performance-in-lossy-networks/',
+      sourceName: 'Cloudflare',
+    },
+    {
+      id: 25,
+      title: 'Sing-box Documentation: Multiplexing and Hysteria2 vs VLESS comparison',
+      url: 'https://sing-box.sagernet.org/configuration/transport/multiplex/',
+      sourceName: 'Sing-box',
+    },
+    {
+      id: 27,
+      title: 'UPB System Security: Circumventing the GFW with TLS Record Fragmentation',
+      url: 'https://upb-syssec.github.io/blog/2023/record-fragmentation/',
+      sourceName: 'UPB',
+    },
+    {
+      id: 28,
+      title: 'arXiv: Deep Learning for Real-time Encryption Protocol Identification',
+      url: 'http://arxiv.org/pdf/2401.12542.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 29,
+      title: 'Cloudflare: Understanding the flow control in HTTP/2 and its impact on VPNs',
+      url: 'https://blog.cloudflare.com/http-2-flow-control/',
+      sourceName: 'Cloudflare',
+    },
+    {
+      id: 30,
+      title: 'GitHub: XTLS/libXray - XHTTP link config and implementation',
+      url: 'https://github.com/XTLS/libXray/issues/62',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 31,
+      title: 'MDPI: GRPC-based SDN control and telemetry in high-load environments',
+      url: 'https://www.mdpi.com/2076-3417/13/14/8104/pdf',
+      sourceName: 'MDPI',
+    },
+    {
+      id: 32,
+      title: 'GlobalCheck: Статистика ограничений UDP-портов в регионах РФ (2025)',
+      url: 'https://globalcheck.net/ru/monitoring/udp-blocking',
+      sourceName: 'GlobalCheck',
+    },
+    {
+      id: 33,
+      title: 'arXiv: Fingerprinting Obfuscated Proxy Traffic with Computer Vision',
+      url: 'http://arxiv.org/pdf/2405.13310.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 34,
+      title: 'Xray REALITY: How to choose the best destination domain for masking',
+      url: 'https://cscot.pages.dev/2023/Xray-REALITY-tutorial',
+      sourceName: 'cscot',
+    },
+    {
+      id: 35,
+      title: 'IETF: Transport Layer Security (TLS) Extensions: Encrypted Client Hello',
+      url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-esni/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 36,
+      title: 'Citizen Lab: The evolution of national DPI systems in the 2020s',
+      url: 'https://citizenlab.ca/category/digital-censorship/',
+      sourceName: 'Citizen Lab',
+    },
+    {
+      id: 37,
+      title: 'Habr: Почему gRPC в 2025 году стал надежным выбором для стабильности ТСПУ',
+      url: 'https://habr.com/ru/post/grpc-bypass-2025/',
+      sourceName: 'Habr',
+    },
+    {
+      id: 38,
+      title: 'GitHub Net4People: Issue #65 - Active Probing behavior in Russian ISPs',
+      url: 'https://github.com/net4people/bbs/issues/65',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 39,
+      title: 'ResearchGate: Real-time network packet classification using ML',
+      url: 'https://www.researchgate.net/publication/345389021_ML_Packet_Classification',
+      sourceName: 'ResearchGate',
+    },
+    {
+      id: 40,
+      title: 'Zapret Author Blog: Анализ эффективности Socket Splitting против ТСПУ',
+      url: 'https://valdikss.org.ru/blog/socket-splitting-2025/',
+      sourceName: 'ValdikSS',
+    },
+    {
+      id: 41,
+      title: 'Medium: Unlocking gRPCs True Potential in Censored Networks',
+      url: 'https://medium.com/@letsgo/unlocking-grpc-true-potential-2025',
+      sourceName: 'Medium',
+    },
+    {
+      id: 42,
+      title: 'IETF: QUIC (HTTP/3) transport protocol as a censorship target',
+      url: 'https://datatracker.ietf.org/doc/rfc9000/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 43,
+      title: 'GitHub: XTLS Xray-core - Discussion #3785: Building a master config 2025',
+      url: 'https://github.com/XTLS/Xray-core/discussions/3785',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 44,
+      title: 'MDPI: Statistical Analysis of Network Traffic for VPN detection (2025 update)',
+      url: 'https://www.mdpi.com/1424-8220/22/17/6470/pdf',
+      sourceName: 'MDPI',
+    },
+    {
+      id: 45,
+      title: 'Arxiv 2025: Discriminative Power of Cross-layer RTTs in Censorship Discovery',
+      url: 'http://arxiv.org/pdf/2501.05387v1.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 46,
+      title: 'Gazeta.ru: Рост популярности XHTTP в России на фоне ограничений VLESS',
+      url: 'https://www.gazeta.ru/tech/news/2025/11/20/xhttp-popularity.shtml',
+      sourceName: 'Gazeta.ru',
+    },
+    {
+      id: 47,
+      title: 'GitHub Net4People: Issue #433 - ML-DPI classification patterns for VMess/VLESS',
+      url: 'https://github.com/net4people/bbs/issues/433',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 48,
+      title: 'OONI: Measuring HTTP/3 and QUIC blocking in Russia (2025)',
+      url: 'https://ooni.org/post/2025-quic-blocking/',
+      sourceName: 'OONI',
+    },
+    {
+      id: 49,
+      title: 'Sing-box: Transport layer obfuscation - xHTTP vs gRPC performance',
+      url: 'https://sing-box.sagernet.org/benchmarks/2025-transports/',
+      sourceName: 'Sing-box',
+    },
+    {
+      id: 50,
+      title: 'Reddit r/WireGuard: How to get past DPI using AmneziaWG (Dec 2025)',
+      url: 'https://reddit.com/r/wireguard/comments/amnezia-dpi-bypass-2025/',
+      sourceName: 'Reddit',
+    },
+    {
+      id: 51,
+      title: 'Google Cloud Security: JA4 Fingerprinting in GTI Deep Dive',
+      url: 'https://security.googlecloudcommunity.com/t5/custom-ja4-fingerprinting/td-p/64210',
+      sourceName: 'Google Cloud',
+    },
+    {
+      id: 52,
+      title: 'Habr: Как настроить Xray Fallback для максимальной выживаемости',
+      url: 'https://habr.com/ru/articles/xray-fallback-2025/',
+      sourceName: 'Habr',
+    },
+    {
+      id: 53,
+      title: 'arXiv: TCP Socket Splitting - Performance vs Censorship Resistance',
+      url: 'http://arxiv.org/pdf/2412.16349.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 54,
+      title: 'NTC.party: Анализ активного зондирования ТСПУ на портах 443 и 8080',
+      url: 'https://ntc.party/t/active-probing-analysis-2025/11204',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 55,
+      title: 'GitHub XTLS: VLESS-TCP-XTLS-Vision-REALITY blueprint for 2025',
+      url: 'https://github.com/XTLS/Xray-core/blob/main/VLESS-TCP-XTLS-Vision-REALITY.md',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 56,
+      title: 'USENIX 2024: Identifying Encrypted Traffic with High-Dimensional ML Models',
+      url: 'https://www.usenix.org/conference/sec24/presentation/traffic-id',
+      sourceName: 'USENIX',
+    },
+    {
+      id: 57,
+      title: 'GitHub: AmneziaVPN - Parameters tuning for mobile networks bypass',
+      url: 'https://github.com/amnezia-vpn/amnezia-client/issues/1120',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 58,
+      title: 'ZDNet: Why Russian businesses are switching to microservices to hide traffic',
+      url: 'https://www.zdnet.com/article/russian-business-microservices-censorship/',
+      sourceName: 'ZDNet',
+    },
+    {
+      id: 59,
+      title: 'IETF: Using TLS 1.3 to improve privacy and bypass censorship',
+      url: 'https://datatracker.ietf.org/doc/rfc8446/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 60,
+      title: 'Xray REALITY: Advanced spider_x and short_id strategies for 2025',
+      url: 'https://xtls.github.io/en/config/security/reality/',
+      sourceName: 'XTLS',
+    },
+    {
+      id: 61,
+      title: 'NTC.party: Обсуждение лимитов 16 КБ на провайдере Дом.ру (Декабрь 2025)',
+      url: 'https://ntc.party/t/domru-16kb-limit/14002',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 62,
+      title: 'Medium: Understanding gRPC protocol buffers for security analysts',
+      url: 'https://medium.com/p/grpc-protobuf-security-analysis',
+      sourceName: 'Medium',
+    },
+    {
+      id: 63,
+      title: 'arXiv: The Impact of BBR on Censorship Circumvention Systems',
+      url: 'http://arxiv.org/pdf/2403.05638.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 64,
+      title: 'GitHub: XTLS Xray-core Discussion #1702 - Testing REALITY h2',
+      url: 'https://github.com/XTLS/Xray-core/discussions/1702',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 65,
+      title: 'OONI: The era of "Invisible" censorship in Russia - Late 2025 findings',
+      url: 'https://ooni.org/post/2025-invisible-censorship/',
+      sourceName: 'OONI',
+    },
+  ]}
+/>

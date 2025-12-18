@@ -21,7 +21,7 @@ interface Props {
 }
 
 const {
-  title = 'Full-Stack Developer | Jersey',
+  title = 'Full-Stack Developer | Rerowros',
   description = '...',
   pathname = '/',
   image = '/favicon.svg', // Значение по умолчанию
@@ -71,7 +71,7 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
         '@graph': [
           {
             '@type': 'Person',
-            name: 'Jersey',
+            name: 'Rerowros',
             url: 'https://rerowros.ru/',
             sameAs: ['https://t.me/rerowros', 'https://github.com/Rerowros'],
             jobTitle: 'Full-Stack Web Developer',
@@ -96,7 +96,7 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
           },
           {
             '@type': 'WebSite',
-            name: 'Jersey — Portfolio',
+            name: 'Rerowros — Portfolio',
             url: 'https://rerowros.ru/',
             potentialAction: {
               '@type': 'SearchAction',
@@ -123,7 +123,7 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
       <Background />
     </div>
 
-    <main class="relative z-10 w-full overflow-x-hidden">
+    <main class="relative z-10 w-full overflow-x-clip">
       <slot />
     </main>
 

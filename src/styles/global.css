@@ -709,11 +709,24 @@ body {
   padding: 0;
 }
 
-/* Force sidebar and toc into normal document flow (prevent accidental sticky/fixed behavior) */
+/* Обеспечиваем прокрутку для оглавления, если оно длиннее экрана */
 .post-page #toc-nav {
-  position: static !important;
-  max-height: none !important;
-  overflow-y: visible !important;
+  /* Ограничиваем высоту оглавления, чтобы оно не уходило за пределы экрана */
+  max-height: calc(100vh - 250px) !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+}
+
+/* Стилизация скроллбара для Webkit (Chrome, Safari, Edge) */
+.post-page #toc-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.post-page #toc-nav::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 10px;
+}
+.post-page #toc-nav::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
 }
 .post-page .glass-card {
   position: relative !important;

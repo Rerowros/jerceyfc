@@ -34,17 +34,23 @@ const blogCollection = defineCollection({
     z.object({
       title: z.object({
         ru: z.string(),
-        en: z.string().optional(), // Делаем опциональным для блога, если статьи только на RU
+        en: z.string().optional(),
       }),
       excerpt: z.object({
         ru: z.string(),
         en: z.string().optional(),
       }),
+      // TL;DR
+      tldr: z
+        .object({
+          ru: z.string().optional(),
+          en: z.string().optional(),
+        })
+        .optional(),
       pubDate: z.date(),
       tags: z.array(z.string()),
       coverImage: image().optional(),
       draft: z.boolean().default(false),
-      // Время чтения можно вычислять автоматически, но можно и задать вручную
       readingTime: z.string().optional(),
     }),
 });
