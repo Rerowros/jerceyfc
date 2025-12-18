@@ -24,7 +24,7 @@ const {
   title = 'Full-Stack Developer | Jersey',
   description = '...',
   pathname = '/',
-  image = '/J-full.png', // Значение по умолчанию
+  image = '/favicon.svg', // Значение по умолчанию
 } = Astro.props;
 
 // Формируем абсолютный URL для изображения
@@ -107,7 +107,7 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
         ],
       })}
     />
-    <link rel="icon" type="image/png" href="/J.png" />
+    <link rel="icon" type="image/png" href="/favicon.svg" />
 
     <meta name="view-transition" content="same-origin" />
     <ClientRouter />
