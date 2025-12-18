@@ -20,13 +20,14 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+
 const { Content, headings } = await post.render();
 
 const seoTitle = `${post.data.title.ru} | Blog Jersey`;
 const seoDesc = post.data.excerpt.ru;
 const currentUrl = `https://rerowros.ru/blog/${post.slug}`;
 
-const ogImageUrl = new URL(`/blog/${post.slug}/og.png`, Astro.site);
+const ogImageUrl = `/blog/${post.slug}/og.png`;
 
 // Формируем объект JSON-LD для Google
 const jsonLd = {
@@ -52,18 +53,14 @@ const jsonLd = {
   title={`${post.data.title.ru} | Blog Jersey`}
   description={post.data.excerpt.ru}
   pathname={`/blog/${post.slug}`}
+  image={ogImageUrl}
 >
   <!-- Вставляем JSON-LD в секцию head (Astro передаст это в Layout через слот или можно добавить в Layout напрямую) -->
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 
   <!-- Обновляем мета-теги изображений (если в Layout.astro они принимаются как пропсы, 
        лучше передать их туда. Если нет — добавь прямо в head через <Layout>) -->
-  <Fragment slot="head">
-    <meta property="og:image" content={ogImageUrl} />
-    <meta name="twitter:image" content={ogImageUrl} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-  </Fragment>
+
   <Header />
 
   <!-- Scroll Progress Bar -->

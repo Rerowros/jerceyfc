@@ -17,13 +17,18 @@ interface Props {
   title?: string;
   description?: string;
   pathname?: string;
+  image?: string; // Добавляем новый пропс
 }
 
 const {
   title = 'Full-Stack Developer | Jersey',
-  description = 'Jersey — Full-Stack разработчик (React, TypeScript, Python). Создание современных веб-приложений и автоматизация через Telegram-ботов.',
+  description = '...',
   pathname = '/',
+  image = '/J-full.png', // Значение по умолчанию
 } = Astro.props;
+
+// Формируем абсолютный URL для изображения
+const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toString();
 ---
 
 <!doctype html>
@@ -49,13 +54,15 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`https://rerowros.ru${pathname}`} />
-    <meta property="og:image" content="/J.png" />
+    <meta property="og:image" content={canonicalImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="/J.png" />
+    <meta name="twitter:image" content={canonicalImage} />
 
     <script
       type="application/ld+json"
