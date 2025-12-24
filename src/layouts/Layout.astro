@@ -17,13 +17,18 @@ interface Props {
   title?: string;
   description?: string;
   pathname?: string;
+  image?: string; // Добавляем новый пропс
 }
 
-const { 
-  title = 'Full-Stack Developer | Jersey', 
-  description = 'Jersey — Full-Stack разработчик (React, TypeScript, Python). Создание современных веб-приложений и автоматизация через Telegram-ботов.', 
-  pathname = '/' 
+const {
+  title = 'Full-Stack Developer | Rerowros',
+  description = '...',
+  pathname = '/',
+  image = '/favicon.svg', // Значение по умолчанию
 } = Astro.props;
+
+// Формируем абсолютный URL для изображения
+const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toString();
 ---
 
 <!doctype html>
@@ -33,11 +38,14 @@ const {
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="color-scheme" content="dark light">
-    <meta name="darkreader-lock">
-    
-    <meta name="keywords" content="Web Development, React Developer, TypeScript, Python, Telegram Bots, Next.js, Astro, Frontend, Backend, Full-Stack, Разработка сайтов, Телеграм боты" />
-    
+    <meta name="color-scheme" content="dark light" />
+    <meta name="darkreader-lock" />
+
+    <meta
+      name="keywords"
+      content="Web Development, React Developer, TypeScript, Python, Telegram Bots, Next.js, Astro, Frontend, Backend, Full-Stack, Разработка сайтов, Телеграм боты"
+    />
+
     <title>{title}</title>
 
     <link rel="canonical" href={`https://rerowros.ru${pathname}`} />
@@ -46,59 +54,60 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`https://rerowros.ru${pathname}`} />
-    <meta property="og:image" content="/J.png" />
-    
+    <meta property="og:image" content={canonicalImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:creator" content="@jerseyfc" />
+    <meta name="twitter:creator" content="" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="/J.png" />
+    <meta name="twitter:image" content={canonicalImage} />
 
-    <script type="application/ld+json" is:inline>
-      {JSON.stringify({
-        "@context": "https://schema.org",
-        "@graph": [
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
           {
-            "@type": "Person",
-            "name": "Jersey",
-            "url": "https://rerowros.ru/",
-            "sameAs": ["https://t.me/jerseyfc", "https://github.com/Rerowros"],
-            "jobTitle": "Full-Stack Web Developer",
-            "makesOffer": 
-            [
+            '@type': 'Person',
+            name: 'Rerowros',
+            url: 'https://rerowros.ru/',
+            sameAs: ['https://t.me/rerowros', 'https://github.com/Rerowros'],
+            jobTitle: 'Full-Stack Web Developer',
+            makesOffer: [
               {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Разработка Telegram-ботов"
-                }
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'Разработка Telegram-ботов',
+                },
               },
               {
-                "@type": "Offer",
-                "itemOffered": {
-                  "@type": "Service",
-                  "name": "Создание сайтов на React"
-                }
-              }
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'Создание сайтов на React',
+                },
+              },
             ],
-            "knowsAbout": ["React", "TypeScript", "Python", "Next.js", "Telegram API"],
-            "description": "Разработчик веб-приложений и Telegram-ботов с фокусом на React и Python."
+            knowsAbout: ['React', 'TypeScript', 'Python', 'Next.js', 'Telegram API'],
+            description: 'Разработчик веб-приложений и Telegram-ботов с фокусом на React и Python.',
           },
           {
-            "@type": "WebSite",
-            "name": "Jersey — Portfolio",
-            "url": "https://rerowros.ru/",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": "https://rerowros.ru/?s={search_term_string}",
-              "query-input": "required name=search_term_string"
-            }
-          }
-        ]
+            '@type': 'WebSite',
+            name: 'Rerowros — Portfolio',
+            url: 'https://rerowros.ru/',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://rerowros.ru/?s={search_term_string}',
+              'query-input': 'required name=search_term_string',
+            },
+          },
+        ],
       })}
-    </script>
-
-    <link rel="icon" type="image/png" href="/J.png" />
+    />
+    <link rel="icon" type="image/png" href="/favicon.svg" />
 
     <meta name="view-transition" content="same-origin" />
     <ClientRouter />
@@ -109,45 +118,57 @@ const {
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
   </head>
-<body class="font-['Inter'] antialiased selection:bg-primary/30">
-  <div transition:persist>
-    <Background />
-  </div>
+  <body class="selection:bg-primary/30 font-['Inter'] antialiased">
+    <div transition:persist>
+      <Background />
+    </div>
 
-  <main class="relative z-10 w-full overflow-x-hidden">
-    <slot />
-  </main>
-  
-  <div transition:persist>
-    <MobileHint />
-  </div>
-  
-<script>
-    function initScrollObserver() {
-      // ОПТИМИЗАЦИЯ: Используем один Observer на все
-      const observer = new IntersectionObserver((entries) => {
-        // ОПТИМИЗАЦИЯ: Оборачиваем изменения DOM в requestAnimationFrame,
-        // чтобы не блокировать Main Thread во время скролла/загрузки
-        window.requestAnimationFrame(() => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        });
-      }, { 
-        threshold: 0.1,
-        rootMargin: "50px" // Начинаем анимировать чуть заранее
+    <main class="relative z-10 w-full overflow-x-clip">
+      <slot />
+    </main>
+
+    <div transition:persist>
+      <MobileHint />
+    </div>
+
+    <script>
+      import { initMagneticButtons } from '../scripts/magnetic';
+
+      function initScrollObserver() {
+        // ОПТИМИЗАЦИЯ: Используем один Observer на все
+        const observer = new IntersectionObserver(
+          (entries) => {
+            // ОПТИМИЗАЦИЯ: Оборачиваем изменения DOM в requestAnimationFrame,
+            // чтобы не блокировать Main Thread во время скролла/загрузки
+            window.requestAnimationFrame(() => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target);
+                }
+              });
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: '50px', // Начинаем анимировать чуть заранее
+          }
+        );
+
+        const animatedElements = document.querySelectorAll('.scroll-animate');
+        animatedElements.forEach((element) => observer.observe(element));
+      }
+
+      // Инициализация магнитных кнопок (глобально)
+      document.addEventListener('astro:page-load', () => {
+        initScrollObserver();
+        initMagneticButtons();
       });
 
-      const animatedElements = document.querySelectorAll('.scroll-animate');
-      animatedElements.forEach(element => observer.observe(element));
-    }
-    
-    document.addEventListener('astro:page-load', initScrollObserver);
-    document.addEventListener('DOMContentLoaded', initScrollObserver);
-</script>
-
-</body>
+      document.addEventListener('DOMContentLoaded', () => {
+        initScrollObserver();
+        initMagneticButtons();
+      });
+    </script>
+  </body>
 </html>

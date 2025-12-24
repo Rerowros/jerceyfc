@@ -5,12 +5,12 @@
   display: none;
 }
 
-html[lang="ru"] .lang-ru {
+html[lang='ru'] .lang-ru {
   display: inline-block; /* Или block, зависит от контекста */
   animation: focusIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-html[lang="en"] .lang-en {
+html[lang='en'] .lang-en {
   display: inline-block;
   animation: focusIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

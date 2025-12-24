@@ -1,0 +1,68 @@
+---
+// src/components/content/References.astro
+interface Source {
+  id: string | number;
+  title: string;
+  url: string;
+  sourceName?: string;
+}
+
+interface Props {
+  items: Source[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="mt-16 border-t border-[var(--color-border)] pt-8">
+  <h3 class="font-cinzel mb-6 flex items-center gap-3 text-2xl font-bold">
+    <svg
+      class="h-6 w-6 text-[var(--color-primary)]"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+      ></path>
+    </svg>
+    <span class="lang-ru">Источники и литература |</span>
+    <span class="lang-en">References & Sources</span>
+  </h3>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    {
+      items.map((item) => (
+        <div
+          id={`ref-${item.id}`}
+          class="group relative flex gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]/50 p-3 transition-all hover:border-[var(--color-primary)] hover:bg-[var(--color-card)]"
+        >
+          <div class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-[var(--color-primary)]/10 font-mono text-xs font-bold text-[var(--color-primary)]">
+            {item.id}
+          </div>
+          <div class="min-w-0 flex-grow">
+            <a href={item.url} target="_blank" rel="noopener noreferrer" class="block">
+              <div class="truncate text-sm font-medium text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">
+                {item.title}
+              </div>
+              <div class="mt-1 flex items-center gap-1 truncate text-xs break-all text-[var(--color-muted-foreground)]">
+                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                  />
+                </svg>
+                {item.sourceName || new URL(item.url).hostname.replace('www.', '')}
+              </div>
+            </a>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>

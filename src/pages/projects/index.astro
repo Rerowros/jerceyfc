@@ -1,13 +1,13 @@
 ---
 // src/pages/projects/index.astro
-import { getCollection } from "astro:content";
-import { fade } from "astro:transitions";
-import Layout from "../../layouts/Layout.astro";
-import Header from "../../components/layout/Header.astro";
-import ProjectCard from "../../components/ui/ProjectCard.astro";
-import Footer from "../../components/layout/Footer.astro";
+import { getCollection } from 'astro:content';
+import { fade } from 'astro:transitions';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+import ProjectCard from '../../components/ui/ProjectCard.astro';
+import Footer from '../../components/layout/Footer.astro';
 
-const allProjects = await getCollection("projects");
+const allProjects = await getCollection('projects');
 
 // Сортировка: сначала featured, потом по дате
 const sortedProjects = allProjects.sort((a, b) => {
@@ -24,32 +24,29 @@ const sortedProjects = allProjects.sort((a, b) => {
 >
   <Header />
   <main
-    class="container pt-24 md:pt-32 pb-16 min-h-screen"
-    transition:animate={fade({ duration: "0.2s" })}
+    class="container min-h-screen pt-24 pb-16 md:pt-32"
+    transition:animate={fade({ duration: '0.2s' })}
   >
     <!-- Заголовок -->
-    <div class="text-center mb-20 relative">
+    <div class="relative mb-20 text-center">
       <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-32 bg-[var(--color-primary)]/20 blur-[100px] -z-10 rounded-full"
+        class="absolute top-1/2 left-1/2 -z-10 h-32 w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-primary)]/20 blur-[100px]"
       >
       </div>
 
-      <h1
-        class="text-5xl md:text-7xl font-extrabold tracking-tight font-cinzel mb-6"
-      >
+      <h1 class="font-cinzel mb-6 text-5xl font-extrabold tracking-tight md:text-7xl">
         <span
-          class="lang-ru text-transparent bg-clip-text bg-gradient-to-r from-white via-[var(--color-primary)] to-white bg-300% animate-gradient"
+          class="lang-ru bg-300% animate-gradient bg-gradient-to-r from-white via-[var(--color-primary)] to-white bg-clip-text text-transparent"
           >Архив Работ</span
         >
         <span
-          class="lang-en text-transparent bg-clip-text bg-gradient-to-r from-white via-[var(--color-primary)] to-white bg-300% animate-gradient"
+          class="lang-en bg-300% animate-gradient bg-gradient-to-r from-white via-[var(--color-primary)] to-white bg-clip-text text-transparent"
           >Works Archive</span
         >
       </h1>
-      <p class="text-xl text-[var(--color-muted-foreground)] max-w-2xl mx-auto">
+      <p class="mx-auto max-w-2xl text-xl text-[var(--color-muted-foreground)]">
         <span class="lang-ru"
-          >Избранные коммерческие проекты, open-source инструменты и
-          эксперименты.</span
+          >Избранные коммерческие проекты, open-source инструменты и эксперименты.</span
         >
         <span class="lang-en"
           >Selected commercial projects, open-source tools, and experiments.</span
@@ -59,15 +56,10 @@ const sortedProjects = allProjects.sort((a, b) => {
 
     <!-- Сетка -->
     <!-- Убрали явную типизацию (p: CollectionEntry...) внутри HTML шаблона, чтобы не ломать парсер -->
-    <div
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 gap-y-12 render-optimization"
-    >
+    <div class="render-optimization grid grid-cols-1 gap-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
       {
         sortedProjects.map((p, index) => (
-          <div
-            class="scroll-animate"
-            style={`transition-delay: ${index * 50}ms`}
-          >
+          <div class="scroll-animate" style={`transition-delay: ${index * 50}ms`}>
             <ProjectCard project={p} />
           </div>
         ))
@@ -104,7 +96,7 @@ const sortedProjects = allProjects.sort((a, b) => {
 </style>
 <script>
   // Помечаем, что мы действительно были в списке проектов
-  document.addEventListener("astro:page-load", () => {
-    sessionStorage.setItem("from-projects-list", "true");
+  document.addEventListener('astro:page-load', () => {
+    sessionStorage.setItem('from-projects-list', 'true');
   });
 </script>

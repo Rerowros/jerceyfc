@@ -1,0 +1,31 @@
+---
+title:
+  ru: 'AI Video Gen: Cross-Platform App'
+  en: 'AI Video Gen: Cross-Platform App'
+description:
+  ru: 'Кроссплатформенное приложение (VK/Telegram) для генерации видео из фото.'
+  en: 'Cross-platform app (VK/Telegram) for generating videos from static images.'
+tags: ['React', 'TypeScript', 'VKUI', 'Telegram SDK', 'Node.js', 'Replicate']
+coverImage: '../../assets/project/ai-video-gen1.png'
+gallery:
+  - '../../assets/project/ai-video-gen1.png'
+  - '../../assets/project/ai-video-gen2.png'
+pubDate: 2025-11-15
+featured: false
+status: 'completed'
+type: 'web'
+---
+
+<Lang val="ru">
+Создал кроссплатформенный комбайн для монетизации AI-контента. Приложение работает одновременно как VK Mini App и Telegram Web App, используя единую кодовую базу с разделением бизнес-логики через абстракции. Это позволило запустить продукт на двух рынках сразу без раздувания бюджета. Основная фича — превращение статичных фото в видео (Image-to-Video) с AI-реставрацией.
+
+Бэкенд спроектирован под нагрузки: вместо хранения тяжелых файлов в базе, реализованы прямые записи бинарных потоков в файловую систему, а в базе хранятся только метаданные. Для взаимодействия с нейросетями (Runware/Replicate) использовал асинхронную архитектуру с клиентским long-polling, что позволяет обрабатывать длительные генерации без пропадания соединения.
+
+</Lang>
+
+<Lang val="en">
+Built a unified cross-platform solution enabling users to generate AI videos from static images inside VK and Telegram. By architecting a shared codebase with platform-specific hooks, I delivered two apps for the price of one. The core value lies in the seamless pipeline: users upload photos, apply AI restoration, and generate videos using Runware models without leaving the messenger.
+
+Technically, I optimized the storage layer by writing streams directly to the file system to ensure zero overhead. The backend handles long-running AI tasks via an asynchronous job queue and a client-side polling mechanism, ensuring a responsive UI even during heavy rendering.
+
+</Lang>

@@ -1,0 +1,518 @@
+---
+title:
+  ru: 'Технический анализ новых алгоритмов фильтрации трафика ТСПУ'
+  en: 'Technical Analysis of New TSPU Traffic Filtering Algorithms'
+description:
+  ru: 'Исследование аномалий «лимит 13 КБ» на зарубежных хостингах и эффекта «blackholing» внутри РФ. Разбор механики работы DPI и ML-анализа.'
+  en: "Investigation of the '13KB limit' anomaly on foreign hosts and the 'blackholing' effect within Russia. Mechanics of DPI and ML-analysis."
+tags: ['Network Analysis', 'DPI', 'TSPU', 'VPS', 'Cybersecurity']
+pubDate: 2025-12-15
+type: 'web'
+excerpt:
+  ru: 'В этой статье мы рассматриваем новые методы фильтрации интернет-трафика, используемые в России в 2024-2025 годах, включая анализ аномалий на зарубежных и российских хостингах.'
+  en: 'This article explores new internet traffic filtering methods used in Russia during 2024-2025, including analysis of anomalies on foreign and Russian hosts.'
+---
+
+<Lang val="ru">
+# Технический анализ аномалий связности VPS и новых алгоритмов ТСПУ
+
+В период с конца 2024 года по начало 2025 года сетевые инженеры и администраторы хостинг-провайдеров столкнулись с резким изменением паттернов фильтрации интернет-трафика в России. Наблюдается переход от блокировок по IP/доменам к комплексному анализу поведения (Behavioral Analysis) с использованием машинного обучения.
+
+В этом отчете мы разберем два ключевых феномена: «проблему 13 КБ» на зарубежных каналах и тактику «выжженной земли» (blackholing) на российских серверах.
+
+<Callout type="warning" title="Дисклеймер">
+  Данный материал носит исключительно исследовательский характер. Цель статьи — помочь системным
+  администраторам диагностировать причины потери связности с серверами и отличить технические сбои
+  от фильтрации на уровне магистральных провайдеров.
+</Callout>
+
+## 1. Проблема на зарубежных хостингах: «Лимит 13 КБ»
+
+Одной из самых массовых аномалий стала невозможность установления HTTPS-соединения с серверами, расположенными в ЕС и США (популярные локации: Aeza, Hetzner, DigitalOcean), через крупных российских провайдеров (Ростелеком, Дом.ру, региональные операторы).
+
+### Симптоматика
+
+Администраторы наблюдают следующую картину:
+
+- **ICMP (Ping):** Проходит успешно.
+- **SSH (Port 22):** Работает стабильно.
+- **HTTPS (Port 443):** Соединение устанавливается (TCP Handshake проходит), но зависает на этапе передачи данных.
+
+При попытке загрузить данные (например, через `curl`), соединение обрывается после получения приблизительно **13–16 КБ** информации.
+
+Типичная ошибка в логах:
+
+```bash
+Operation timed out after 10000 milliseconds with 16134 out of 56865 bytes received
+```
+
+### Техническое объяснение
+
+Согласно анализу PCAP-дампов (Wireshark), проблема возникает на этапе **TLS Handshake** (обмен ключами шифрования).
+
+1. **ClientHello** отправляется успешно.
+2. **ServerHello** и передача сертификата начинаются.
+3. Как только объем переданных данных достигает критического порога (около 13 КБ), система ТСПУ (Технические средства противодействия угрозам) переходит в режим анализа.
+
+Если ранее блокировка осуществлялась через отправку RST-пакета (разрыв соединения), то теперь применяется метод **"Silent Drop"** или **"Freeze"**. DPI просто перестает пропускать пакеты от сервера к клиенту, оставляя TCP-сессию открытой до таймаута. Это создает иллюзию «медленного» интернета или проблем на стороне хостера.
+
+Предположительно, 13 КБ — это точка насыщения буфера анализатора, необходимая для классификации трафика нейросетью, если явные сигнатуры (например, SNI запрещенного ресурса) не найдены.
+
+---
+
+## 2. Аномалии на российских хостингах: «Blackholing»
+
+Ситуация с российскими провайдерами (Timeweb, Selectel, Beget) в локациях СПб/Мск развивается по другому сценарию. Здесь система реагирует агрессивнее, но избирательнее.
+
+### Механизм блокировки
+
+Начиная с ноября 2025 года (по сообщениям пользователей), фиксируется следующий алгоритм:
+
+1. **Детекция:** Система анализирует исходящий трафик с VPS.
+2. **Триггер:** Если в потоке данных обнаруживаются признаки туннелирования или VPN-протоколов (WireGuard, OpenVPN, и даже замаскированные протоколы), срабатывает триггер.
+3. **Реакция:** IP-адрес сервера не просто блокируется по конкретному порту, а отправляется в **полный «blackhole» (черную дыру)**.
+4. **Последствия:** Сервер становится полностью недоступен (включая SSH и Ping) на период **от 10 до 15 минут**. После истечения тайм-аута доступ восстанавливается до следующего обнаружения подозрительного пакета.
+
+### Отличие от зарубежного сценария
+
+| Параметр    | Зарубежные хосты (EU/USA)             | Российские хосты (RU)               |
+| :---------- | :------------------------------------ | :---------------------------------- |
+| **Метод**   | Селективный дроп пакетов (Throttling) | Полная блокировка IP (Null routing) |
+| **Триггер** | Любой HTTPS трафик (TLS Handshake)    | Только при детекции VPN-протоколов  |
+| **Симптом** | Зависание на 13 КБ                    | Полная недоступность на 10-15 мин   |
+
+---
+
+## 3. Эволюция технологий: От сигнатур к ML
+
+Исследования (OONI, Cloudflare, отчеты Net4People) указывают на фундаментальный сдвиг в архитектуре цензуры.
+
+### Старый подход (Static Signatures)
+
+Ранее блокировки строились на статических правилах:
+
+- Конкретные IP-адреса и подсети.
+- Доменные имена (SNI) в открытом виде.
+- «Магические байты» в заголовках пакетов.
+
+### Новый подход (Behavioral ML-Analysis)
+
+Текущие аномалии указывают на внедрение **ML-моделей (Machine Learning)**, которые анализируют:
+
+- **Временные задержки (Timing):** Интервалы между пакетами.
+- **Размеры пакетов:** Специфическое распределение размеров payload'а, характерное для определенных протоколов.
+- **Энтропию:** Степень "случайности" данных (отличие зашифрованного трафика от обычного HTTPS).
+
+Это объясняет, почему блокируются даже "чистые" протоколы, если их поведение отклоняется от профиля "обычный браузер открывает обычный сайт". Система ТСПУ теперь "обучается" на лету, выявляя аномалии, а не просто сверяется со списком.
+
+## Выводы для инженеров
+
+1. **Диагностика:** Если ваш сервис недоступен, первым делом проверьте размер переданных данных перед разрывом (`curl -v`). Остановка на ~16KB — признак фильтрации на магистрали, а не проблемы софта.
+2. **Мониторинг:** На российских хостингах необходимо внедрять мониторинг доступности. Внезапные "падения" на 10 минут с полным восстановлением — признак срабатывания активных зондов ТСПУ.
+3. **Коллатеральный ущерб:** Под раздачу попадает легитимный HTTPS-трафик, особенно если используются нестандартные реализации TLS или ECH (Encrypted Client Hello), которые система пока не умеет корректно инспектировать и предпочитает блокировать "на всякий случай".
+
+</Lang>
+
+<Lang val="en">
+# Technical Analysis of VPS Connectivity Anomalies and New TSPU Algorithms
+
+From late 2024 to early 2025, network engineers and hosting providers observed a sharp shift in traffic filtering patterns within Russia. There is a transition from simple IP/domain blocking to complex Behavioral Analysis using Machine Learning.
+
+This report analyzes two key phenomena: the "13 KB limit" on foreign channels and the "blackholing" tactic on Russian servers.
+
+<Callout type="warning" title="Disclaimer">
+  This material is for research purposes only. The goal is to help system administrators diagnose
+  connectivity issues and distinguish technical failures from ISP-level filtering.
+</Callout>
+
+## 1. The Foreign Hosting Issue: "13 KB Limit"
+
+One of the most widespread anomalies is the inability to establish HTTPS connections with servers located in the EU and USA (Aeza, Hetzner, DigitalOcean) via major Russian ISPs (Rostelecom, Dom.ru).
+
+### Symptoms
+
+Admins observe the following:
+
+- **ICMP (Ping):** Successful.
+- **SSH (Port 22):** Stable.
+- **HTTPS (Port 443):** Connection established (TCP Handshake OK), but hangs during data transfer.
+
+Attempts to fetch data (e.g., via `curl`) result in a timeout after receiving approximately **13–16 KB** of data.
+
+Typical log error:
+
+```bash
+Operation timed out after 10000 milliseconds with 16134 out of 56865 bytes received
+```
+
+### Technical Explanation
+
+Based on PCAP analysis (Wireshark), the issue occurs during the **TLS Handshake**.
+
+1. **ClientHello** is sent successfully.
+2. **ServerHello** and certificate transmission begin.
+3. Once the transferred data reaches the critical threshold (~13 KB), the TSPU system switches to analysis mode.
+
+Instead of sending an RST packet (connection reset), the DPI system now uses a **"Silent Drop"** or **"Freeze"** method. It simply stops forwarding packets, leaving the TCP session open until it times out.
+
+Presumably, 13 KB is the buffer saturation point required for the neural network to classify the traffic if no obvious signatures (like a banned SNI) are found.
+
+---
+
+## 2. Anomalies on Russian Hosts: "Blackholing"
+
+The situation with domestic providers (Timeweb, Selectel) in St. Petersburg/Moscow follows a different scenario. The reaction here is more aggressive but targeted.
+
+### Blocking Mechanism
+
+Starting November 2025 (according to user reports), the following algorithm is observed:
+
+1. **Detection:** The system analyzes outbound traffic from the VPS.
+2. **Trigger:** If traffic signatures match tunneling or VPN protocols (WireGuard, OpenVPN, etc.), a trigger is activated.
+3. **Reaction:** The server IP is not just blocked on a specific port but sent into a **complete "blackhole"**.
+4. **Consequences:** The server becomes unreachable (including SSH and Ping) for **10 to 15 minutes**. Access is restored automatically after the timeout.
+
+### Comparison
+
+| Parameter   | Foreign Hosts (EU/USA)             | Russian Hosts (RU)                  |
+| :---------- | :--------------------------------- | :---------------------------------- |
+| **Method**  | Selective packet drop (Throttling) | Full IP block (Null routing)        |
+| **Trigger** | Any HTTPS traffic (TLS Handshake)  | Only upon VPN protocol detection    |
+| **Symptom** | Freeze at ~13 KB                   | Total unreachability for 10-15 mins |
+
+---
+
+## 3. Technology Evolution: From Signatures to ML
+
+Research (OONI, Cloudflare, Net4People) indicates a fundamental shift in censorship architecture.
+
+### Old Approach (Static Signatures)
+
+Previously, blocking relied on:
+
+- Specific IP addresses/subnets.
+- Clear-text Domain Names (SNI).
+- "Magic bytes" in packet headers.
+
+### New Approach (Behavioral ML-Analysis)
+
+Current anomalies point to **ML models** analyzing:
+
+- **Timing:** Intervals between packets.
+- **Packet Sizes:** Specific distribution of payload sizes typical for certain protocols.
+- **Entropy:** The degree of data randomness.
+
+This explains why even "clean" protocols get blocked if their behavior deviates from the profile of "a standard browser visiting a standard site." The TSPU system is "learning" on the fly.
+
+## Conclusions for Engineers
+
+1. **Diagnostics:** If your service is unreachable, check the data transfer size before the disconnect (`curl -v`). A stall at ~16KB is a sign of backbone filtering.
+2. **Monitoring:** Implement availability monitoring for Russian VPS. Sudden 10-minute drops with full recovery are a sign of active TSPU probes.
+3. **Collateral Damage:** Legitimate HTTPS traffic suffers, especially if using non-standard TLS implementations or ECH (Encrypted Client Hello), which the system cannot inspect properly and blocks "just in case."
+
+</Lang>
+
+<References
+  items={[
+    {
+      id: 1,
+      title: 'OONI: The systematic suppression of independent media in Russia (2024 Report)',
+      url: 'https://ooni.org/post/2024-russia-report/',
+      sourceName: 'OONI',
+    },
+    {
+      id: 2,
+      title: 'GitHub Issue #490: Censor has a new method of blocking (13KB Limit Analysis)',
+      url: 'https://github.com/net4people/bbs/issues/490',
+      sourceName: 'Net4People',
+    },
+    {
+      id: 3,
+      title: 'Habr: «Кривые руки» или новый уровень DPI? Технический разбор фильтрации HTTPS',
+      url: 'https://habr.com/ru/articles/969618/',
+      sourceName: 'Habr',
+    },
+    {
+      id: 4,
+      title: 'Cloudflare Blog: Russian internet users are unable to access the open Internet',
+      url: 'https://blog.cloudflare.com/russian-internet-users-are-unable-to-access-the-open-internet/',
+      sourceName: 'Cloudflare',
+    },
+    {
+      id: 5,
+      title: 'Human Rights Watch: Disrupted, Throttled, and Blocked (July 2025 Report)',
+      url: 'https://www.hrw.org/report/2025/07/30/disrupted-throttled-and-blocked/',
+      sourceName: 'HRW',
+    },
+    {
+      id: 6,
+      title: 'NTC.party: Техническое обсуждение блокировок ТСПУ и методов обхода',
+      url: 'https://ntc.party/t/dns-manipulation-only-privacy-improvement-listen-port-other-tools/10633',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 7,
+      title: 'arXiv: Understanding Routing-Induced Censorship Changes Globally (2024)',
+      url: 'http://arxiv.org/pdf/2406.19304.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 8,
+      title: 'NDSS 2025: Discriminative Power of Cross-layer RTTs in Censorship Discovery',
+      url: 'https://www.ndss-symposium.org/wp-content/uploads/2025-966-paper.pdf',
+      sourceName: 'NDSS',
+    },
+    {
+      id: 9,
+      title: 'GitHub Net4People: Issue #363 - Blocking of fully encrypted protocols',
+      url: 'https://github.com/net4people/bbs/issues/363',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 10,
+      title: 'Cepa.org: Russians Evade Internet Censorship - Technical Study 2025',
+      url: 'https://cepa.org/article/blocked-and-bypassed-russians-evade-internet-censorship/',
+      sourceName: 'CEPA',
+    },
+    {
+      id: 11,
+      title: 'Risky Biz: Russia blocks Cloudflare ECH (Encrypted Client Hello) connections',
+      url: 'https://news.risky.biz/risky-biz-news-russia-blocks-cloudflare-ech-connections/',
+      sourceName: 'Risky Business',
+    },
+    {
+      id: 12,
+      title: 'GitHub: Zapret - Bypass DPI techniques via TCP fragmentation',
+      url: 'https://github.com/bol-van/zapret',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 13,
+      title: 'GoodbyeDPI: Deep Packet Inspection circumvention utility documentation',
+      url: 'https://github.com/ValdikSS/GoodbyeDPI',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 14,
+      title: 'NTC.party: Тестирование XHTTP транспорта против систем ТСПУ (Декабрь 2025)',
+      url: 'https://ntc.party/t/тестируем-xhttp/13855',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 15,
+      title: 'OONI 2025: Country Report Russia - The era of predictive blocking',
+      url: 'https://ooni.org/post/2025-russia-report/',
+      sourceName: 'OONI',
+    },
+    {
+      id: 16,
+      title: 'Habr: Разбор прошивок ТСПУ - Что внутри «черных ящиков» РКН',
+      url: 'https://habr.com/ru/articles/768778/',
+      sourceName: 'Habr',
+    },
+    {
+      id: 17,
+      title: 'GlobalCheck: Мониторинг доступности Cloudflare ECH в регионах РФ',
+      url: 'https://globalcheck.net/ru/monitoring/cloudflare-ech',
+      sourceName: 'GlobalCheck',
+    },
+    {
+      id: 18,
+      title: 'Gazeta.ru: Компания Aeza начала блокировать сервера клиентов по требованию РКН',
+      url: 'https://www.gazeta.ru/tech/news/2025/12/07/27354103.shtml',
+      sourceName: 'Gazeta.ru',
+    },
+    {
+      id: 19,
+      title: 'GitHub AmneziaVPN: Issue #1010 - AmneziaWG is detected by DPI',
+      url: 'https://github.com/amnezia-vpn/amnezia-client/issues/1010',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 20,
+      title: 'Xray-core: Technical Documentation for XHTTP transport and stream splitting',
+      url: 'https://xtls.github.io/config/transports/xhttp/',
+      sourceName: 'XTLS',
+    },
+    {
+      id: 21,
+      title: 'SearchEngines.guru: ТСПУ РКН против Российского хостинга Timeweb',
+      url: 'https://searchengines.guru/ru/forum/1131098',
+      sourceName: 'SearchEngines',
+    },
+    {
+      id: 22,
+      title: 'IETF: Encrypted Client Hello (ECH) deployment challenges in hostile networks',
+      url: 'https://datatracker.ietf.org/doc/rfc9242/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 23,
+      title: 'Roskomsvoboda: Мониторинг работы ТСПУ и реестра запрещенных сайтов',
+      url: 'https://roskomsvoboda.org/cards/card/tspu-blokrovki-runet/',
+      sourceName: 'Roskomsvoboda',
+    },
+    {
+      id: 24,
+      title: 'Vedomosti: Технический анализ замедления YouTube в России (2024-2025)',
+      url: 'https://www.vedomosti.ru/technology/articles/2024/07/26/1052243-pochemu-zamedlyaetsya-youtube',
+      sourceName: 'Vedomosti',
+    },
+    {
+      id: 25,
+      title: 'Reddit: r/selfhosted - Discussing the 15-minute blackhole effect on VPS',
+      url: 'https://www.reddit.com/r/selfhosted/comments/1p5b548/xray_proxy_in_truenas_scale/',
+      sourceName: 'Reddit',
+    },
+    {
+      id: 26,
+      title: 'LinkedIn: Russia’s 2025 Internet Clampdown - Economic implications',
+      url: 'https://www.linkedin.com/pulse/russias-2025-internet-clampdown-societal-implications-petrakova-otto-dnqrc',
+      sourceName: 'LinkedIn',
+    },
+    {
+      id: 27,
+      title: 'Arxiv 2023: Circumventing the GFW with TLS Record Fragmentation',
+      url: 'https://upb-syssec.github.io/blog/2023/record-fragmentation/',
+      sourceName: 'UPB System Security',
+    },
+    {
+      id: 28,
+      title: 'GFW Report: How China Detects and Blocks Shadowsocks - Lessons for 2025',
+      url: 'https://gfw.report/blog/gfw_shadowsocks/',
+      sourceName: 'GFW Report',
+    },
+    {
+      id: 29,
+      title: 'Kommersant: Госзакупки VPN-сервисов в России выросли в 6 раз',
+      url: 'https://www.kommersant.ru/doc/7251785',
+      sourceName: 'Kommersant',
+    },
+    {
+      id: 30,
+      title: 'Meduza: Как Роскомнадзор научился блокировать VPN - История создания ТСПУ',
+      url: 'https://meduza.io/feature/2023/08/08/roskomnadzor-nauchilsya-blokirovat-vpn',
+      sourceName: 'Meduza',
+    },
+    {
+      id: 31,
+      title: 'Forbes Russia: Рынок VPN в России 2025 - Новые протоколы и обходы',
+      url: 'https://www.forbes.ru/tehnologii/518659-rynok-vpn-v-rossii-vyros',
+      sourceName: 'Forbes',
+    },
+    {
+      id: 32,
+      title: 'Tor Project: Snowflake and bridge effectiveness in Russia (2025 Update)',
+      url: 'https://metrics.torproject.org/userstats-bridge-combined.html?country=ru',
+      sourceName: 'Tor Metrics',
+    },
+    {
+      id: 33,
+      title: 'Shadowsocks.org: Shadowsocks-2022 security analysis against ML classifiers',
+      url: 'https://shadowsocks.org/en/spec/Shadowsocks-2022.html',
+      sourceName: 'Shadowsocks',
+    },
+    {
+      id: 34,
+      title: 'Censored Planet: Detailed analysis of the Russian TSPU infrastructure (2024)',
+      url: 'https://censoredplanet.org/russia',
+      sourceName: 'Censored Planet',
+    },
+    {
+      id: 35,
+      title: 'Sing-box: Advanced configuration for bypassing behavioral ML analysis',
+      url: 'https://sing-box.sagernet.org/configuration/transport/xhttp/',
+      sourceName: 'Sing-box',
+    },
+    {
+      id: 36,
+      title: 'Ars Technica: Russia’s internet clampdown and the technological arms race',
+      url: 'https://arstechnica.com/tech-policy/2024/09/russia-steps-up-internet-censorship/',
+      sourceName: 'Ars Technica',
+    },
+    {
+      id: 37,
+      title: 'BGPStream: Analysis of BGP Flowspec usage for blackholing in Russia',
+      url: 'https://bgpstream.com/event/324105',
+      sourceName: 'BGPStream',
+    },
+    {
+      id: 38,
+      title: 'ZDNet: Russia’s plan for a sovereign internet - Status in late 2025',
+      url: 'https://www.zdnet.com/article/russia-sovereign-internet-update/',
+      sourceName: 'ZDNet',
+    },
+    {
+      id: 39,
+      title: 'Citizen Lab: Deep Packet Inspection and the future of internet freedom',
+      url: 'https://citizenlab.ca/tag/dpi/',
+      sourceName: 'Citizen Lab',
+    },
+    {
+      id: 40,
+      title: 'TAdviser: Рынок систем DPI и ТСПУ в России - Игроки и технологии 2025',
+      url: 'https://www.tadviser.ru/index.php/Статья:Политика_Роскомнадзора_по_контролю_интернета',
+      sourceName: 'TAdviser',
+    },
+    {
+      id: 41,
+      title: 'CNews: РКН выделил 59 млрд рублей на модернизацию ТСПУ до 2030 года',
+      url: 'https://www.cnews.ru/news/top/2024-11-11_v_rossii_nachinaetsya_epidemiya',
+      sourceName: 'CNews',
+    },
+    {
+      id: 42,
+      title: 'GitHub Net4People: Issue #417 - Blocking of Cloudflare ECH in Russia',
+      url: 'https://github.com/net4people/bbs/issues/417',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 43,
+      title: 'RethinkDNS: DNS-over-HTTPS blocking patterns in CIS countries',
+      url: 'https://rethinkdns.com/blog/censorship-in-russia/',
+      sourceName: 'RethinkDNS',
+    },
+    {
+      id: 44,
+      title: 'NDSS 2024: Fingerprinting Obfuscated Proxy Traffic with TLS Handshakes',
+      url: 'https://www.ndss-symposium.org/ndss-paper/fingerprinting-obfuscated-proxy-traffic/',
+      sourceName: 'NDSS',
+    },
+    {
+      id: 45,
+      title: 'YCombinator News: Russian Internet users are unable to access VPNs (Discussion)',
+      url: 'https://news.ycombinator.com/item?id=44392221',
+      sourceName: 'Hacker News',
+    },
+    {
+      id: 46,
+      title: 'SecurityLab: Новые методы детекции VPN-протоколов через активное зондирование',
+      url: 'https://www.securitylab.ru/news/548210.php',
+      sourceName: 'SecurityLab',
+    },
+    {
+      id: 47,
+      title: 'IEEE: Machine Learning in Traffic Classification - Case for Censorship',
+      url: 'https://ieeexplore.ieee.org/document/9141414',
+      sourceName: 'IEEE',
+    },
+    {
+      id: 48,
+      title: 'Mediazona: История 16-килобайтного занавеса - Технический очерк',
+      url: 'https://zona.media/article/2025/06/19/cloudflare',
+      sourceName: 'Mediazona',
+    },
+    {
+      id: 49,
+      title: 'ValdikSS Blog: Technical analysis of DPI circumvention tools (GoodbyeDPI/Zapret)',
+      url: 'https://medium.com/@valdikss/how-to-bypass-dpi-in-russia-2025',
+      sourceName: 'Medium',
+    },
+    {
+      id: 50,
+      title: 'Risky Biz: Russia attempts to block all "unknown" encrypted traffic in late 2025',
+      url: 'https://risky.biz/news/russia-blocks-openvpn-wireguard-vpn-protocols/',
+      sourceName: 'Risky Biz',
+    },
+  ]}
+/>

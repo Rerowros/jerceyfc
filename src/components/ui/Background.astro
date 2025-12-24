@@ -4,7 +4,7 @@
 
 <div
   id="magic-background"
-  class="fixed inset-0 z-[-1] overflow-hidden transition-colors duration-500 bg-background"
+  class="bg-background fixed inset-0 z-[-1] overflow-hidden transition-colors duration-500"
 >
   <!-- 1. Градиентные блобы (теперь под сеткой для глубины) -->
   <div class="blob blob-1"></div>
@@ -12,17 +12,13 @@
   <div class="blob blob-3"></div>
 
   <!-- 2. Геометрическая сетка -->
-  <div class="absolute inset-0 grid-overlay"></div>
+  <div class="grid-overlay absolute inset-0"></div>
 
   <!-- 3. Следование мыши (теперь под шумом, но над сеткой) -->
   <div id="mouse-follower" class="block"></div>
 
   <!-- 4. Частицы -->
-  <div
-    id="particles-container"
-    class="absolute inset-0 overflow-hidden pointer-events-none"
-  >
-  </div>
+  <div id="particles-container" class="pointer-events-none absolute inset-0 overflow-hidden"></div>
 
   <!-- 5. Шум (самый верхний, но очень прозрачный) -->
   <div class="bg-noise"></div>
@@ -39,11 +35,7 @@
 
     /* Маска для плавного исчезновения по краям */
     mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 90%);
-    -webkit-mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 40%,
-      transparent 90%
-    );
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 90%);
 
     /* Важно для производительности и четкости */
     transform: translateZ(0);
@@ -158,16 +150,12 @@
   /* Усиление видимости мыши в светлой теме */
   :global(html.light) #mouse-follower {
     opacity: 0.25; /* Сильнее в светлой теме */
-    background: radial-gradient(
-      circle,
-      var(--color-primary) 0%,
-      transparent 60%
-    );
+    background: radial-gradient(circle, var(--color-primary) 0%, transparent 60%);
   }
 </style>
 
 <script>
-  import { initBackgroundAnimation } from "../../scripts/background"; // Проверь путь
+  import { initBackgroundAnimation } from '../../scripts/background'; // Проверь путь
 
-  document.addEventListener("astro:page-load", initBackgroundAnimation);
+  document.addEventListener('astro:page-load', initBackgroundAnimation);
 </script>

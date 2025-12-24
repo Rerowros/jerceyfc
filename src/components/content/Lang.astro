@@ -1,0 +1,12 @@
+---
+// src/components/content/Lang.astro
+interface Props {
+  val: 'ru' | 'en';
+}
+
+const { val } = Astro.props;
+---
+
+<div class={`lang-${val}`}>
+  <slot />
+</div>

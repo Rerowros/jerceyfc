@@ -1,0 +1,128 @@
+---
+// src/pages/blog/index.astro
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import { fade } from 'astro:transitions';
+
+// Получаем все посты и сортируем
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout
+  title="Blog | Rerowros"
+  description="Engineering, Network Security, and Web Development articles."
+  pathname="/blog"
+>
+  <Header />
+
+  <main
+    class="container mx-auto min-h-screen px-4 pt-32 pb-20"
+    transition:animate={fade({ duration: '0.2s' })}
+  >
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-16 text-center">
+        <h1 class="font-cinzel text-glow mb-6 text-4xl font-extrabold md:text-6xl">
+          <span
+            class="animate-gradient bg-300% bg-gradient-to-r from-white via-[var(--color-primary)] to-white bg-clip-text text-transparent"
+          >
+            Engineering Log
+          </span>
+        </h1>
+        <p class="text-xl text-[var(--color-muted-foreground)]">
+          <span class="lang-ru">Заметки о сетях, архитектуре и разработке.</span>
+          <span class="lang-en">Notes on networking, architecture, and development.</span>
+        </p>
+      </div>
+
+      <div class="grid gap-8">
+        {
+          posts.map((post, index) => (
+            <div
+              class="scroll-animate group glass-card relative block overflow-hidden rounded-2xl border border-[var(--color-border)] p-6 transition-all hover:border-[var(--color-primary)] hover:shadow-[var(--color-primary)]/10 hover:shadow-lg md:p-8"
+              style={`transition-delay: ${index * 100}ms`}
+            >
+              <div
+                class="pointer-events-none absolute inset-0 z-0 opacity-[0.05] mix-blend-soft-light"
+                style='background-image: url("data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.8\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E");'
+              />
+
+              <div class="relative z-10 mb-4 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div class="relative flex gap-2">
+                  {post.data.tags.slice(0, 3).map((tag) => (
+                    <a
+                      href={`/blog/tag/${tag}`}
+                      class="z-20 rounded border border-[var(--color-border)] bg-[var(--color-background)]/50 px-2.5 py-1 font-mono text-xs text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    >
+                      #{tag}
+                    </a>
+                  ))}
+                </div>
+                <time class="font-mono text-xs text-[var(--color-muted-foreground)] opacity-80">
+                  {post.data.pubDate.toLocaleDateString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+
+              <a
+                href={`/blog/${post.slug}`}
+                class="relative z-10 block transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <h2 class="font-cinzel mb-3 text-2xl leading-tight font-bold transition-colors group-hover:text-[var(--color-primary)]">
+                  <span class="lang-ru">{post.data.title.ru}</span>
+                  <span class="lang-en">{post.data.title.en || post.data.title.ru}</span>
+                </h2>
+
+                <p class="line-clamp-3 text-base leading-relaxed text-[var(--color-muted-foreground)]">
+                  <span class="lang-ru">{post.data.excerpt.ru}</span>
+                  <span class="lang-en">{post.data.excerpt.en || post.data.excerpt.ru}</span>
+                </p>
+
+                <div class="mt-4 flex -translate-x-2 items-center text-sm font-medium text-[var(--color-primary)] opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+                  <span class="lang-ru">Читать статью</span>
+                  <span class="lang-en">Read article</span>
+                  <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </div>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .bg-300\% {
+    background-size: 300% auto;
+  }
+  .animate-gradient {
+    animation: gradient 8s ease infinite;
+  }
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>

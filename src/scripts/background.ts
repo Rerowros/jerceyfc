@@ -1,7 +1,7 @@
 // src/scripts/background.ts
 
 export function initBackgroundAnimation() {
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isLowPerfDevice =
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
     // @ts-ignore deviceMemory is not in all browsers
@@ -10,9 +10,9 @@ export function initBackgroundAnimation() {
   // Для слабых устройств или пользователей с reduce-motion оставляем фон статичным
   if (prefersReducedMotion) return;
 
-  const container = document.getElementById("particles-container");
+  const container = document.getElementById('particles-container');
   if (!container) return;
-  
+
   // ОПТИМИЗАЦИЯ: Если частицы уже есть (при возврате или SPA-навигации), не пересоздаём их
   if (container.children.length > 0) {
     return;
@@ -22,8 +22,8 @@ export function initBackgroundAnimation() {
   const particleCount = isLowPerfDevice ? 10 : 20;
 
   for (let i = 0; i < particleCount; i++) {
-    const particle = document.createElement("div");
-    particle.className = "particle";
+    const particle = document.createElement('div');
+    particle.className = 'particle';
     const left = Math.random() * 100;
     const top = Math.random() * 100;
     const size = Math.random() < 0.3 ? 3 : 1;
@@ -42,15 +42,14 @@ export function initBackgroundAnimation() {
     container.appendChild(particle);
   }
 
-
-  const follower = document.getElementById("mouse-follower");
+  const follower = document.getElementById('mouse-follower');
 
   // Отключаем «хвост» на слабых машинах, чтобы убрать лишний rAF
   if (isLowPerfDevice) return;
 
   // Инициализируем фолловер только один раз
   if (follower && !follower.dataset.init) {
-    follower.dataset.init = "true";
+    follower.dataset.init = 'true';
 
     let targetX = 0;
     let targetY = 0;
@@ -61,7 +60,7 @@ export function initBackgroundAnimation() {
 
     const step = () => {
       // Если элемент удален из DOM — прекращаем цикл
-      if (!document.getElementById("mouse-follower")) {
+      if (!document.getElementById('mouse-follower')) {
         rafId = null;
         return;
       }
@@ -70,8 +69,7 @@ export function initBackgroundAnimation() {
       currentY += (targetY - currentY) * 0.1;
       follower.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
-      const isSettled =
-        Math.abs(targetX - currentX) < 0.5 && Math.abs(targetY - currentY) < 0.5;
+      const isSettled = Math.abs(targetX - currentX) < 0.5 && Math.abs(targetY - currentY) < 0.5;
       const idleTooLong = performance.now() - lastMoveTs > 200;
 
       if (isSettled && idleTooLong) {
@@ -112,8 +110,8 @@ export function initBackgroundAnimation() {
       }
     };
 
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("touchmove", onTouchMove, { passive: true });
-    document.addEventListener("visibilitychange", onVisibilityChange);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('touchmove', onTouchMove, { passive: true });
+    document.addEventListener('visibilitychange', onVisibilityChange);
   }
 }

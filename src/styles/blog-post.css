@@ -1,0 +1,249 @@
+/* ========================================
+   ОФОРМЛЕНИЕ ТЕКСТА И СТАТЬИ
+   ======================================== */
+
+.article-content {
+  font-family: 'Manrope', sans-serif;
+  /* УЛУЧШАЕМ ПЕРЕНОСЫ */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  /* Удаляем или меняем word-break: break-all, так как он рвет слова посреди буквы */
+  word-break: normal;
+  /* Отключаем автоматические дефисы, если они выглядят криво */
+  hyphens: none;
+  line-height: 1.7;
+}
+.article-content h1::before,
+.article-content h2::before,
+.article-content h3::before,
+.article-content h4::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Если решетка — это ссылка внутри заголовка (anchor link) */
+.article-content h1 a,
+.article-content h2 a,
+.article-content h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Заголовки внутри статьи */
+.article-content h2 {
+  margin-top: 4rem;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-primary); /* Цвет темы */
+}
+
+.article-content h3 {
+  font-size: 1.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  color: var(--color-foreground);
+  font-weight: 700;
+}
+
+.article-content h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  margin-top: 0.75rem;
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+.article-content h3::before {
+  content: '#';
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.article-content a:not(.toc-link) {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1.5px solid rgba(var(--color-primary-rgb, 129, 140, 248), 0.3);
+  transition: all 0.2s ease;
+  padding: 0 2px;
+}
+
+.article-content a:not(.toc-link):hover {
+  background-color: rgba(var(--color-primary-rgb, 129, 140, 248), 0.1);
+  border-bottom-color: var(--color-primary);
+  border-radius: 4px;
+}
+
+.article-content ol {
+  list-style-type: decimal; /* Включаем цифры */
+  margin-left: 1.5rem; /* Отступ слева для цифр */
+  margin-bottom: 1.5rem;
+  display: block; /* Гарантируем блочное отображение */
+}
+
+.article-content ul {
+  list-style-type: disc; /* Включаем точки */
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.article-content li {
+  margin-bottom: 0.75rem; /* Расстояние между пунктами */
+  padding-left: 0.5rem;
+  display: list-item; /* Важно для отображения маркера */
+}
+
+/* Стили для жирного текста внутри списков (как в вашем примере) */
+.article-content li strong {
+  color: var(--color-foreground);
+  font-weight: 700;
+}
+
+/* ========================================
+   ТАБЛИЦЫ (Markdown)
+   ======================================== */
+
+.article-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 2rem 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+}
+
+.article-content thead {
+  background-color: rgba(var(--color-primary-rgb), 0.05);
+}
+
+.article-content th {
+  text-align: left;
+  padding: 1rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-foreground);
+}
+
+.article-content td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted-foreground);
+}
+
+.article-content tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========================================
+   АККОРДЕОНЫ (TL;DR и Источники)
+   ======================================== */
+
+/* Базовая анимация раскрытия */
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accordion-item[open] .accordion-content {
+  grid-template-rows: 1fr;
+}
+
+.accordion-content > div {
+  overflow: hidden;
+}
+
+/* Специфика для блока "Источники" (References) */
+.article-content details.references-container {
+  margin-top: 4rem;
+  cursor: pointer;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  transition: all 0.3s ease;
+}
+
+.article-content details.references-container summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.article-content details.references-container summary::-webkit-details-marker {
+  display: none;
+}
+
+.article-content details.references-container[open] {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.02);
+}
+
+/* ========================================
+   БОКОВАЯ ПАНЕЛЬ И НАВИГАЦИЯ (TOC)
+   ======================================== */
+
+/* Кастомный скроллбар для навигации */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 10px;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: var(--color-muted-foreground);
+}
+
+/* Активная ссылка в Table of Contents */
+.toc-link.active {
+  color: var(--color-foreground);
+  border-left-color: var(--color-primary) !important;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  font-weight: 600;
+}
+
+/* Состояние при наведении на ссылки TOC */
+.toc-link:hover {
+  border-left-color: rgba(var(--color-primary-rgb), 0.5);
+}
+
+/* Фикс для ссылок в блоках внимания */
+.callout-content a {
+  /* Чтобы ссылка не разрывалась на полуслове */
+  word-break: normal;
+  overflow-wrap: anywhere;
+  /* Визуальное выделение */
+  color: var(--color-primary);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.3);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.callout-content a:hover {
+  border-bottom-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.05);
+}

@@ -1,7 +1,7 @@
 ---
 // src/components/sections/Projects.astro
-import { getCollection } from "astro:content";
-import ProjectCard from "../ui/ProjectCard.astro";
+import { getCollection } from 'astro:content';
+import ProjectCard from '../ui/ProjectCard.astro';
 
 interface Props {
   limit?: number;
@@ -12,7 +12,7 @@ interface Props {
 const { limit, showViewAll = false, showFeaturedOnly = false } = Astro.props;
 
 // 1. Получаем проекты из коллекции
-const allProjects = await getCollection("projects");
+const allProjects = await getCollection('projects');
 
 // 2. Сортируем и фильтруем
 let displayProjects = allProjects.sort(
@@ -28,44 +28,41 @@ if (limit) {
 }
 ---
 
-<section id="projects" class="py-12 md:py-20 px-4">
-  <div class="max-w-7xl mx-auto">
+<section id="projects" class="px-4 py-12 md:py-20">
+  <div class="mx-auto max-w-7xl">
     <!-- Заголовок секции -->
-    <div class="text-center mb-10 md:mb-16">
+    <div class="mb-10 text-center md:mb-16">
       <p class="section-title scroll-animate">
         <span class="lang-ru">Портфолио</span>
         <span class="lang-en">Portfolio</span>
       </p>
       <h2
-        class="text-3xl md:text-5xl font-bold font-cinzel text-glow scroll-animate"
+        class="font-cinzel text-glow scroll-animate text-3xl font-bold md:text-5xl"
         style="transition-delay: 100ms;"
       >
         <span class="lang-ru">Избранные работы</span>
         <span class="lang-en">Featured Work</span>
       </h2>
       <p
-        class="text-base md:text-lg text-[var(--color-muted-foreground)] mt-3 md:mt-4 max-w-2xl mx-auto scroll-animate"
+        class="scroll-animate mx-auto mt-3 max-w-2xl text-base text-[var(--color-muted-foreground)] md:mt-4 md:text-lg"
         style="transition-delay: 200ms;"
       >
         <span class="lang-ru"
-          >Проекты, которыми я особенно горжусь — от веб-приложений до
-          десктопных решений и ML-моделей.</span
+          >Проекты, которыми я особенно горжусь — от веб-приложений до десктопных решений и
+          ML-моделей.</span
         >
         <span class="lang-en"
-          >Projects I'm particularly proud of — from web applications to desktop
-          solutions and ML models.</span
+          >Projects I'm particularly proud of — from web applications to desktop solutions and ML
+          models.</span
         >
       </p>
     </div>
 
     <!-- Сетка проектов -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {
         displayProjects.map((p, index) => (
-          <div
-            class="scroll-animate h-full"
-            style={`transition-delay: ${index * 100 + 300}ms`}
-          >
+          <div class="scroll-animate h-full" style={`transition-delay: ${index * 100 + 300}ms`}>
             <ProjectCard project={p} />
           </div>
         ))
@@ -75,18 +72,12 @@ if (limit) {
     <!-- Кнопка "Все проекты" -->
     {
       showViewAll && (
-        <div
-          class="text-center mt-10 md:mt-14 scroll-animate"
-          style="transition-delay: 600ms;"
-        >
-          <a
-            href="/projects"
-            class="btn-primary inline-flex items-center gap-2 group"
-          >
+        <div class="scroll-animate mt-10 text-center md:mt-14" style="transition-delay: 600ms;">
+          <a href="/projects" class="btn-primary group inline-flex items-center gap-2">
             <span class="lang-ru">Все проекты</span>
             <span class="lang-en">View All Projects</span>
             <svg
-              class="w-5 h-5 transition-transform group-hover:translate-x-1"
+              class="h-5 w-5 transition-transform group-hover:translate-x-1"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

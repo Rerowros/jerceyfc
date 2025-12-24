@@ -1,5 +1,5 @@
 ---
-import IconDesktop from "../icons/IconDesktop.astro";
+import IconDesktop from '../icons/IconDesktop.astro';
 ---
 
 <!-- 
@@ -9,55 +9,46 @@ import IconDesktop from "../icons/IconDesktop.astro";
 -->
 <div
   id="mobile-hint-container"
-  class="fixed top-0 left-0 right-0 z-[100] pt-[max(12px,env(safe-area-inset-top))] px-4 flex justify-center pointer-events-none md:hidden overflow-hidden"
+  class="pointer-events-none fixed top-0 right-0 left-0 z-[100] flex justify-center overflow-hidden px-4 pt-[max(12px,env(safe-area-inset-top))] md:hidden"
 >
   <div
     id="mobile-hint"
-    class="pointer-events-auto w-full max-w-sm glass-card p-4 rounded-2xl border border-[var(--color-primary)]/30 shadow-2xl flex items-start gap-3 -translate-y-[150%] transition-transform duration-700 cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+    class="glass-card cubic-bezier(0.175, 0.885, 0.32, 1.275) pointer-events-auto flex w-full max-w-sm -translate-y-[150%] items-start gap-3 rounded-2xl border border-[var(--color-primary)]/30 p-4 shadow-2xl transition-transform duration-700"
     style="background: rgba(20, 20, 30, 0.85); backdrop-filter: blur(16px);"
   >
     <!-- Фоновый блик -->
     <div
-      class="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/10 to-transparent pointer-events-none rounded-2xl"
+      class="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-[var(--color-primary)]/10 to-transparent"
     >
     </div>
 
     <!-- Иконка монитора -->
     <div
-      class="flex-shrink-0 p-2.5 bg-[var(--color-primary)]/15 rounded-xl text-[var(--color-primary)]"
+      class="flex-shrink-0 rounded-xl bg-[var(--color-primary)]/15 p-2.5 text-[var(--color-primary)]"
     >
-      <IconDesktop class="w-6 h-6" />
+      <IconDesktop class="h-6 w-6" />
     </div>
 
-    <div class="flex-grow pr-6 pt-0.5">
-      <h4
-        class="font-bold text-sm text-[var(--color-foreground)] mb-1 leading-tight"
-      >
+    <div class="flex-grow pt-0.5 pr-6">
+      <h4 class="mb-1 text-sm leading-tight font-bold text-[var(--color-foreground)]">
         <span class="lang-ru">Магия в деталях </span>
         <span class="lang-en">Magic in details </span>
       </h4>
-      <p class="text-xs text-[var(--color-muted-foreground)] leading-relaxed">
+      <p class="text-xs leading-relaxed text-[var(--color-muted-foreground)]">
         <span class="lang-ru"
           >Сайт полон эффектов, доступных только на ПК. Зайдите с компьютера!</span
         >
-        <span class="lang-en"
-          >The site is full of PC-only effects. Visit from desktop!</span
-        >
+        <span class="lang-en">The site is full of PC-only effects. Visit from desktop!</span>
       </p>
     </div>
 
     <!-- Кнопка закрытия -->
     <button
       id="close-hint"
-      class="absolute top-2 right-2 p-2 text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] transition-colors active:scale-95"
+      class="absolute top-2 right-2 p-2 text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)] active:scale-95"
       aria-label="Close"
     >
-      <svg
-        class="w-4 h-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -70,31 +61,31 @@ import IconDesktop from "../icons/IconDesktop.astro";
 
 <script>
   function initMobileHint() {
-    const hint = document.getElementById("mobile-hint");
-    const closeBtn = document.getElementById("close-hint");
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const hint = document.getElementById('mobile-hint');
+    const closeBtn = document.getElementById('close-hint');
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     // Проверяем, закрывал ли пользователь хинт ранее
-    const hasClosedHint = sessionStorage.getItem("mobile-hint-closed");
+    const hasClosedHint = sessionStorage.getItem('mobile-hint-closed');
 
     if (hint && isMobile && !hasClosedHint) {
       // Показываем с задержкой 3 секунды
       setTimeout(() => {
-        hint.classList.remove("-translate-y-[150%]");
+        hint.classList.remove('-translate-y-[150%]');
       }, 3000);
 
       // Логика закрытия
-      closeBtn?.addEventListener("click", () => {
-        hint.classList.add("-translate-y-[150%]");
+      closeBtn?.addEventListener('click', () => {
+        hint.classList.add('-translate-y-[150%]');
         // Ждем окончания анимации перед записью в сторадж (опционально)
         setTimeout(() => {
-          sessionStorage.setItem("mobile-hint-closed", "true");
+          sessionStorage.setItem('mobile-hint-closed', 'true');
         }, 500);
       });
     }
   }
 
   // Запускаем на каждом переходе страниц
-  document.addEventListener("astro:page-load", initMobileHint);
-  document.addEventListener("DOMContentLoaded", initMobileHint);
+  document.addEventListener('astro:page-load', initMobileHint);
+  document.addEventListener('DOMContentLoaded', initMobileHint);
 </script>
