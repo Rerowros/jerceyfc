@@ -502,7 +502,8 @@ html[lang='en'] .lang-en {
 }
 
 /* Принудительный запрет горизонтального скролла на всем сайте */
-html, body {
+html,
+body {
   max-width: 100%;
   overflow-x: hidden;
   position: relative;

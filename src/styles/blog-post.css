@@ -189,9 +189,9 @@
   .article-content table {
     font-size: 0.875rem;
   }
-  
+
   /* Фикс для списков, чтобы они не вылезали */
-  .article-content.prose ul, 
+  .article-content.prose ul,
   .article-content.prose ol,
   .article-content ul,
   .article-content ol {
