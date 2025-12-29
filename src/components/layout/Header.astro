@@ -6,8 +6,7 @@ import HeaderControls from './HeaderControls.astro';
 <header
   class="glass-card fixed top-0 right-0 left-0 z-50 rounded-none border-x-0 border-t-0 backdrop-blur-xl"
 >
-  <div class="container mx-auto px-4">
-    <div class="flex h-16 items-center justify-between">
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
       <!-- Лого/Имя -->
       <a
         href="/"
@@ -61,7 +60,6 @@ import HeaderControls from './HeaderControls.astro';
           ></span>
         </button>
       </div>
-    </div>
   </div>
 
   <!-- Выпадающее меню для мобильных -->
@@ -69,7 +67,19 @@ import HeaderControls from './HeaderControls.astro';
     id="mobile-menu"
     class="glass-card hidden origin-top overflow-hidden border-t border-[var(--color-border)] transition-all duration-300 md:hidden"
   >
-    <nav class="container space-y-4 px-4 py-6">
+    <nav class="container max-h-[85vh] space-y-4 overflow-y-auto px-4 py-6">
+      <!-- Блок оглавления (скрыт по умолчанию, виден только в статьях) -->
+      <div id="mobile-toc-section" class="mb-6 hidden border-b border-[var(--color-border)] pb-6">
+        <h4
+          class="font-cinzel mb-4 text-xs font-bold tracking-widest text-[var(--color-primary)] uppercase"
+        >
+          <span class="lang-ru">В этой статье</span>
+          <span class="lang-en">In this article</span>
+        </h4>
+        <div id="mobile-toc-links" class="flex flex-col gap-3">
+          <!-- Сюда JS вставит ссылки -->
+        </div>
+      </div>
       <div class="space-y-2">
         <a
           href="/#skills"
@@ -85,6 +95,14 @@ import HeaderControls from './HeaderControls.astro';
         >
           <span class="text-lg font-medium"
             ><span class="lang-ru">Обо мне</span><span class="lang-en">About</span></span
+          >
+        </a>
+        <a
+          href="/blog"
+          class="flex items-center gap-3 rounded-xl p-3 text-[var(--color-muted-foreground)] transition-all hover:bg-[var(--color-foreground)]/5 hover:text-[var(--color-primary)]"
+        >
+          <span class="text-lg font-medium"
+            ><span class="lang-ru">Статьи</span><span class="lang-en">Blog</span></span
           >
         </a>
         <a
@@ -208,6 +226,8 @@ import HeaderControls from './HeaderControls.astro';
         // Prevent body scroll when menu is open
         if (!mobileMenu.classList.contains('hidden')) {
           document.body.style.overflow = 'hidden';
+          // Синхронизируем оглавление при открытии
+          syncMobileTOC();
         } else {
           document.body.style.overflow = '';
         }
@@ -283,6 +303,43 @@ import HeaderControls from './HeaderControls.astro';
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
         updateIcon(isLight);
       };
+
+      function syncMobileTOC() {
+        const mobileTocSection = document.getElementById('mobile-toc-section');
+        const mobileTocLinks = document.getElementById('mobile-toc-links');
+        // Ищем заголовки только в основном контенте статьи
+        const articleHeadings = document.querySelectorAll(
+          '.article-content h2, .article-content h3'
+        );
+
+        if (articleHeadings.length > 0 && mobileTocSection && mobileTocLinks) {
+          mobileTocSection.classList.remove('hidden');
+          mobileTocLinks.innerHTML = ''; // Чистим
+
+          articleHeadings.forEach((heading) => {
+            // Клонируем логику видимости (offsetParent) как в десктопном TOC
+            if (heading.offsetParent === null) return;
+
+            const link = document.createElement('a');
+            link.href = `#${heading.id}`;
+            link.className = `text-sm transition-colors hover:text-[var(--color-primary)] ${heading.tagName === 'H3' ? 'pl-4 text-xs opacity-80' : 'font-medium'}`;
+            link.textContent = heading.textContent;
+
+            // Закрывать меню при клике на пункт оглавления
+            link.onclick = () => {
+              const mobileMenu = document.getElementById('mobile-menu');
+              const mobileMenuButton = document.getElementById('mobile-menu-button');
+              mobileMenu?.classList.add('hidden');
+              mobileMenuButton?.classList.remove('is-active');
+              document.body.style.overflow = '';
+            };
+
+            mobileTocLinks.appendChild(link);
+          });
+        } else {
+          mobileTocSection?.classList.add('hidden');
+        }
+      }
     }
   }
 

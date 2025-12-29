@@ -12,6 +12,7 @@ import TelegramIcon from '../../components/icons/TelegramIcon.astro';
 import EmailIcon from '../../components/icons/EmailIcon.astro';
 import SparklesIcon from '../../components/icons/SparklesIcon.astro';
 import '../../styles/blog-post.css';
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
@@ -97,7 +98,7 @@ const jsonLd = {
       </div>
 
       <h1
-        class="font-cinzel text-glow relative z-10 mb-8 px-2 text-3xl leading-[1.1] font-extrabold break-words md:text-5xl lg:text-7xl"
+        class="font-cinzel text-glow relative z-10 mb-8 px-2 text-2xl leading-[1.2] font-extrabold break-words md:text-5xl lg:text-7xl"
       >
         <span class="lang-ru">{post.data.title.ru}</span>
         <span class="lang-en">{post.data.title.en || post.data.title.ru}</span>
@@ -137,7 +138,7 @@ const jsonLd = {
     </div>
 
     <div
-      class="relative container mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-4 lg:grid-cols-[1fr_300px]"
+      class="relative container mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-2 md:px-4 lg:grid-cols-[1fr_300px]"
     >
       <div class="min-w-0">
         <div
@@ -357,6 +358,39 @@ const jsonLd = {
     };
     window.addEventListener('scroll', updateProgress, { passive: true });
 
+    // --- НОВОЕ: Фильтрация оглавления по языку ---
+    const updateTocVisibility = () => {
+      const tocLinks = document.querySelectorAll('.toc-link');
+      tocLinks.forEach((link) => {
+        const id = link.getAttribute('href')?.substring(1);
+        if (!id) return;
+        const target = document.getElementById(id);
+
+        // offsetParent равен null, если элемент или его родитель имеет display: none
+        // Это надежный способ узнать, скрыт ли заголовок языковыми стилями
+        if (target && target.offsetParent === null) {
+          if (link.parentElement) link.parentElement.style.display = 'none';
+        } else {
+          if (link.parentElement) link.parentElement.style.display = 'block';
+        }
+      });
+    };
+
+    // Запускаем при загрузке
+    setTimeout(updateTocVisibility, 100);
+
+    // Следим за сменой языка (изменение атрибута lang на html)
+    const langObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
+          // Небольшая задержка, чтобы CSS успел примениться
+          setTimeout(updateTocVisibility, 50);
+        }
+      });
+    });
+    langObserver.observe(document.documentElement, { attributes: true });
+    // ----------------------------------------------
+
     // 2. TOC: Умный скролл и подсветка
     const tocLinks = document.querySelectorAll('.toc-link');
     const tocNav = document.getElementById('toc-nav');
@@ -388,12 +422,10 @@ const jsonLd = {
               activeLink.classList.add('active');
 
               // АВТО-СКРОЛЛ:
-              // Работает только если пользователь НЕ держит мышку над меню.
-              // Это решает проблему "откатывания" при ручном скролле меню.
               if (tocNav && !isHoveringToc) {
                 activeLink.scrollIntoView({
                   behavior: 'smooth',
-                  block: 'nearest', // ВАЖНО: скроллит только если элемент выходит за границы видимости
+                  block: 'nearest',
                   inline: 'nearest',
                 });
               }
@@ -402,7 +434,6 @@ const jsonLd = {
         });
       },
       {
-        // Срабатывает, когда заголовок находится в верхней части экрана (от 10% до 80% высоты)
         rootMargin: '-10% 0px -80% 0px',
       }
     );
@@ -447,6 +478,27 @@ const jsonLd = {
         setTimeout(() => (this.innerHTML = original), 2000);
       });
     });
+
+    // 5. Обёртка таблиц — гарантия, что таблицы не будут ломать мобилку
+    const wrapTables = () => {
+      const tables = document.querySelectorAll('.article-content table');
+      tables.forEach((table) => {
+        if (!table.parentElement || table.parentElement.classList.contains('table-wrapper')) return;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        wrapper.style.width = '100%';
+        wrapper.style.overflowX = 'auto';
+        // @ts-ignore
+        wrapper.style.webkitOverflowScrolling = 'touch';
+        wrapper.style.marginBottom = '2rem';
+        table.parentNode?.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
+    };
+
+    // Выполнить при загрузке и при ресайзе, на случай динамического контента
+    wrapTables();
+    window.addEventListener('resize', wrapTables);
   }
 
   document.addEventListener('astro:page-load', initBlogPost);

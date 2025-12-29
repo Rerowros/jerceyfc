@@ -4,15 +4,15 @@
 
 .article-content {
   font-family: 'Manrope', sans-serif;
-  /* УЛУЧШАЕМ ПЕРЕНОСЫ */
   overflow-wrap: break-word;
   word-wrap: break-word;
-  /* Удаляем или меняем word-break: break-all, так как он рвет слова посреди буквы */
   word-break: normal;
-  /* Отключаем автоматические дефисы, если они выглядят криво */
   hyphens: none;
   line-height: 1.7;
+  /* Добавляем, чтобы контент не распирал экран */
+  max-width: 100%;
 }
+
 .article-content h1::before,
 .article-content h2::before,
 .article-content h3::before,
@@ -109,37 +109,94 @@
    ТАБЛИЦЫ (Markdown)
    ======================================== */
 
+/* 1. Глобальный фикс для контейнера контента */
+.article-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important; /* Запрещаем горизонтальный скролл всей статье */
+}
+
+/* 2. ПРИНУДИТЕЛЬНЫЙ СКРОЛЛ ТАБЛИЦ */
+/* Мы используем селектор .prose table, чтобы перебить Tailwind */
+.article-content.prose table,
 .article-content table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  display: block !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   margin: 2rem 0;
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background: var(--color-card);
+}
+
+/* Фикс для ячеек, чтобы текст не слипался */
+.article-content.prose th,
+.article-content.prose td,
+.article-content th,
+.article-content td {
+  min-width: 140px; /* Минимальная ширина колонки на мобилках */
+  padding: 0.75rem !important;
+  white-space: normal !important; /* Разрешаем перенос текста внутри ячеек */
+  word-break: break-word !important;
 }
 
 .article-content thead {
   background-color: rgba(var(--color-primary-rgb), 0.05);
 }
 
-.article-content th {
-  text-align: left;
-  padding: 1rem;
-  font-weight: 700;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-foreground);
-}
-
-.article-content td {
-  padding: 1rem;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-muted-foreground);
-}
-
 .article-content tr:last-child td {
   border-bottom: none;
+}
+
+/* Обёртка-резерв на случай, если таблица всё ещё ломает страницу */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .article-content h2 {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .article-content h3 {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+  /* Уменьшаем отступы в карточке статьи */
+  .prose-container {
+    padding: 1.5rem !important;
+    border-radius: 1.5rem !important;
+  }
+}
+
+/* 3. Оптимизация отступов для маленьких экранов */
+@media (max-width: 640px) {
+  /* Уменьшаем паддинги основного контейнера, чтобы дать больше места тексту */
+  .prose-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    border-radius: 1rem !important;
+    margin-left: -0.5rem; /* Слегка расширяем контейнер */
+    margin-right: -0.5rem;
+  }
+
+  /* Уменьшаем размер шрифта в таблицах */
+  .article-content.prose table,
+  .article-content table {
+    font-size: 0.875rem;
+  }
+  
+  /* Фикс для списков, чтобы они не вылезали */
+  .article-content.prose ul, 
+  .article-content.prose ol,
+  .article-content ul,
+  .article-content ol {
+    padding-left: 1.25rem !important;
+  }
 }
 
 /* ========================================
@@ -246,4 +303,67 @@
 .callout-content a:hover {
   border-bottom-color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.05);
+}
+
+/* =========================
+   ЯДЕРНЫЙ ФИКС ДЛЯ МОБИЛЬНЫХ
+   ========================= */
+
+/* Фикс для заголовков, которые не хотят переноситься */
+.article-content h1,
+.article-content h2,
+.article-content h3 {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+  white-space: normal !important;
+  max-width: 100% !important;
+}
+
+/* Фикс для всего текстового контента */
+.article-content p,
+.article-content li,
+.article-content span {
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+/* МОБИЛЬНЫЙ ФИКС (до 768px) */
+@media (max-width: 768px) {
+  /* Убираем жесткие отступы, которые могут выталкивать контент */
+  .prose-container {
+    padding: 1rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important; /* На мобилках лучше без скруглений по бокам */
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  /* ТАБЛИЦЫ: Полная изоляция */
+  .article-content table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    /* Уменьшаем шрифт, чтобы влезло больше данных */
+    font-size: 0.75rem !important;
+    border-spacing: 0 !important;
+  }
+
+  .article-content td,
+  .article-content th {
+    min-width: 100px !important; /* Уменьшили минимальную ширину */
+    padding: 0.5rem 0.25rem !important;
+  }
+
+  /* Фикс для списков: уменьшаем отступы слева */
+  .article-content ul,
+  .article-content ol {
+    padding-left: 1rem !important;
+    margin-left: 0.5rem !important;
+  }
 }
