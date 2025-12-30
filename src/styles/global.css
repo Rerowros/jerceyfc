@@ -127,18 +127,15 @@ html.light[data-theme='rose'] {
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-
   font-family: 'Manrope', sans-serif;
   line-height: 1.6;
+  overflow-x: hidden; /* Оставляем только здесь */
+  /* Удалите overscroll-behavior-y: none; */
 
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
-  -webkit-tap-highlight-color: transparent;
   transition:
     background-color 0.5s ease,
     color 0.5s ease;
 }
-/* Добавьте в начало global.css */
 
 .optimize-rendering {
   content-visibility: auto;
@@ -505,8 +502,6 @@ html[lang='en'] .lang-en {
 html,
 body {
   max-width: 100%;
-  overflow-x: hidden;
-  position: relative;
 }
 
 /* ========================================

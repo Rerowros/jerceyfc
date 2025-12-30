@@ -113,7 +113,7 @@
 .article-content {
   width: 100% !important;
   max-width: 100% !important;
-  overflow-x: hidden !important; /* Запрещаем горизонтальный скролл всей статье */
+  overflow-x: visible !important; /* Измените на visible или удалите строку */
 }
 
 /* 2. ПРИНУДИТЕЛЬНЫЙ СКРОЛЛ ТАБЛИЦ */
