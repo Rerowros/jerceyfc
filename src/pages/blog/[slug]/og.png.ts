@@ -20,8 +20,6 @@ interface Props {
 export const GET: APIRoute<Props> = async ({ props }) => {
   const { post } = props;
 
-  // 1. Читаем файл локально из папки public
-  // process.cwd() указывает на корень проекта при запуске
   const fontPath = path.join(process.cwd(), 'public/fonts/Unbounded-Black.ttf');
   const fontData = fs.readFileSync(fontPath);
 

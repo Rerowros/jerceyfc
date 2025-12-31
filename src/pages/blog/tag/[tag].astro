@@ -39,7 +39,7 @@ const { posts } = Astro.props;
     <div class="mx-auto max-w-4xl">
       <div class="mb-12">
         <a
-          href="/blog"
+          href="/blog/"
           class="group mb-4 inline-flex items-center gap-2 text-sm text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-primary)]"
         >
           <div
@@ -101,7 +101,7 @@ const { posts } = Astro.props;
                 </time>
               </div>
 
-              <a href={`/blog/${post.slug}`} class="relative z-10 block">
+              <a href={`/blog/${post.slug}/`} class="relative z-10 block">
                 <h2 class="font-cinzel mb-3 text-2xl leading-tight font-bold transition-colors group-hover:text-[var(--color-primary)]">
                   <span class="lang-ru">{post.data.title.ru}</span>
                   <span class="lang-en">{post.data.title.en || post.data.title.ru}</span>
@@ -114,7 +114,7 @@ const { posts } = Astro.props;
               </p>
 
               <a
-                href={`/blog/${post.slug}`}
+                href={`/blog/${post.slug}/`}
                 class="relative z-10 inline-flex items-center text-sm font-medium text-[var(--color-primary)]"
               >
                 <span class="lang-ru">Читать статью</span>

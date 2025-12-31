@@ -13,6 +13,10 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://rerowros.ru',
+  trailingSlash: 'always',
+  build: {
+    format: 'directory',
+  },
 
   // Настройка i18n (оставляем вашу)
   i18n: {

@@ -54,7 +54,7 @@ const posts = (await getCollection('blog'))
                 <div class="relative flex gap-2">
                   {post.data.tags.slice(0, 3).map((tag) => (
                     <a
-                      href={`/blog/tag/${tag}`}
+                      href={`/blog/tag/${tag}/`}
                       class="z-20 rounded border border-[var(--color-border)] bg-[var(--color-background)]/50 px-2.5 py-1 font-mono text-xs text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
                     >
                       #{tag}
@@ -71,7 +71,7 @@ const posts = (await getCollection('blog'))
               </div>
 
               <a
-                href={`/blog/${post.slug}`}
+                href={`/blog/${post.slug}/`}
                 class="relative z-10 block transition-transform duration-300 group-hover:translate-x-1"
               >
                 <h2 class="font-cinzel mb-3 text-2xl leading-tight font-bold transition-colors group-hover:text-[var(--color-primary)]">
