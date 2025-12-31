@@ -17,14 +17,14 @@ interface Props {
   title?: string;
   description?: string;
   pathname?: string;
-  image?: string; // Добавляем новый пропс
+  image?: string;
 }
 
 const {
   title = 'Full-Stack Developer | Rerowros',
   description = '...',
   pathname = '/',
-  image = '/favicon.svg', // Значение по умолчанию
+  image = '/favicon.svg',
 } = Astro.props;
 
 // Нормализуем pathname: гарантируем ведущий и завершающий слеш
@@ -123,8 +123,95 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
       applyTheme();
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
+
+    <!-- ============================================== -->
+    <!-- ANALYTICS SECTION -->
+    <!-- ============================================== -->
+
+    <!-- 1. Yandex.Metrika (Initialization) -->
+    <!-- is:inline гарантирует, что скрипт останется как есть и выполнится сразу -->
+    <script is:inline>
+      (function (m, e, t, r, i, k, a) {
+        m[i] =
+          m[i] ||
+          function () {
+            (m[i].a = m[i].a || []).push(arguments);
+          };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) {
+            return;
+          }
+        }
+        ((k = e.createElement(t)),
+          (a = e.getElementsByTagName(t)[0]),
+          (k.async = 1),
+          (k.src = r),
+          a.parentNode.insertBefore(k, a));
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      // Используем ['ym'] чтобы TS не искал это свойство в типах, а JS выполнил корректно
+      window['ym'](106091669, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+      });
+    </script>
+
+    <!-- 2. Google Analytics (Initialization) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E3GFTGVKJP"></script>
+    <script is:inline>
+      window['dataLayer'] = window['dataLayer'] || [];
+      function gtag() {
+        window['dataLayer'].push(arguments);
+      }
+
+      gtag('js', new Date());
+      gtag('config', 'G-E3GFTGVKJP');
+    </script>
+
+    <!-- 3. SPA Navigation Fix (Processed by Astro, supports TS) -->
+    <script>
+      const YM_ID = 106091669;
+      const GA_ID = 'G-E3GFTGVKJP';
+
+      document.addEventListener('astro:page-load', () => {
+        const currentUrl = window.location.href;
+
+        // Здесь мы внутри модуля Astro, поэтому можем использовать приведение типов,
+        // но безопаснее и проще снова использовать ['prop']
+        const w = window as any;
+
+        // Отправка хита в Яндекс.Метрику
+        if (typeof w['ym'] === 'function') {
+          w['ym'](YM_ID, 'hit', currentUrl);
+        }
+
+        // Отправка хита в Google Analytics
+        if (typeof w['gtag'] === 'function') {
+          w['gtag']('config', GA_ID, {
+            page_path: window.location.pathname,
+            page_title: document.title,
+            page_location: currentUrl,
+          });
+        }
+      });
+    </script>
+    <!-- ============================================== -->
   </head>
   <body class="selection:bg-primary/30 font-['Inter'] antialiased">
+    <!-- Yandex.Metrika noscript -->
+    <noscript>
+      <div>
+        <img
+          src="https://mc.yandex.ru/watch/106091669"
+          style="position:absolute; left:-9999px;"
+          alt=""
+        />
+      </div>
+    </noscript>
+
     <div transition:persist>
       <Background />
     </div>
@@ -141,11 +228,8 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
       import { initMagneticButtons } from '../scripts/magnetic';
 
       function initScrollObserver() {
-        // ОПТИМИЗАЦИЯ: Используем один Observer на все
         const observer = new IntersectionObserver(
           (entries) => {
-            // ОПТИМИЗАЦИЯ: Оборачиваем изменения DOM в requestAnimationFrame,
-            // чтобы не блокировать Main Thread во время скролла/загрузки
             window.requestAnimationFrame(() => {
               entries.forEach((entry) => {
                 if (entry.isIntersecting) {
@@ -157,7 +241,7 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
           },
           {
             threshold: 0.1,
-            rootMargin: '50px', // Начинаем анимировать чуть заранее
+            rootMargin: '50px',
           }
         );
 
@@ -165,7 +249,6 @@ const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toStr
         animatedElements.forEach((element) => observer.observe(element));
       }
 
-      // Инициализация магнитных кнопок (глобально)
       document.addEventListener('astro:page-load', () => {
         initScrollObserver();
         initMagneticButtons();
