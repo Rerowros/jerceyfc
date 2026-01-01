@@ -24,6 +24,69 @@ import Footer from '../components/layout/Footer.astro';
       <Hero />
 
       <div class="optimize-rendering">
+        <div class="container mx-auto mt-8 mb-12 px-4">
+          <a
+            href="/tools/xray/"
+            class="group relative mx-auto block w-full max-w-4xl overflow-hidden rounded-2xl border border-[var(--color-primary)]/30 bg-[var(--color-card)] p-6 transition-all hover:border-[var(--color-primary)] hover:shadow-[0_0_40px_-10px_rgba(129,140,248,0.3)]"
+          >
+            <!-- Фоновый градиент -->
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/10 via-transparent to-transparent opacity-50 transition-opacity group-hover:opacity-100"
+            >
+            </div>
+
+            <div class="relative z-10 flex flex-col items-center justify-between gap-6 md:flex-row">
+              <div class="flex items-center gap-4">
+                <div
+                  class="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-primary)]/20 text-[var(--color-primary)]"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path><path
+                      d="m9 12 2 2 4-4"></path></svg
+                  >
+                </div>
+                <div>
+                  <h3 class="font-cinzel text-lg font-bold text-[var(--color-foreground)]">
+                    <span class="lang-ru">Генератор Xray Config</span>
+                    <span class="lang-en">Xray Config Generator</span>
+                  </h3>
+                  <p class="text-sm text-[var(--color-muted-foreground)]">
+                    VLESS Reality • XHTTP • UUID
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center gap-2 text-sm font-bold text-[var(--color-primary)] transition-transform group-hover:translate-x-1"
+              >
+                <span class="lang-ru">Открыть инструмент</span>
+                <span class="lang-en">Open Tool</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+                >
+              </div>
+            </div>
+          </a>
+        </div>
+
         <Skills />
         <Projects limit={3} showViewAll={true} showFeaturedOnly={true} />
       </div>

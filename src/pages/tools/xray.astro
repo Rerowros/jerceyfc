@@ -1,0 +1,121 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import XrayGenerator from '../../features/xray-generator/index';
+
+// SEO Constants
+const TITLE = 'Xray Config Generator: VLESS Reality, XHTTP & UUID | Rerowros Tools';
+const DESCRIPTION =
+  'Free online generator for Xray-core configs. Supports VLESS Reality, SplitHTTP (XHTTP), XTLS-Vision, and gRPC. Generate UUID, ShortId, and share links for v2rayNG, Hiddify, and NekoBox.';
+const KEYWORDS =
+  'xray generator, vless reality config, xhttp splithttp config, xray uuid generator, v2rayng link creator, hiddify config, xtls vision, xray config json';
+
+// Schema.org для веб-приложения
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Xray Config Generator',
+  url: 'https://rerowros.ru/tools/xray',
+  description: DESCRIPTION,
+  applicationCategory: 'Utility',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    'VLESS Reality Config Generation',
+    'XHTTP (SplitHTTP) Support',
+    'UUID v4 Generator',
+    'x25519 Key Pair Generation',
+  ],
+  author: {
+    '@type': 'Person',
+    name: 'Rerowros',
+  },
+};
+---
+
+<Layout title={TITLE} description={DESCRIPTION} pathname="/tools/xray">
+  <!-- Вставка JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <meta name="keywords" content={KEYWORDS} slot="head" />
+
+  <Header />
+
+  <main class="container mx-auto min-h-screen px-4 pt-32 pb-20">
+    <!-- H1 Заголовок (Главный для SEO) -->
+    <div class="mb-12 text-center">
+      <h1 class="font-cinzel text-glow mb-4 text-3xl leading-tight font-extrabold md:text-5xl">
+        <span class="text-gradient">Xray VLESS Generator</span>
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-[var(--color-muted-foreground)] md:text-xl">
+        Создание конфигов <span class="font-semibold text-[var(--color-foreground)]">Reality</span> и
+        <span class="font-semibold text-[var(--color-foreground)]">XHTTP (2026)</span> для v2rayNG и Hiddify.
+      </p>
+    </div>
+
+    <!-- Интерактивный инструмент (React) -->
+    <XrayGenerator client:load />
+
+    <!-- SEO Content Block (Статический HTML для роботов) -->
+    <article
+      class="prose prose-invert prose-lg mx-auto mt-24 max-w-4xl text-[var(--color-muted-foreground)]"
+    >
+      <div
+        class="rounded-3xl border border-[var(--color-border)] bg-[var(--color-card)]/30 p-8 backdrop-blur-sm"
+      >
+        <h2 class="font-cinzel mb-6 text-2xl font-bold text-[var(--color-foreground)]">
+          О генераторе Xray Config
+        </h2>
+
+        <div class="grid gap-8 text-sm md:grid-cols-2 md:text-base">
+          <div>
+            <h3 class="mb-2 font-bold text-[var(--color-primary)]">Что такое VLESS Reality?</h3>
+            <p class="mb-4">
+              Это современный стандарт обхода блокировок, который позволяет скрывать VPN-сервер под
+              видом популярного сайта (например, Microsoft или Apple). Ему не нужен домен, а
+              сертификаты подделываются "на лету".
+            </p>
+
+            <h3 class="mb-2 font-bold text-[var(--color-primary)]">
+              Зачем нужен XHTTP (SplitHTTP)?
+            </h3>
+            <p>
+              Новый протокол 2025/2026 года в Xray-core. Он разделяет поток данных на множество
+              мелких HTTP-запросов, делая трафик неотличимым от загрузки картинок с CDN. Эффективен
+              против DPI, анализирующих длину сессии.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="mb-2 font-bold text-[var(--color-primary)]">Поддерживаемые клиенты</h3>
+            <ul class="list-disc space-y-1 pl-4 marker:text-[var(--color-primary)]">
+              <li><strong>Android:</strong> v2rayNG, Hiddify Next</li>
+              <li><strong>iOS:</strong> FoXray, V2Box, Streisand (частично)</li>
+              <li><strong>Windows/Linux:</strong> NekoBox, Hiddify Desktop</li>
+            </ul>
+
+            <h3 class="mt-4 mb-2 font-bold text-[var(--color-primary)]">Как использовать?</h3>
+            <ol class="list-decimal space-y-1 pl-4 marker:text-[var(--color-primary)]">
+              <li>Сгенерируйте UUID и ShortId.</li>
+              <li>Вставьте публичный ключ сервера (x25519).</li>
+              <li>Скопируйте ссылку <code>vless://</code>.</li>
+              <li>Импортируйте в клиент из буфера обмена.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ключевые слова для поисковиков (скрытый контекст, но полезный) -->
+      <div class="mt-8 text-center text-xs opacity-30">
+        Generator tools available: UUID v4 generator, ShortId hex generator, Xray config json
+        builder, VLESS share link decoder.
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>

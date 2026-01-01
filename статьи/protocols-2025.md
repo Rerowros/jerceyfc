@@ -1,7 +1,7 @@
 ---
 title:
-  ru: "Архитектура сетевых протоколов 2025: VLESS, XHTTP и современные методы инкапсуляции"
-  en: "Network Protocol Architecture 2025: VLESS, XHTTP & Modern Encapsulation Methods"
+  ru: 'Архитектура сетевых протоколов 2025: VLESS, XHTTP и современные методы инкапсуляции'
+  en: 'Network Protocol Architecture 2025: VLESS, XHTTP & Modern Encapsulation Methods'
 description:
   ru: 'Технический обзор архитектуры современных протоколов и их поведения в высоконагруженных сетях в условиях углубленного анализа трафика.'
   en: 'Technical overview of modern protocol architecture and behavior in high-load networks under deep traffic analysis.'
@@ -12,14 +12,14 @@ excerpt:
   ru: 'В этом руководстве мы разберем, как современные инженерные решения обеспечивают стабильность соединения через имитацию стандартного приложенческого уровня и защиту метаданных.'
   en: 'In this guide, we analyze how 2025 engineering solutions ensure connection stability through application-level imitation and metadata protection.'
 tldr:
-  ru: "Узнаем принципы работы современных транспортных протоколов, особенности анализа TLS-отпечатков JA4 и архитектуру XHTTP для оптимизации передачи данных."
-  en: "Learn the principles of modern transport protocols, the specifics of JA4 TLS fingerprinting, and XHTTP architecture for data transfer optimization."
-
+  ru: 'Узнаем принципы работы современных транспортных протоколов, особенности анализа TLS-отпечатков JA4 и архитектуру XHTTP для оптимизации передачи данных.'
+  en: 'Learn the principles of modern transport protocols, the specifics of JA4 TLS fingerprinting, and XHTTP architecture for data transfer optimization.'
 ---
 
 <Lang val="ru">
 
 # Введение: Эволюция транспортных протоколов в сложных сетях
+
 <Callout type="info" title="Цикл статей «Сети 2025»">
   Это вторая часть технического обзора. Чтобы лучше понять принципы работы современных систем мониторинга трафика, рекомендуем ознакомиться с первой частью: 
   **[Эволюция систем анализа трафика: От IP-адресов к машинному обучению.](/blog/tspu-deep-dive)**.
@@ -40,11 +40,11 @@ tldr:
 
 Если ранее системам мониторинга было достаточно проанализировать этап рукопожатия (TLS Handshake), то современные модели на базе нейросетей перешли к анализу окон размером **100 и более пакетов**.
 
-| Архитектура модели анализа            | Окно пакетов (N) | Точность классификации            |
-| :------------------------------------- | :--------------- | :-------------------------------- |
-| Базовая (2023)                         | 10               | 0.99593                           |
-| Расширенная (2024)                     | 50               | 0.99860                           |
-| **Глубокая (2025)**                    | **100**          | **0.99895**                       |
+| Архитектура модели анализа | Окно пакетов (N) | Точность классификации |
+| :------------------------- | :--------------- | :--------------------- |
+| Базовая (2023)             | 10               | 0.99593                |
+| Расширенная (2024)         | 50               | 0.99860                |
+| **Глубокая (2025)**        | **100**          | **0.99895**            |
 
 Это означает, что системы мониторинга теперь «наблюдают» за сессией дольше, накапливая статистику о распределении длин пакетов и временных интервалах.
 
@@ -120,6 +120,7 @@ XHTTP радикально меняет подход к транспортиро
 Анализ технологий конца 2025 года показывает, что статичные конфигурации сетевых узлов теряют актуальность. Системы мониторинга постоянно обновляются, что требует от сетевых решений высокой степени гибкости.
 
 Будущее стабильной связи заключается в:
+
 1.  **Динамическом переключении (Fallback):** Автоматический переход между XHTTP, gRPC и стандартным TLS при деградации канала.
 2.  **Архитектурной мимикрии:** Соответствии трафика текущим профилям популярных веб-сервисов.
 3.  **Защите метаданных:** Использовании современных стандартов TLS и корректных криптографических отпечатков.
@@ -128,11 +129,10 @@ XHTTP радикально меняет подход к транспортиро
 
 </Lang>
 
-
 <Lang val="en">
 
-
 # Introduction: The Evolution of Transport Protocols in Complex Networks
+
 <Callout type="info" title="Network 2025 Series">
   This is the second part of our technical overview. To better understand the principles of modern traffic monitoring systems, we recommend reading the first part: 
   **[Evolution of Traffic Analysis Systems: From IP Addresses to Machine Learning.](/blog/tspu-deep-dive)**.
@@ -153,11 +153,11 @@ The VLESS protocol paired with XTLS has long been an effective solution due to i
 
 While monitoring systems previously only needed to analyze the handshake phase (TLS Handshake), modern neural network-based models have moved to analyzing windows of **100 packets or more**.
 
-| Analysis Model Architecture            | Packet Window (N) | Classification Accuracy           |
-| :------------------------------------- | :--------------- | :-------------------------------- |
-| Basic (2023)                           | 10               | 0.99593                           |
-| Extended (2024)                        | 50               | 0.99860                           |
-| **Deep (2025)**                        | **100**          | **0.99895**                       |
+| Analysis Model Architecture | Packet Window (N) | Classification Accuracy |
+| :-------------------------- | :---------------- | :---------------------- |
+| Basic (2023)                | 10                | 0.99593                 |
+| Extended (2024)             | 50                | 0.99860                 |
+| **Deep (2025)**             | **100**           | **0.99895**             |
 
 This means that monitoring systems now "observe" a session longer, accumulating statistics on packet length distribution and timing intervals.
 
@@ -233,6 +233,7 @@ Many network nodes apply bandwidth limits to UDP traffic not related to DNS or k
 An analysis of late 2025 technologies shows that static network node configurations are losing relevance. Monitoring systems are constantly updated, requiring high flexibility from network solutions.
 
 The future of stable connectivity lies in:
+
 1.  **Dynamic Fallback:** Automatic transition between XHTTP, gRPC, and standard TLS during channel degradation.
 2.  **Architectural Mimicry:** Ensuring traffic matches current profiles of popular web services.
 3.  **Metadata Protection:** Utilizing modern TLS standards and correct cryptographic fingerprints.
@@ -242,54 +243,54 @@ In 2026, the most effective systems will be those capable of adapting their para
 </Lang>
 
 <References
-  items={[
-    {
-      id: 1,
-      title: 'Xray-core Documentation: XHTTP Transport Overview',
-      url: 'https://xtls.github.io/config/transports/xhttp.html',
-      sourceName: 'XTLS',
-    },
-    {
-      id: 2,
-      title: 'JA4+ Network Fingerprinting: Technical Specification',
-      url: 'https://github.com/FoxIO-LLC/ja4',
-      sourceName: 'FoxIO',
-    },
-    {
-      id: 5,
-      title: 'BBR Congestion Control: Technical Deep Dive',
-      url: 'https://cloud.google.com/blog/products/networking/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster',
-      sourceName: 'Google Cloud',
-    },
-    {
-      id: 6,
-      title: 'QUIC and HTTP/3: Performance in Lossy Networks',
-      url: 'https://blog.cloudflare.com/quic-and-http-3-performance-in-lossy-networks/',
-      sourceName: 'Cloudflare',
-    },
-    {
-      id: 29,
-      title: 'Cloudflare: Understanding the flow control in HTTP/2',
-      url: 'https://blog.cloudflare.com/http-2-flow-control/',
-      sourceName: 'Cloudflare',
-    },
-    {
-      id: 31,
-      title: 'MDPI: GRPC-based SDN control and telemetry in high-load environments',
-      url: 'https://www.mdpi.com/2076-3417/13/14/8104/pdf',
-      sourceName: 'MDPI',
-    },
-    {
-      id: 51,
-      title: 'Google Cloud Security: JA4 Fingerprinting in GTI Deep Dive',
-      url: 'https://security.googlecloudcommunity.com/t5/custom-ja4-fingerprinting/td-p/64210',
-      sourceName: 'Google Cloud',
-    },
-    {
-      id: 62,
-      title: 'Medium: Understanding gRPC protocol buffers for security analysts',
-      url: 'https://medium.com/p/grpc-protobuf-security-analysis',
-      sourceName: 'Medium',
-    }
-  ]}
+items={[
+{
+id: 1,
+title: 'Xray-core Documentation: XHTTP Transport Overview',
+url: 'https://xtls.github.io/config/transports/xhttp.html',
+sourceName: 'XTLS',
+},
+{
+id: 2,
+title: 'JA4+ Network Fingerprinting: Technical Specification',
+url: 'https://github.com/FoxIO-LLC/ja4',
+sourceName: 'FoxIO',
+},
+{
+id: 5,
+title: 'BBR Congestion Control: Technical Deep Dive',
+url: 'https://cloud.google.com/blog/products/networking/tcp-bbr-congestion-control-comes-to-gcp-your-internet-just-got-faster',
+sourceName: 'Google Cloud',
+},
+{
+id: 6,
+title: 'QUIC and HTTP/3: Performance in Lossy Networks',
+url: 'https://blog.cloudflare.com/quic-and-http-3-performance-in-lossy-networks/',
+sourceName: 'Cloudflare',
+},
+{
+id: 29,
+title: 'Cloudflare: Understanding the flow control in HTTP/2',
+url: 'https://blog.cloudflare.com/http-2-flow-control/',
+sourceName: 'Cloudflare',
+},
+{
+id: 31,
+title: 'MDPI: GRPC-based SDN control and telemetry in high-load environments',
+url: 'https://www.mdpi.com/2076-3417/13/14/8104/pdf',
+sourceName: 'MDPI',
+},
+{
+id: 51,
+title: 'Google Cloud Security: JA4 Fingerprinting in GTI Deep Dive',
+url: 'https://security.googlecloudcommunity.com/t5/custom-ja4-fingerprinting/td-p/64210',
+sourceName: 'Google Cloud',
+},
+{
+id: 62,
+title: 'Medium: Understanding gRPC protocol buffers for security analysts',
+url: 'https://medium.com/p/grpc-protobuf-security-analysis',
+sourceName: 'Medium',
+}
+]}
 />

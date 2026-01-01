@@ -1,10 +1,10 @@
 ---
 title:
-  ru: "Технический анализ новых алгоритмов фильтрации трафика ТСПУ"
-  en: "TSPU Deep Dive: Modern Traffic Classification Techniques"
+  ru: 'Технический анализ новых алгоритмов фильтрации трафика ТСПУ'
+  en: 'TSPU Deep Dive: Modern Traffic Classification Techniques'
 description:
-  ru: "Глубокое техническое исследование современных методов классификации и фильтрации трафика в магистральных сетях."
-  en: "A deep dive into the transformation of internet traffic filtering systems: the shift to active probing, behavioral analysis, and surgical precision."
+  ru: 'Глубокое техническое исследование современных методов классификации и фильтрации трафика в магистральных сетях.'
+  en: 'A deep dive into the transformation of internet traffic filtering systems: the shift to active probing, behavioral analysis, and surgical precision.'
 tags: ['DPI', 'TSPU', 'Network Analysis', 'Cybersecurity', 'Runet 2025']
 pubDate: 2025-12-15
 type: 'web'
@@ -12,17 +12,25 @@ excerpt:
   ru: 'К концу 2025 года российский интернет окончательно перешел в эпоху "умной" фильтрации. Разбираем, как современные алгоритмы классификации управляют магистральными потоками данных.'
   en: 'By late 2025, the Russian internet has fully entered the era of "smart" filtering. We analyze how modern classification algorithms manage backbone traffic.'
 tldr:
-  ru: "Разбираем переход ТСПУ от блокировок IP к поведенческому анализу, узнаем, что стоит за «лимитом 13 КБ» и как активное зондирование верифицирует узлы в реальном времени."
+  ru: 'Разбираем переход ТСПУ от блокировок IP к поведенческому анализу, узнаем, что стоит за «лимитом 13 КБ» и как активное зондирование верифицирует узлы в реальном времени.'
   en: "Analyze the shift from IP blocking to behavioral analysis, discover the mechanics behind the '13 KB limit,' and learn how active probing verifies nodes in real-time."
 ---
+
 ---
 
 <Lang val="ru">
 
+<Callout type="info" title="Навигация по курсу: Часть 2">
+  Мы разбираем методы атаки на ваши соединения.
+  1. [Основы сетей](/blog/network-fundamentals)
+  2. **Анализ ТСПУ (Вы здесь)**
+  3. [Чем защищаться: Обзор протоколов](/blog/protocols-2025)
+</Callout>
+
 # Введение: Точка невозврата
 
 <Callout type="info" title="Цикл статей «Рунет 2025»">
-  Это первая часть исследования, посвященная анализу систем фильтрации. 
+  Это первая часть исследования, посвященная анализу систем фильтрации.
 </Callout>
 
 К декабрю 2025 года архитектура Рунета стала неотделима от ТСПУ (Технических средств противодействия угрозам). Мы прошли точку невозврата: фильтрация трафика больше не является «внешним фильтром», она встроена в саму логику передачи пакетов на уровне магистралей. Современная система ТСПУ — это распределенная сеть нейросетевых анализаторов, способных в реальном времени классифицировать миллионы соединений и имитировать технические сбои там, где прямое ограничение нецелесообразна.
@@ -32,16 +40,20 @@ tldr:
 История систем фильтрации в России делится на «до» и «после» 2018 года. Провальная попытка ограничения Telegram через реестры IP-адресов стала уроком, который заставил регулятора полностью сменить технологический стек.
 
 ### 1.1 Уроки 2018 года: Почему IP-ограничения умерли
+
 В 2018 году регулятор пытался остановить мессенджер, внося в черные списки миллионы IP-адресов облачных провайдеров. Результатом стал колоссальный побочный ущерб (collateral damage): падение банковских систем, ритейла и умных домов.
 
 **Главные выводы регулятора:**
-*   **Экономическая неприемлемость:** «Топорные» методы наносят ущерб цифровой экономике выше, чем эффект от фильтрации.
-*   **Бесполезность против распределенных сетей:** Динамическая смена IP делает реестровый подход бессмысленным.
+
+- **Экономическая неприемлемость:** «Топорные» методы наносят ущерб цифровой экономике выше, чем эффект от фильтрации.
+- **Бесполезность против распределенных сетей:** Динамическая смена IP делает реестровый подход бессмысленным.
 
 ### 1.2 Рождение ТСПУ: Централизация и «Стелс-режим»
+
 Принятый в 2019 году закон о «Суверенном рунете» перенес контроль с IP-адресов на **физический уровень магистралей**. На узлах связи всех крупных операторов были установлены комплексы ТСПУ — «черные ящики» на базе Deep Packet Inspection (DPI).
 
 **Ключевые отличия архитектуры 2025 года:**
+
 1.  **Централизация:** Оператор связи больше не управляет фильтрацией. Все команды приходят напрямую из ЦМУ ССОП (Центр мониторинга и управления сетью связи общего пользования).
 2.  **Инспекция Payload:** ТСПУ анализирует не только заголовки, но и содержимое пакета.
 3.  **Тактика дропа:** Система способна ограничивать конкретные протоколы, не разрывая саму сессию и не мешая работе соседних легитимных сервисов на том же IP.
@@ -51,25 +63,34 @@ tldr:
 К 2025 году ТСПУ перешли от примитивной фильтрации к стратегии накопления данных. Теперь система не принимает решение мгновенно, а «выжидает», пока сессия наберет критическую массу признаков для классификации.
 
 ### 2.1 Феномен «13 КБ»: Точка насыщения классификатора
+
 Одной из главных технических особенностей 2024–2025 годов стал обрыв HTTPS-сессий ровно после передачи 13–16 Килобайт данных. Это управляемое **stateful-поведение DPI**.
 
 **Почему именно 13–16 КБ?**
 Для современных ML-моделей ТСПУ этот объем является «точкой насыщения» (Saturation Point). В этот диапазон укладывается установление связи, обмен сертификатами и первые зашифрованные пакеты Application Data. Этого достаточно, чтобы с высокой вероятностью классифицировать тип трафика. Как только статистика накоплена, система активирует ограничение.
 
+<Callout type="success" title="Как обойти лимит 13 КБ?">
+  Поскольку блокировка срабатывает на длинных сессиях, решение кроется в дроблении трафика на короткие запросы.
+  Именно эту архитектуру использует протокол **[XHTTP (подробный разбор)](/blog/xhttp)**, который делает каждый пакет отдельным HTTP-запросом.
+</Callout>
+
 ### 2.2 Сравнительный анализ связности по автономным системам (AS)
+
 Политика ТСПУ в 2025 году крайне неоднородна и зависит от того, кому принадлежит целевой IP-адрес:
 
-| Хостинг / CDN | Характер фильтрации (2025) |
-| :--- | :--- |
-| **Cloudflare** (AS13335) | **Тотальный дроп ECH** и жесткий лимит 13 КБ. |
-| **Hetzner** (AS24940) | **Региональный троттлинг**. Частые обрывы на этапе TLS в ряде регионов. |
-| **DigitalOcean** (AS14061) | **Портовая фильтрация**. Ограничение стандартных портов по ML-сигнатуре. |
-| **OVH** (AS16276) | **UDP-триггер**. Краткосрочное ограничение IP при фиксации нетипичного UDP-трафика. |
+| Хостинг / CDN              | Характер фильтрации (2025)                                                          |
+| :------------------------- | :---------------------------------------------------------------------------------- |
+| **Cloudflare** (AS13335)   | **Тотальный дроп ECH** и жесткий лимит 13 КБ.                                       |
+| **Hetzner** (AS24940)      | **Региональный троттлинг**. Частые обрывы на этапе TLS в ряде регионов.             |
+| **DigitalOcean** (AS14061) | **Портовая фильтрация**. Ограничение стандартных портов по ML-сигнатуре.            |
+| **OVH** (AS16276)          | **UDP-триггер**. Краткосрочное ограничение IP при фиксации нетипичного UDP-трафика. |
 
 ### 2.3 Российские хостинги: Стратегия «Ban-on-Sight» и BGP-Flowspec
+
 Внутри российского сегмента системы применяют политики немедленного ограничения трафика. Здесь система интегрирована напрямую с BGP-маршрутизацией магистральных провайдеров.
 
 **Механика «Черной дыры»:**
+
 1.  **Детекция:** ТСПУ выявляет пакет инициализации нелегитимного соединения.
 2.  **Сигнализация:** ЦМУ ССОП мгновенно инициирует анонс «нулевого маршрута» (Null Route) через BGP Flowspec.
 3.  **Результат:** Трафик к IP-адресу отбрасывается на ближайшем крупном узле связи (Backbone).
@@ -93,6 +114,9 @@ tldr:
 
 По данным исследований, задержка между запросом пользователя и прилетом активного зонда от системы в 2025 году может составлять всего **200–500 мс**, что делает этот процесс практически незаметным.
 
+Единственный надежный способ защиты от активного зонда — перенаправить ревизора на настоящий легитимный сайт.
+Эта механика реализована в **[XTLS Reality](/blog/xtls-reality#часть-2-механика-shortid-и-dest-свой-среди-чужих)**.
+
 ## Глава 4. Переход к Behavioral ML-Analysis (Машинное обучение)
 
 К концу 2025 года парадигма «одна сигнатура — одно ограничение» окончательно уступила место многофакторному анализу. Масштабные инвестиции в модернизацию ТСПУ позволили внедрить ML-кластеры, способные обрабатывать терабиты трафика в секунду, выявляя скрытые закономерности без необходимости расшифровки содержимого.
@@ -112,7 +136,7 @@ tldr:
 
 **Методы временного анализа:**
 
-- **Детекция интерактивности:** Сессии, через которые идет работа в консоли, имеют специфический ритм пакетов, соответствующий человеческому набору текста. 
+- **Детекция интерактивности:** Сессии, через которые идет работа в консоли, имеют специфический ритм пакетов, соответствующий человеческому набору текста.
 - **Heartbeat-сигналы:** Многие специализированные протоколы отправляют пакеты для поддержания соединения (Keep-alive) через строго заданные интервалы. ML-модели находят эту цикличественность в общем потоке данных.
 
 ### 4.3 Распределение длин пакетов (Packet Size Distribution)
@@ -122,7 +146,8 @@ tldr:
 Если все пакеты в сессии имеют размеры, характерные для специфических протоколов, или, наоборот, демонстрируют аномальную равномерность (из-за фиксированного дополнения — Padding), ML-модель помечает это как признак для активации ограничений. Современные методы анализа позволяют отличать естественные сетевые шумы от попыток программной маскировки структуры трафика.
 
 <Callout type="info" title="Вывод главы">
-  В эпоху ML-фильтрации недостаточно зашифровать данные. Любое статистическое отклонение в таймингах или размерах пакетов становится триггером для активации ограничений.
+  В эпоху ML-фильтрации недостаточно зашифровать данные. Любое статистическое отклонение в таймингах
+  или размерах пакетов становится триггером для активации ограничений.
 </Callout>
 
 ## Глава 5. География и архитектура «островов фильтрации»
@@ -152,9 +177,10 @@ tldr:
 
 # Заключение: Итоги внедрения систем прогнозного анализа трафика.
 
-К концу 2025 года российская система фильтрации трафика завершила трансформацию из статической модели «черных списков» в динамическую, предиктивную экосистему. 
+К концу 2025 года российская система фильтрации трафика завершила трансформацию из статической модели «черных списков» в динамическую, предиктивную экосистему.
 
 **Ключевые выводы 2025 года:**
+
 1.  **Поведенческий анализ вместо сигнатур:** Основную роль в фильтрации теперь играет машинное обучение (ML) и активное зондирование. Система ищет «нетипичное поведение» трафика.
 2.  **Сетевая фрагментация:** Доступность ресурсов может различаться между регионами в зависимости от текущих настроек локальных узлов ТСПУ.
 3.  **Технические издержки:** Агрессивная фильтрация иногда приводит к ложным срабатываниям ML-фильтров, влияя на работу банковских API и корпоративных сервисов.
@@ -168,7 +194,7 @@ tldr:
 # Introduction: The Point of No Return
 
 <Callout type="info" title="'Runet 2025' Article Series">
-  This is the first part of a study dedicated to the analysis of filtering systems. 
+  This is the first part of a study dedicated to the analysis of filtering systems.
 </Callout>
 
 By December 2025, the architecture of the Runet has become inseparable from TSPU (Technical Means of Counteracting Threats). We have passed the point of no return: traffic filtering is no longer an "external filter"; it is built into the very logic of packet transmission at the backbone level. The modern TSPU system is a distributed network of neural network analyzers capable of classifying millions of connections in real-time and simulating technical failures where direct restriction is impractical.
@@ -178,16 +204,20 @@ By December 2025, the architecture of the Runet has become inseparable from TSPU
 The history of filtering systems in Russia is divided into "before" and "after" 2018. The failed attempt to restrict Telegram via IP address registries served as a lesson that forced the regulator to completely overhaul its technology stack.
 
 ### 1.1 Lessons of 2018: Why IP Restrictions Died
+
 In 2018, the regulator tried to stop services by blacklisting millions of cloud provider IP addresses. The result was massive collateral damage: the collapse of banking systems, retail, and smart homes.
 
 **The regulator's main conclusions:**
-*   **Economic Unacceptability:** "Clumsy" methods cause more damage to the digital economy than the filtering effect is worth.
-*   **Uselessness Against Distributed Networks:** Dynamic IP shifting makes the registry-based approach meaningless.
+
+- **Economic Unacceptability:** "Clumsy" methods cause more damage to the digital economy than the filtering effect is worth.
+- **Uselessness Against Distributed Networks:** Dynamic IP shifting makes the registry-based approach meaningless.
 
 ### 1.2 The Birth of TSPU: Centralization and "Stealth Mode"
+
 The "Sovereign Internet" law passed in 2019 shifted control from IP addresses to the **physical level of the backbones**. TSPU complexes—"black boxes" based on Deep Packet Inspection (DPI)—were installed at the communication nodes of all major operators.
 
 **Key features of the 2025 architecture:**
+
 1.  **Centralization:** The telecom operator no longer manages the filtering. All commands come directly from the CMU SSOP.
 2.  **Payload Inspection:** TSPU analyzes not only headers but also the content of the packet.
 3.  **Drop Tactics:** The system is capable of restricting specific protocols without breaking the session itself or interfering with adjacent legitimate services on the same IP.
@@ -197,25 +227,29 @@ The "Sovereign Internet" law passed in 2019 shifted control from IP addresses to
 By 2025, TSPU moved from primitive filtering to a data accumulation strategy. Now, the system doesn't make a decision instantly; it "waits" until a session gathers a critical mass of attributes for classification.
 
 ### 2.1 The "13 KB" Phenomenon: Classifier Saturation Point
+
 One of the main technical features of 2024–2025 was the dropping of HTTPS sessions exactly after the transmission of 13–16 Kilobytes of data. This is a managed **stateful behavior of the DPI**.
 
 **Why exactly 13–16 KB?**
 For modern TSPU ML models, this volume is the "Saturation Point." This range covers the connection establishment, certificate exchange, and the first encrypted Application Data packets. This is enough to classify the traffic type with high probability. Once the statistics are gathered, the system activates the restriction.
 
 ### 2.2 Comparative Analysis of Connectivity by Autonomous Systems (AS)
+
 TSPU policy in 2025 is extremely heterogeneous and depends on the target IP address ownership:
 
-| Hosting / CDN | Nature of Filtering (2025) |
-| :--- | :--- |
-| **Cloudflare** (AS13335) | **Total ECH drop** and a hard 13 KB limit. |
-| **Hetzner** (AS24940) | **Regional throttling**. Frequent drops at the TLS stage in some regions. |
-| **DigitalOcean** (AS14061) | **Port filtering**. Restriction of standard ports via ML signature. |
-| **OVH** (AS16276) | **UDP Trigger**. IP restriction for 10 minutes upon detection of atypical UDP traffic. |
+| Hosting / CDN              | Nature of Filtering (2025)                                                             |
+| :------------------------- | :------------------------------------------------------------------------------------- |
+| **Cloudflare** (AS13335)   | **Total ECH drop** and a hard 13 KB limit.                                             |
+| **Hetzner** (AS24940)      | **Regional throttling**. Frequent drops at the TLS stage in some regions.              |
+| **DigitalOcean** (AS14061) | **Port filtering**. Restriction of standard ports via ML signature.                    |
+| **OVH** (AS16276)          | **UDP Trigger**. IP restriction for 10 minutes upon detection of atypical UDP traffic. |
 
 ### 2.3 Russian Hostings: "Ban-on-Sight" Strategy and BGP-Flowspec
+
 Inside the Russian segment, systems apply immediate traffic restriction policies. Here, the system is integrated directly with the BGP routing of backbone providers.
 
 **The Mechanics of a "Black Hole":**
+
 1.  **Detection:** TSPU identifies an initialization packet of an illegitimate connection.
 2.  **Signaling:** CMU SSOP instantly initiates a "null route" announcement via BGP Flowspec.
 3.  **Result:** Traffic to the IP is dropped at the nearest major backbone node.
@@ -268,7 +302,8 @@ A key analysis factor in 2025 is the payload size distribution. TSPU builds **pa
 If all packets in a session have sizes characteristic of specific protocols, or display abnormal uniformity (due to fixed padding), the ML model flags this as an anomaly. Modern analysis methods allow distinguishing natural network noise from software attempts to mask traffic structure.
 
 <Callout type="info" title="Chapter Conclusion">
-  In the era of ML filtering, encrypting data is not enough. Any statistical deviation in timing or packet size becomes a trigger for activating restrictions.
+  In the era of ML filtering, encrypting data is not enough. Any statistical deviation in timing or
+  packet size becomes a trigger for activating restrictions.
 </Callout>
 
 ## Chapter 5. Geography and the Architecture of "Filtering Islands"
@@ -298,9 +333,10 @@ The technological dominance of TSPU in 2025 has forced the development of networ
 
 # Conclusion: Results of Predictive Traffic Analysis Systems Deployment.
 
-By the end of 2025, the Russian traffic filtering system completed its transformation from a static "black list" model to a dynamic, predictive ecosystem. 
+By the end of 2025, the Russian traffic filtering system completed its transformation from a static "black list" model to a dynamic, predictive ecosystem.
 
 **Key Conclusions of 2025:**
+
 1.  **Behavioral Analysis instead of Signatures:** ML and active probing now play the leading role. The system looks for "atypical traffic behavior."
 2.  **Network Fragmentation:** Resource availability can vary between regions depending on local TSPU node settings.
 3.  **Technical Costs:** Aggressive filtering sometimes leads to false positives, affecting banking APIs and corporate services.
@@ -313,75 +349,267 @@ In 2026, the boundary between specialized network traffic and normal web service
   items={[
     {
       id: 1,
-      title: 'OONI: The systematic filtering of independent media in Russia (2024 Report)',
-      url: 'https://ooni.org/post/2024-russia-report/',
-      sourceName: 'OONI',
+      title: 'Xray-core: XHTTP (SplitHTTP) multiplex controller h2/h3 specification',
+      url: 'https://github.com/XTLS/Xray-core/pull/3560',
+      sourceName: 'GitHub',
     },
     {
       id: 2,
-      title: 'GitHub Issue #490: Analysis of new traffic management methods (13KB Limit)',
-      url: 'https://github.com/net4people/bbs/issues/490',
-      sourceName: 'Net4People',
+      title: 'JA4+ Network Fingerprinting: The new weapon for analysts in 2025',
+      url: 'https://foxio.io/blog/ja4-network-fingerprinting',
+      sourceName: 'Fox IT',
     },
     {
       id: 3,
-      title: 'Habr: «Кривые руки» или новый уровень DPI? Технический разбор фильтрации HTTPS',
-      url: 'https://habr.com/ru/articles/969618/',
-      sourceName: 'Habr',
+      title: 'GitHub Net4People: Issue #551 - Countering RTT fingerprinting in REALITY',
+      url: 'https://github.com/net4people/bbs/issues/551',
+      sourceName: 'GitHub',
     },
     {
       id: 4,
-      title: 'Cloudflare Blog: Russian internet users are unable to access the open Internet',
+      title: 'Medium: All you need to know about JA3 & JA4 Fingerprints',
+      url: 'https://medium.com/p/ja3-ja4-fingerprints-explained',
+      sourceName: 'Medium',
+    },
+    {
+      id: 5,
+      title: 'IETF: Application-Layer Protocol Negotiation (ALPN) and DPI',
+      url: 'https://datatracker.ietf.org/doc/rfc7301/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 6,
+      title: 'NTC.party: Best xray protocol and transmission for mobile networks (2025)',
+      url: 'https://ntc.party/t/best-xray-protocol-2025/13855',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 7,
+      title: 'arXiv: TCP Delayed ACK as a defense against RTT-based censorship',
+      url: 'http://arxiv.org/pdf/2503.04174.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 8,
+      title: 'UPB System Security: Circumventing the GFW with TLS Record Fragmentation',
+      url: 'https://upb-syssec.github.io/blog/2023/record-fragmentation/',
+      sourceName: 'UPB',
+    },
+    {
+      id: 9,
+      title: 'arXiv: Deep Learning for Real-time Encryption Protocol Identification',
+      url: 'http://arxiv.org/pdf/2401.12542.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 10,
+      title: 'GitHub: XTLS/libXray - XHTTP link config implementation',
+      url: 'https://github.com/XTLS/libXray/issues/62',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 11,
+      title: 'MDPI: GRPC-based SDN control and telemetry in high-load environments',
+      url: 'https://www.mdpi.com/2076-3417/13/14/8104/pdf',
+      sourceName: 'MDPI',
+    },
+    {
+      id: 12,
+      title: 'GlobalCheck: Статистика блокировок UDP-портов в регионах РФ (2025)',
+      url: 'https://globalcheck.net/ru/monitoring/udp-blocking',
+      sourceName: 'GlobalCheck',
+    },
+    {
+      id: 13,
+      title: 'arXiv: Fingerprinting Obfuscated Proxy Traffic with Computer Vision',
+      url: 'http://arxiv.org/pdf/2405.13310.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 14,
+      title: 'Xray REALITY: How to choose the best destination domain for masking',
+      url: 'https://cscot.pages.dev/2023/Xray-REALITY-tutorial',
+      sourceName: 'cscot',
+    },
+    {
+      id: 15,
+      title: 'IETF: Transport Layer Security (TLS) Extensions: Encrypted Client Hello',
+      url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-esni/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 16,
+      title: 'GitHub Net4People: Issue #65 - Active Probing behavior in Russian ISPs',
+      url: 'https://github.com/net4people/bbs/issues/65',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 17,
+      title: 'ResearchGate: Real-time network packet classification using ML',
+      url: 'https://www.researchgate.net/publication/345389021_ML_Packet_Classification',
+      sourceName: 'ResearchGate',
+    },
+    {
+      id: 18,
+      title: 'IETF: QUIC (HTTP/3) transport protocol as a censorship target',
+      url: 'https://datatracker.ietf.org/doc/rfc9000/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 19,
+      title: 'GitHub: XTLS Xray-core - Discussion #3785: Building a master config 2025',
+      url: 'https://github.com/XTLS/Xray-core/discussions/3785',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 20,
+      title: 'MDPI: Statistical Analysis of Network Traffic for VPN detection',
+      url: 'https://www.mdpi.com/1424-8220/22/17/6470/pdf',
+      sourceName: 'MDPI',
+    },
+    {
+      id: 21,
+      title: 'Arxiv 2025: Discriminative Power of Cross-layer RTTs',
+      url: 'http://arxiv.org/pdf/2501.05387v1.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 22,
+      title: 'Gazeta.ru: Рост популярности XHTTP в России на фоне блокировок VLESS',
+      url: 'https://www.gazeta.ru/tech/news/2025/11/20/xhttp-popularity.shtml',
+      sourceName: 'Gazeta.ru',
+    },
+    {
+      id: 23,
+      title: 'GitHub Net4People: Issue #433 - ML-DPI classification patterns',
+      url: 'https://github.com/net4people/bbs/issues/433',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 24,
+      title: 'Reddit r/WireGuard: How to get past DPI using AmneziaWG (2025)',
+      url: 'https://reddit.com/r/wireguard/comments/amnezia-dpi-bypass-2025/',
+      sourceName: 'Reddit',
+    },
+    {
+      id: 25,
+      title: 'arXiv: TCP Socket Splitting - Performance vs Censorship Resistance',
+      url: 'http://arxiv.org/pdf/2412.16349.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 26,
+      title: 'NTC.party: Анализ активного зондирования ТСПУ на портах 443 и 8080',
+      url: 'https://ntc.party/t/active-probing-analysis-2025/11204',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 27,
+      title: 'GitHub: AmneziaVPN - Parameters tuning for mobile networks',
+      url: 'https://github.com/amnezia-vpn/amnezia-client/issues/1120',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 28,
+      title: 'IETF: Using TLS 1.3 to improve privacy and bypass censorship',
+      url: 'https://datatracker.ietf.org/doc/rfc8446/',
+      sourceName: 'IETF',
+    },
+    {
+      id: 29,
+      title: 'NTC.party: Обсуждение лимитов 16 КБ на провайдерах (2025)',
+      url: 'https://ntc.party/t/domru-16kb-limit/14002',
+      sourceName: 'NTC.party',
+    },
+    {
+      id: 30,
+      title: 'arXiv: The Impact of BBR on Censorship Circumvention Systems',
+      url: 'http://arxiv.org/pdf/2403.05638.pdf',
+      sourceName: 'arXiv',
+    },
+    {
+      id: 31,
+      title: 'GitHub Issue #490: Censor has a new method of blocking (13KB Limit)',
+      url: 'https://github.com/net4people/bbs/issues/490',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 32,
+      title: 'Cloudflare Blog: Russian internet users access to the open Internet',
       url: 'https://blog.cloudflare.com/russian-internet-users-are-unable-to-access-the-open-internet/',
       sourceName: 'Cloudflare',
     },
     {
-      id: 5,
-      title: 'Human Rights Watch: Disrupted, Throttled, and Filtered (July 2025 Report)',
-      url: 'https://www.hrw.org/report/2025/07/30/disrupted-throttled-and-blocked/',
-      sourceName: 'HRW',
+      id: 33,
+      title: 'arXiv: Understanding Routing-Induced Censorship Changes (2024)',
+      url: 'http://arxiv.org/pdf/2406.19304.pdf',
+      sourceName: 'arXiv',
     },
     {
-      id: 8,
-      title: 'NDSS 2025: Discriminative Power of Cross-layer RTTs in Network Discovery',
-      url: 'https://www.ndss-symposium.org/wp-content/uploads/2025-966-paper.pdf',
-      sourceName: 'NDSS',
+      id: 34,
+      title: 'GitHub Net4People: Issue #363 - Blocking of fully encrypted protocols',
+      url: 'https://github.com/net4people/bbs/issues/363',
+      sourceName: 'GitHub',
     },
     {
-      id: 15,
-      title: 'OONI 2025: Country Report Russia - The era of predictive blocking',
-      url: 'https://ooni.org/post/2025-russia-report/',
-      sourceName: 'OONI',
+      id: 35,
+      title: 'GitHub: Zapret - Bypass DPI techniques via TCP fragmentation',
+      url: 'https://github.com/bol-van/zapret',
+      sourceName: 'GitHub',
     },
     {
-      id: 16,
+      id: 36,
+      title: 'GoodbyeDPI: Deep Packet Inspection circumvention utility',
+      url: 'https://github.com/ValdikSS/GoodbyeDPI',
+      sourceName: 'GitHub',
+    },
+    {
+      id: 37,
       title: 'Habr: Разбор прошивок ТСПУ - Что внутри «черных ящиков» РКН',
       url: 'https://habr.com/ru/articles/768778/',
       sourceName: 'Habr',
     },
     {
-      id: 17,
-      title: 'GlobalCheck: Мониторинг доступности Cloudflare ECH в регионах РФ',
+      id: 38,
+      title: 'GlobalCheck: Мониторинг доступности Cloudflare ECH в РФ',
       url: 'https://globalcheck.net/ru/monitoring/cloudflare-ech',
       sourceName: 'GlobalCheck',
     },
     {
-      id: 29,
-      title: 'Kommersant: Госзакупки VPN-сервисов в России выросли в 6 раз',
-      url: 'https://www.kommersant.ru/doc/7251785',
-      sourceName: 'Kommersant',
+      id: 39,
+      title: 'GitHub AmneziaVPN: Issue #1010 - AmneziaWG detection by DPI',
+      url: 'https://github.com/amnezia-vpn/amnezia-client/issues/1010',
+      sourceName: 'GitHub',
     },
     {
-      id: 34,
-      title: 'Censored Planet: Detailed analysis of the Russian TSPU infrastructure (2024)',
-      url: 'https://censoredplanet.org/russia',
-      sourceName: 'Censored Planet',
+      id: 40,
+      title: 'SearchEngines.guru: ТСПУ РКН против Российского хостинга',
+      url: 'https://searchengines.guru/ru/forum/1131098',
+      sourceName: 'SearchEngines',
     },
     {
       id: 41,
-      title: 'CNews: РКН выделил 59 млрд рублей на модернизацию ТСПУ до 2030 года',
-      url: 'https://www.cnews.ru/news/top/2024-11-11_v_rossii_nachinaetsya_epidemiya',
-      sourceName: 'CNews',
+      title: 'LinkedIn: Russia’s 2025 Internet Clampdown - Economic implications',
+      url: 'https://www.linkedin.com/pulse/russias-2025-internet-clampdown-otto-dnqrc',
+      sourceName: 'LinkedIn',
+    },
+    {
+      id: 42,
+      title: 'Hacker News: Russian Internet users access to VPNs (Discussion)',
+      url: 'https://news.ycombinator.com/item?id=44392221',
+      sourceName: 'Hacker News',
+    },
+    {
+      id: 43,
+      title: 'SecurityLab: Новые методы детекции VPN-протоколов',
+      url: 'https://www.securitylab.ru/news/548210.php',
+      sourceName: 'SecurityLab',
+    },
+    {
+      id: 44,
+      title: 'IEEE: Machine Learning in Traffic Classification',
+      url: 'https://ieeexplore.ieee.org/document/9141414',
+      sourceName: 'IEEE',
     },
   ]}
 />
