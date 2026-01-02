@@ -5,8 +5,7 @@ interface Props {
 }
 
 const { val } = Astro.props;
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
-<div class={`lang-${val}`}>
-  <slot />
-</div>
+{currentLang === val && <slot />}

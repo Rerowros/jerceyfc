@@ -1,17 +1,17 @@
 ---
-// src/pages/blog/[...slug].astro
+// src/pages/en/blog/[...slug].astro
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
-import Lang from '../../components/content/Lang.astro';
-import Callout from '../../components/content/Callout.astro';
-import References from '../../components/content/References.astro';
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import Lang from '../../../components/content/Lang.astro';
+import Callout from '../../../components/content/Callout.astro';
+import References from '../../../components/content/References.astro';
 import { Image } from 'astro:assets';
-import TelegramIcon from '../../components/icons/TelegramIcon.astro';
-import EmailIcon from '../../components/icons/EmailIcon.astro';
-import SparklesIcon from '../../components/icons/SparklesIcon.astro';
-import '../../styles/blog-post.css';
+import TelegramIcon from '../../../components/icons/TelegramIcon.astro';
+import EmailIcon from '../../../components/icons/EmailIcon.astro';
+import SparklesIcon from '../../../components/icons/SparklesIcon.astro';
+import '../../../styles/blog-post.css';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 export async function getStaticPaths() {
@@ -351,63 +351,30 @@ const jsonLd = {
 
           <!-- 2. Кнопка "Есть проект?" (Фиксированный размер, shrink-0 запрещает сжатие) -->
           <div
-            class="glass-card group relative shrink-0 overflow-hidden rounded-2xl border border-[var(--color-primary)]/30 p-5 shadow-lg transition-all hover:border-[var(--color-primary)]"
+            class="glass-card group relative shrink-0 overflow-hidden rounded-2xl border border-[var(--color-primary)]/30 bg-gradient-to-br from-[var(--color-primary)]/10 to-transparent p-6 shadow-lg transition-all hover:border-[var(--color-primary)]/60"
           >
             <div
-              class="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-[var(--color-primary)]/10 blur-2xl transition-colors group-hover:bg-[var(--color-primary)]/20"
+              class="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-[var(--color-primary)]/10 blur-2xl transition-all group-hover:bg-[var(--color-primary)]/20"
             >
             </div>
-            <p
-              class="relative z-10 mb-4 text-[11px] font-bold tracking-widest text-[var(--color-muted-foreground)] uppercase"
-            >
+            <h5 class="font-cinzel mb-2 text-sm font-bold text-[var(--color-foreground)]">
               {currentLang === 'ru' ? 'Есть проект?' : 'Have a project?'}
+            </h5>
+            <p class="mb-4 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+              {
+                currentLang === 'ru'
+                  ? 'Давайте обсудим вашу идею и превратим её в качественный продукт.'
+                  : 'Let’s discuss your idea and turn it into a high-quality product.'
+              }
             </p>
             <a
               href="https://t.me/Rerowros"
               target="_blank"
-              class="relative z-10 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 text-sm font-bold text-white shadow-lg transition-transform active:scale-95"
+              class="flex items-center justify-center gap-2 rounded-lg bg-[var(--color-primary)] py-2 text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <TelegramIcon class="h-4 w-4" />
-              {currentLang === 'ru' ? 'Обсудить' : "Let's talk"}
+              <TelegramIcon class="h-3.5 w-3.5" />
+              {currentLang === 'ru' ? 'Обсудить в Telegram' : 'Discuss in Telegram'}
             </a>
-          </div>
-
-          <!-- 3. Кнопка Share (Фиксированный размер, shrink-0) -->
-          <div
-            class="glass-card shrink-0 rounded-2xl border border-[var(--color-border)] p-4 shadow-lg"
-          >
-            <h4
-              class="mb-3 text-[10px] font-bold tracking-widest text-[var(--color-muted-foreground)] uppercase"
-            >
-              Share
-            </h4>
-            <div class="grid grid-cols-2 gap-2">
-              <a
-                href={`https://t.me/share/url?url=${currentUrl}&text=${post.data.title.ru}`}
-                target="_blank"
-                class="group flex items-center justify-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-2 transition-all hover:border-[#0088cc] hover:text-[#0088cc]"
-              >
-                <TelegramIcon class="h-5 w-5 transition-transform group-hover:scale-110" />
-              </a>
-              <button
-                class="copy-link-btn group flex items-center justify-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-2 transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-                data-url={currentUrl}
-              >
-                <svg
-                  class="h-5 w-5 transition-transform group-hover:scale-110"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  ></path>
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
       </aside>
@@ -417,129 +384,101 @@ const jsonLd = {
   <Footer />
 
   <script>
-    function initBlogPost() {
-      // 1. Progress Bar
+    // Progress Bar Logic
+    function initProgressBar() {
       const progressBar = document.getElementById('progress-bar');
+      if (!progressBar) return;
+
       const updateProgress = () => {
-        if (!progressBar) return;
-        const scrollTop = window.scrollY;
-        const docHeight = document.body.scrollHeight - window.innerHeight;
-        progressBar.style.width = `${(scrollTop / docHeight) * 100}%`;
-      };
-      window.addEventListener('scroll', updateProgress, { passive: true });
-
-      // 2. TOC: Умный скролл и подсветка
-      const tocLinks = document.querySelectorAll('.toc-link');
-      const tocNav = document.getElementById('toc-nav');
-      const tocContainer = document.getElementById('toc-container');
-
-      // Флаг: пользователь навел мышь на меню?
-      let isHoveringToc = false;
-
-      if (tocContainer) {
-        tocContainer.addEventListener('mouseenter', () => {
-          isHoveringToc = true;
-        });
-        tocContainer.addEventListener('mouseleave', () => {
-          isHoveringToc = false;
-        });
-      }
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              // Снимаем активный класс со всех
-              tocLinks.forEach((l) => l.classList.remove('active'));
-
-              // Находим ссылку для текущего заголовка
-              const activeLink = document.querySelector(`.toc-link[data-id="${entry.target.id}"]`);
-
-              if (activeLink) {
-                activeLink.classList.add('active');
-
-                // АВТО-СКРОЛЛ:
-                if (tocNav && !isHoveringToc) {
-                  activeLink.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'nearest',
-                  });
-                }
-              }
-            }
-          });
-        },
-        {
-          rootMargin: '-10% 0px -80% 0px',
-        }
-      );
-
-      document
-        .querySelectorAll('.article-content h1, .article-content h2, .article-content h3')
-        .forEach((h) => observer.observe(h));
-
-      // 3. АВТО-СВОРАЧИВАНИЕ ИСТОЧНИКОВ
-      const refHeading = Array.from(document.querySelectorAll('.article-content h3')).find(
-        (h) => h.textContent?.includes('Источники') || h.textContent?.includes('References')
-      );
-
-      if (refHeading && refHeading.nextElementSibling) {
-        const contentToWrap = refHeading.nextElementSibling;
-        const details = document.createElement('details');
-        details.className = 'references-container accordion-item group';
-        const summary = document.createElement('summary');
-        summary.innerHTML = `<span class="flex items-center gap-2"><svg class="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>${refHeading.textContent}</span><svg class="w-4 h-4 transition-transform duration-300 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-        const animWrapper = document.createElement('div');
-        animWrapper.className = 'accordion-content';
-        const innerContent = document.createElement('div');
-        innerContent.className = 'pt-0';
-
-        animWrapper.appendChild(innerContent);
-        innerContent.appendChild(contentToWrap);
-
-        refHeading.parentNode?.insertBefore(details, refHeading);
-        details.appendChild(summary);
-        details.appendChild(animWrapper);
-        refHeading.remove();
-      }
-
-      // 4. Copy Code & Links
-      document.querySelectorAll('.copy-link-btn').forEach((btn) => {
-        btn.addEventListener('click', async function (this: any) {
-          await navigator.clipboard.writeText(this.dataset.url);
-          const original = this.innerHTML;
-          this.innerHTML =
-            '<svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
-          setTimeout(() => (this.innerHTML = original), 2000);
-        });
-      });
-
-      // 5. Обёртка таблиц — гарантия, что таблицы не будут ломать мобилку
-      const wrapTables = () => {
-        const tables = document.querySelectorAll('.article-content table');
-        tables.forEach((table) => {
-          if (!table.parentElement || table.parentElement.classList.contains('table-wrapper'))
-            return;
-          const wrapper = document.createElement('div');
-          wrapper.className = 'table-wrapper';
-          wrapper.style.width = '100%';
-          wrapper.style.overflowX = 'auto';
-          // @ts-ignore
-          wrapper.style.webkitOverflowScrolling = 'touch';
-          wrapper.style.marginBottom = '2rem';
-          table.parentNode?.insertBefore(wrapper, table);
-          wrapper.appendChild(table);
-        });
+        const winScroll = document.documentElement.scrollTop;
+        const height =
+          document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        progressBar.style.width = scrolled + '%';
       };
 
-      // Выполнить при загрузке и при ресайзе, на случай динамического контента
-      wrapTables();
-      window.addEventListener('resize', wrapTables);
+      window.addEventListener('scroll', updateProgress);
+      updateProgress();
     }
 
-    document.addEventListener('astro:page-load', initBlogPost);
-    document.addEventListener('DOMContentLoaded', initBlogPost);
+    // TOC Active Link Logic
+    function initTOC() {
+      const links = document.querySelectorAll('.toc-link');
+      const sections = Array.from(links)
+        .map((link) => {
+          const id = link.getAttribute('data-id');
+          return document.getElementById(id || '');
+        })
+        .filter((section): section is HTMLElement => section !== null);
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '-100px 0px -70% 0px',
+        threshold: 0,
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            links.forEach((link) => {
+              link.classList.remove('active-toc');
+              if (link.getAttribute('data-id') === entry.target.id) {
+                link.classList.add('active-toc');
+                // Scroll TOC to active link if needed
+                link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach((section) => observer.observe(section));
+    }
+
+    // Initialize on page load and view transitions
+    document.addEventListener('astro:page-load', () => {
+      initProgressBar();
+      initTOC();
+    });
   </script>
 </Layout>
+
+<style is:global>
+  .active-toc {
+    border-left-color: var(--color-primary) !important;
+    background-color: var(--color-primary-transparent) !important;
+    color: var(--color-primary) !important;
+    font-weight: 600;
+  }
+
+  /* Custom Scrollbar for TOC */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted-foreground);
+  }
+
+  /* Accordion Animation */
+  .accordion-item[open] .accordion-content {
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

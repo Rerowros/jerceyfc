@@ -1,12 +1,12 @@
 ---
 // src/pages/projects/[...slug].astro
 import { getCollection, type CollectionEntry } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
-import GitHubIcon from '../../components/icons/GitHubIcon.astro';
-import TelegramIcon from '../../components/icons/TelegramIcon.astro';
-import Lang from '../../components/content/Lang.astro'; // Импортируем наш компонент
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import GitHubIcon from '../../../components/icons/GitHubIcon.astro';
+import TelegramIcon from '../../../components/icons/TelegramIcon.astro';
+import Lang from '../../../components/content/Lang.astro'; // Импортируем наш компонент
 import { slide } from 'astro:transitions';
 import { Image } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';

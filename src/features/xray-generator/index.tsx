@@ -125,10 +125,12 @@ const TEXTS = {
 };
 
 // Хук для определения языка
-const useLanguage = () => {
-  const [lang, setLang] = useState<'ru' | 'en'>('ru');
+const useLanguage = (initialLang?: 'ru' | 'en') => {
+  const [lang, setLang] = useState<'ru' | 'en'>(initialLang || 'ru');
 
   useEffect(() => {
+    if (initialLang) return;
+
     // Функция проверки языка из HTML атрибута (Astro его меняет)
     const checkLang = () => {
       const htmlLang = document.documentElement.lang;
@@ -143,7 +145,7 @@ const useLanguage = () => {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 
     return () => observer.disconnect();
-  }, []);
+  }, [initialLang]);
 
   return lang;
 };
@@ -259,8 +261,8 @@ const SelectField = ({ label, value, onChange, options, tooltip }: any) => (
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ ---
 
-export default function XrayGenerator() {
-  const lang = useLanguage();
+export default function XrayGenerator({ lang: initialLang }: { lang?: 'ru' | 'en' }) {
+  const lang = useLanguage(initialLang);
   const t = TEXTS[lang]; // Текущие тексты
 
   const [config, setConfig] = useState<XrayConfig>({

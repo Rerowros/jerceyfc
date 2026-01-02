@@ -1,5 +1,13 @@
 ---
-// src/components/HeaderControls.astro
+// src/components/layout/HeaderControls.astro
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const currentLang = Astro.currentLocale || 'ru';
+const targetLang = currentLang === 'ru' ? 'en' : 'ru';
+
+// Получаем текущий путь (например, /about) и делаем из него ссылку на другой язык
+const currentPath = Astro.url.pathname.replace(/^\/en/, '') || '/';
+const targetPath = getRelativeLocaleUrl(targetLang, currentPath);
 ---
 
 <div class="flex items-center gap-3">
@@ -64,15 +72,14 @@
   </div>
 
   <!-- 2. Переключатель языка -->
-  <button
-    id="lang-toggle"
+  <a
+    href={targetPath}
     class="icon-btn group font-cinzel relative overflow-hidden text-sm font-bold transition-colors hover:border-[var(--color-primary)]"
     aria-label="Switch Language"
   >
     <!-- Контейнер для смены текста -->
     <span class="relative z-10 block w-full text-center">
-      <span class="lang-ru">RU</span>
-      <span class="lang-en">EN</span>
+      {currentLang === 'ru' ? 'EN' : 'RU'}
     </span>
 
     <!-- Декоративная подсветка при ховере -->
@@ -80,7 +87,7 @@
       class="absolute inset-0 translate-y-full bg-[var(--color-primary)]/10 transition-transform duration-300 group-hover:translate-y-0"
     >
     </div>
-  </button>
+  </a>
 
   <!-- 3. Переключатель темы -->
   <button
@@ -175,11 +182,9 @@
 
 <script>
   import { initThemeControls } from '../../scripts/theme'; // Путь зависит от вложенности components/layout
-  import { initLanguageControls } from '../../scripts/language'; // Добавили
 
   const init = () => {
     initThemeControls();
-    initLanguageControls(); // Вызываем
   };
 
   document.addEventListener('astro:page-load', init);

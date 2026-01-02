@@ -1,8 +1,8 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
-import XrayGenerator from '../../features/xray-generator/index';
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/layout/Header.astro';
+import Footer from '../../../components/layout/Footer.astro';
+import XrayGenerator from '../../../features/xray-generator/index';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const currentLang = Astro.currentLocale || 'ru';
@@ -84,7 +84,7 @@ const schema = {
     </div>
 
     <!-- Интерактивный инструмент (React) -->
-    <XrayGenerator client:load lang="ru" />
+    <XrayGenerator client:load lang="en" />
 
     <!-- SEO Content Block (Статический HTML для роботов) -->
     <article

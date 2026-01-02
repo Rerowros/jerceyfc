@@ -460,23 +460,6 @@ html[data-astro-transition='back']::view-transition-new(root) {
 }
 
 /* ========================================
-   ЯЗЫКОВЫЕ ПЕРЕКЛЮЧАТЕЛИ
-   ======================================== */
-
-.lang-ru,
-.lang-en {
-  display: none;
-}
-
-html[lang='ru'] .lang-ru {
-  display: initial;
-}
-
-html[lang='en'] .lang-en {
-  display: initial;
-}
-
-/* ========================================
    КОНТЕЙНЕР
    ======================================== */
 

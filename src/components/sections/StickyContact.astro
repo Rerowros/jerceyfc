@@ -1,5 +1,7 @@
 ---
 import TelegramIcon from '../../components/icons/TelegramIcon.astro';
+
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <!-- ИЗМЕНЕНИЕ: Добавили <style> для анимации дочерних элементов -->
@@ -45,20 +47,16 @@ import TelegramIcon from '../../components/icons/TelegramIcon.astro';
     <h2
       class="animated-child mb-4 px-2 text-3xl leading-tight font-extrabold tracking-tight break-words whitespace-normal sm:text-4xl md:text-6xl"
     >
-      <span class="lang-ru">Готовы к сотрудничеству?</span>
-      <span class="lang-en">Ready to Collaborate?</span>
+      {currentLang === 'ru' ? 'Готовы к сотрудничеству?' : 'Ready to Collaborate?'}
     </h2>
     <p
       class="text-primary-foreground/80 animated-child mx-auto mb-8 max-w-[90vw] px-2 text-base leading-relaxed break-words sm:text-lg md:max-w-xl"
     >
-      <span class="lang-ru"
-        >У вас есть идея для проекта? Я открыт для предложений и готов помочь в ее реализации.
-        Давайте создадим что-то выдающееся вместе.</span
-      >
-      <span class="lang-en"
-        >Have a project in mind? I'm open to opportunities and ready to help bring your ideas to
-        life. Let's build something great together.</span
-      >
+      {
+        currentLang === 'ru'
+          ? 'У вас есть идея для проекта? Я открыт для предложений и готов помочь в ее реализации. Давайте создадим что-то выдающееся вместе.'
+          : "Have a project in mind? I'm open to opportunities and ready to help bring your ideas to life. Let's build something great together."
+      }
     </p>
     <a
       href="https://t.me/Rerowros"
@@ -68,8 +66,7 @@ import TelegramIcon from '../../components/icons/TelegramIcon.astro';
       style="justify-content: center;"
     >
       <TelegramIcon class="h-6 w-6" />
-      <span class="lang-ru">Связаться в Telegram</span>
-      <span class="lang-en">Contact me on Telegram</span>
+      {currentLang === 'ru' ? 'Связаться в Telegram' : 'Contact me on Telegram'}
     </a>
   </div>
 </section>

@@ -1,52 +1,62 @@
 ---
 // src/components/About.astro
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import GitHubIcon from '../../components/icons/GitHubIcon.astro';
 import LinkedInIcon from '../../components/icons/LinkedInIcon.astro';
+
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <div
   class="bg-card/70 border-border hover:border-primary/50 hover:shadow-primary/10 flex h-full flex-col rounded-2xl border p-8 shadow-xl backdrop-blur-sm transition-all duration-300"
 >
   <h2 class="text-foreground mb-4 text-3xl font-extrabold tracking-tight">
-    <span class="lang-ru">Обо мне</span>
-    <span class="lang-en">About Me</span>
+    {currentLang === 'ru' ? 'Обо мне' : 'About Me'}
   </h2>
   <p class="text-muted-foreground mb-6 flex-grow">
-    <span class="lang-ru">
-      Веб-разработчик, который превращает бизнес-задачи в элегантные и производительные цифровые
-      продукты. Моя цель — создавать интерфейсы, которые не только отлично выглядят, но и интуитивно
-      понятны для пользователей и легко поддерживаются другими разработчиками.
-    </span>
-    <span class="lang-en">
-      A web developer who transforms business objectives into elegant and high-performance digital
-      products. My goal is to create interfaces that not only look great but are also intuitive for
-      users and easily maintainable for fellow developers.
-    </span>
+    {
+      currentLang === 'ru' ? (
+        <>
+          Веб-разработчик, который превращает бизнес-задачи в элегантные и производительные цифровые
+          продукты. Моя цель — создавать интерфейсы, которые не только отлично выглядят, но и
+          интуитивно понятны для пользователей и легко поддерживаются другими разработчиками.
+        </>
+      ) : (
+        <>
+          A web developer who transforms business objectives into elegant and high-performance
+          digital products. My goal is to create interfaces that not only look great but are also
+          intuitive for users and easily maintainable for fellow developers.
+        </>
+      )
+    }
   </p>
   <h2 class="text-foreground mb-4 text-3xl font-extrabold tracking-tight">
-    <span class="lang-ru">Моя Философия</span>
-    <span class="lang-en">My Philosophy</span>
+    {currentLang === 'ru' ? 'Моя Философия' : 'My Philosophy'}
   </h2>
   <div class="text-muted-foreground flex-grow space-y-4">
     <p>
-      <span class="lang-ru">
-        Я верю, что лучший код — это результат инженерной дисциплины и эмпатии. Дисциплина в
-        написании чистого, масштабируемого кода. Эмпатия к конечному пользователю продукта и к
-        коллеге, который будет с этим кодом работать.
-      </span>
-      <span class="lang-en">
-        I believe the best code is a result of engineering discipline and empathy. Discipline in
-        writing clean, scalable code. Empathy for the end-user of the product and for the colleague
-        who will work with that code next.
-      </span>
+      {
+        currentLang === 'ru' ? (
+          <>
+            Я верю, что лучший код — это результат инженерной дисциплины и эмпатии. Дисциплина в
+            написании чистого, масштабируемого кода. Эмпатия к конечному пользователю продукта и к
+            коллеге, который будет с этим кодом работать.
+          </>
+        ) : (
+          <>
+            I believe the best code is a result of engineering discipline and empathy. Discipline in
+            writing clean, scalable code. Empathy for the end-user of the product and for the
+            colleague who will work with that code next.
+          </>
+        )
+      }
     </p>
   </div>
   <div class="mt-auto flex items-center justify-between pt-6">
     <!-- Левая часть: Социальные сети -->
     <div class="flex items-center gap-4">
       <span class="text-muted-foreground font-semibold">
-        <span class="lang-ru">Найти меня на:</span>
-        <span class="lang-en">Find me on:</span>
+        {currentLang === 'ru' ? 'Найти меня на:' : 'Find me on:'}
       </span>
       <a
         href="https://github.com/Rerowros"
@@ -69,9 +79,11 @@ import LinkedInIcon from '../../components/icons/LinkedInIcon.astro';
     </div>
 
     <!-- Правая часть: Кнопка "Подробнее" -->
-    <a href="/about" class="group btn flex items-center transition-all duration-200">
-      <span class="lang-ru">Подробнее</span>
-      <span class="lang-en">Learn more</span>
+    <a
+      href={getRelativeLocaleUrl(currentLang, 'about')}
+      class="group btn flex items-center transition-all duration-200"
+    >
+      {currentLang === 'ru' ? 'Подробнее' : 'Learn more'}
       <svg
         class="h-5 w-5 transition-transform group-hover:translate-x-1"
         fill="none"

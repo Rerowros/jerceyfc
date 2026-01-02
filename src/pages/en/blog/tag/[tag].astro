@@ -1,8 +1,9 @@
 ---
+// src/pages/en/blog/tag/[tag].astro
 import { getCollection } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro';
-import Header from '../../../components/layout/Header.astro';
-import Footer from '../../../components/layout/Footer.astro';
+import Layout from '../../../../layouts/Layout.astro';
+import Header from '../../../../components/layout/Header.astro';
+import Footer from '../../../../components/layout/Footer.astro';
 import { fade } from 'astro:transitions';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
@@ -109,37 +110,30 @@ const currentLang = Astro.currentLocale || 'ru';
                 href={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)}
                 class="relative z-10 block"
               >
-                <h2 class="font-cinzel mb-3 text-2xl leading-tight font-bold transition-colors group-hover:text-[var(--color-primary)]">
+                <h2 class="font-cinzel mb-4 text-2xl font-bold transition-colors group-hover:text-[var(--color-primary)] md:text-3xl">
                   {currentLang === 'ru'
                     ? post.data.title.ru
                     : post.data.title.en || post.data.title.ru}
                 </h2>
-              </a>
-
-              <p class="relative z-10 mb-4 line-clamp-3 text-base leading-relaxed text-[var(--color-muted-foreground)]">
-                {currentLang === 'ru'
-                  ? post.data.excerpt.ru
-                  : post.data.excerpt.en || post.data.excerpt.ru}
-              </p>
-
-              <a
-                href={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)}
-                class="relative z-10 inline-flex items-center text-sm font-medium text-[var(--color-primary)]"
-              >
-                {currentLang === 'ru' ? 'Читать статью' : 'Read article'}
-                <svg
-                  class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
+                <p class="mb-6 line-clamp-3 text-lg leading-relaxed text-[var(--color-muted-foreground)]">
+                  {currentLang === 'ru' ? post.data.excerpt.ru : post.data.excerpt.en}
+                </p>
+                <div class="flex items-center gap-2 font-bold text-[var(--color-primary)]">
+                  <span>{currentLang === 'ru' ? 'Читать далее' : 'Read more'}</span>
+                  <svg
+                    class="h-4 w-4 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </div>
               </a>
             </div>
           ))

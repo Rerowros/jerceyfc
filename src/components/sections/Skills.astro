@@ -1,5 +1,6 @@
 ---
 // src/components/sections/Skills.astro
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <section id="skills" class="px-4 py-12 md:py-20">
@@ -7,15 +8,13 @@
     <!-- Заголовок секции -->
     <div class="mb-10 text-center md:mb-16">
       <p class="section-title hero-animate">
-        <span class="lang-ru">Экспертиза</span>
-        <span class="lang-en">Expertise</span>
+        {currentLang === 'ru' ? 'Экспертиза' : 'Expertise'}
       </p>
       <h2
         class="font-cinzel text-glow hero-animate text-3xl font-bold md:text-5xl"
         style="transition-delay: 100ms;"
       >
-        <span class="lang-ru">Основной Стек</span>
-        <span class="lang-en">Main Tech Stack</span>
+        {currentLang === 'ru' ? 'Основной Стек' : 'Main Tech Stack'}
       </h2>
     </div>
 
@@ -44,14 +43,16 @@
             </svg>
           </div>
           <h3 class="font-cinzel mb-2 text-xl font-bold md:text-2xl">
-            <span class="lang-ru">Современный Web</span>
-            <span class="lang-en">Modern Web</span>
+            {currentLang === 'ru' ? 'Современный Web' : 'Modern Web'}
           </h3>
           <p class="mb-4 text-sm text-[var(--color-muted-foreground)]">
-            <span class="lang-ru"
-              >Основное направление работы. Создание сложных SPA и SSR приложений.</span
-            >
-            <span class="lang-en">Primary focus. Building complex SPA and SSR applications.</span>
+            {
+              currentLang === 'ru' ? (
+                <>Основное направление работы. Создание сложных SPA и SSR приложений.</>
+              ) : (
+                <>Primary focus. Building complex SPA and SSR applications.</>
+              )
+            }
           </p>
           <div class="mt-auto flex flex-wrap gap-2">
             {
@@ -89,14 +90,16 @@
             </svg>
           </div>
           <h3 class="font-cinzel mb-2 text-xl font-bold md:text-2xl">
-            <span class="lang-ru">Python и Боты</span>
-            <span class="lang-en">Python & Bots</span>
+            {currentLang === 'ru' ? 'Python и Боты' : 'Python & Bots'}
           </h3>
           <p class="mb-4 text-sm text-[var(--color-muted-foreground)]">
-            <span class="lang-ru"
-              >Разработка Telegram-ботов, парсеров и скриптов автоматизации.</span
-            >
-            <span class="lang-en">Developing Telegram bots, parsers, and automation scripts.</span>
+            {
+              currentLang === 'ru' ? (
+                <>Разработка Telegram-ботов, парсеров и скриптов автоматизации.</>
+              ) : (
+                <>Developing Telegram bots, parsers, and automation scripts.</>
+              )
+            }
           </p>
           <div class="mt-auto flex flex-wrap gap-2">
             {
@@ -134,16 +137,16 @@
             </svg>
           </div>
           <h3 class="font-cinzel mb-2 text-xl font-bold md:text-2xl">
-            <span class="lang-ru">Инструменты</span>
-            <span class="lang-en">Tools & DevOps</span>
+            {currentLang === 'ru' ? 'Инструменты' : 'Tools & DevOps'}
           </h3>
           <p class="mb-4 text-sm text-[var(--color-muted-foreground)]">
-            <span class="lang-ru"
-              >Технологии для развертывания, контроля версий и работы с данными.</span
-            >
-            <span class="lang-en"
-              >Technologies for deployment, version control, and data management.</span
-            >
+            {
+              currentLang === 'ru' ? (
+                <>Технологии для развертывания, контроля версий и работы с данными.</>
+              ) : (
+                <>Technologies for deployment, version control, and data management.</>
+              )
+            }
           </p>
           <div class="mt-auto flex flex-wrap gap-2">
             {

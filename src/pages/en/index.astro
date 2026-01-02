@@ -3,13 +3,13 @@
 // ИСПРАВЛЕНИЕ: Убран импорт global.css, так как он уже есть в Layout
 import { slide } from 'astro:transitions';
 
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/layout/Header.astro';
-import Hero from '../components/sections/Hero.astro';
-import Skills from '../components/sections/Skills.astro';
-import Projects from '../components/sections/Projects.astro';
-import StickyContact from '../components/sections/StickyContact.astro';
-import Footer from '../components/layout/Footer.astro';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+import Hero from '../../components/sections/Hero.astro';
+import Skills from '../../components/sections/Skills.astro';
+import Projects from '../../components/sections/Projects.astro';
+import StickyContact from '../../components/sections/StickyContact.astro';
+import Footer from '../../components/layout/Footer.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const currentLang = Astro.currentLocale || 'ru';
@@ -20,7 +20,7 @@ const currentLang = Astro.currentLocale || 'ru';
   description={currentLang === 'ru'
     ? 'Портфолио Rerowros — разработчик веб‑приложений, Telegram‑ботов и десктоп‑приложений. Просмотрите кейсы, демо и исходный код.'
     : 'Rerowros Portfolio — developer of web apps, Telegram bots and desktop apps. View cases, demos and source code.'}
-  pathname="/"
+  pathname={getRelativeLocaleUrl(currentLang, '')}
 >
   <Header />
   <div>
@@ -31,7 +31,7 @@ const currentLang = Astro.currentLocale || 'ru';
       <div class="optimize-rendering">
         <div class="container mx-auto mt-8 mb-12 px-4">
           <a
-            href={getRelativeLocaleUrl(currentLang, 'tools/xray/')}
+            href={getRelativeLocaleUrl(currentLang, 'tools/xray')}
             class="group relative mx-auto block w-full max-w-4xl overflow-hidden rounded-2xl border border-[var(--color-primary)]/30 bg-[var(--color-card)] p-6 transition-all hover:border-[var(--color-primary)] hover:shadow-[0_0_40px_-10px_rgba(129,140,248,0.3)]"
           >
             <!-- Фоновый градиент -->

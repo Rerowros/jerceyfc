@@ -2,6 +2,8 @@
 // src/components/Footer.astro
 import GitHubIcon from '../../components/icons/GitHubIcon.astro';
 import TelegramIcon from '../../components/icons/TelegramIcon.astro';
+
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <footer class="relative z-10 px-4 py-12">
@@ -35,8 +37,11 @@ import TelegramIcon from '../../components/icons/TelegramIcon.astro';
       <p class="text-sm text-[var(--color-muted-foreground)]">
         © {new Date().getFullYear()}
         <span class="text-gradient font-semibold">Rerowros</span>.
-        <span class="lang-ru">Никакие права не защищены, можете забирать :)</span>
-        <span class="lang-en">No rights reserved, take anything you want :)</span>
+        {
+          currentLang === 'ru'
+            ? 'Никакие права не защищены, можете забирать :)'
+            : 'No rights reserved, take anything you want :)'
+        }
       </p>
     </div>
   </div>

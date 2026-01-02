@@ -8,7 +8,6 @@ import '@fontsource/unbounded/700.css';
 import '@fontsource/unbounded/900.css';
 
 import '../styles/global.css';
-import '../styles/lang-animate.css';
 import { ClientRouter } from 'astro:transitions';
 import Background from '../components/ui/Background.astro';
 import MobileHint from '../components/ui/MobileHint.astro';
@@ -33,10 +32,11 @@ const cleanPathname = normalizedPathname.endsWith('/')
   : `${normalizedPathname}/`;
 
 const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toString();
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <!doctype html>
-<html lang="ru" class="scroll-smooth">
+<html lang={currentLang} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />

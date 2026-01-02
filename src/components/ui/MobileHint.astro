@@ -1,5 +1,7 @@
 ---
 import IconDesktop from '../icons/IconDesktop.astro';
+
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <!-- 
@@ -31,14 +33,12 @@ import IconDesktop from '../icons/IconDesktop.astro';
 
     <div class="flex-grow pt-0.5 pr-6">
       <h4 class="mb-1 text-sm leading-tight font-bold text-[var(--color-foreground)]">
-        <span class="lang-ru">Магия в деталях </span>
-        <span class="lang-en">Magic in details </span>
+        {currentLang === 'ru' ? 'Магия в деталях' : 'Magic in details'}
       </h4>
       <p class="text-xs leading-relaxed text-[var(--color-muted-foreground)]">
-        <span class="lang-ru"
-          >Сайт полон эффектов, доступных только на ПК. Зайдите с компьютера!</span
-        >
-        <span class="lang-en">The site is full of PC-only effects. Visit from desktop!</span>
+        {currentLang === 'ru' 
+          ? 'Сайт полон эффектов, доступных только на ПК. Зайдите с компьютера!'
+          : 'The site is full of PC-only effects. Visit from desktop!'}
       </p>
     </div>
 

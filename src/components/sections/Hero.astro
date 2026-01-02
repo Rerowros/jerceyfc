@@ -1,7 +1,9 @@
 ---
 // src/components/sections/Hero.astro
 import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем иконку (убедитесь, что она есть в components/icons)
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
+const currentLang = Astro.currentLocale || 'ru';
 ---
 
 <section class="relative min-h-[90vh] flex items-center justify-center px-4 py-20 overflow-hidden">
@@ -34,54 +36,60 @@ import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем 
               <span class="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
             </span>
             <span class="text-xs font-semibold tracking-wide uppercase text-[var(--color-primary)]">
-              <span class="lang-ru">Открыт к предложениям</span>
-              <span class="lang-en">Available for work</span>
+              {currentLang === 'ru' ? 'Открыт к предложениям' : 'Available for work'}
             </span>
           </div>
 
           <div class="hero-animate">
             <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight font-cinzel">
-              <span class="lang-ru">
-                Привет, я <br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-400 animate-gradient-x">Ярослав</span>
-              </span>
-              <span class="lang-en">
-                Hi, I'm <br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-400 animate-gradient-x">Yaroslav</span>
-              </span>
+              {currentLang === 'ru' ? (
+                <>
+                  Привет, я <br />
+                  <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-400 animate-gradient-x">Ярослав</span>
+                </>
+              ) : (
+                <>
+                  Hi, I'm <br />
+                  <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-purple-400 animate-gradient-x">Yaroslav</span>
+                </>
+              )}
             </h1>
           <p class="text-xl md:text-2xl text-[var(--color-muted-foreground)] font-light mt-4">
-            <span class="lang-ru">Делаю сложные Web-проекты и <br class="md:hidden" /> умных ботов</span>
-            <span class="lang-en">Crafting Complex Web Apps & <br class="md:hidden" /> Smart Bots</span>
+            {currentLang === 'ru' ? (
+              <>Делаю сложные Web-проекты и <br class="md:hidden" /> умных ботов</>
+            ) : (
+              <>Crafting Complex Web Apps & <br class="md:hidden" /> Smart Bots</>
+            )}
           </p>
           </div>
 
 <p class="scroll-animate text-base text-[var(--color-muted-foreground)] max-w-lg leading-relaxed mx-auto lg:mx-0" style="transition-delay: 200ms;">
-  <span class="lang-ru">
-    Превращаю бизнес-логику в чистый код. Специализируюсь на React/Next.js и автоматизации Telegram. 
-    Работаю по стандартам крупных продуктовых команд.
-  </span>
-  <span class="lang-en">
-    Turning business logic into clean code. Specializing in React/Next.js and Telegram automation. 
-    Working with Big Tech quality standards.
-  </span>
+  {currentLang === 'ru' ? (
+    <>
+      Превращаю бизнес-логику в чистый код. Специализируюсь на React/Next.js и автоматизации Telegram. 
+      Работаю по стандартам крупных продуктовых команд.
+    </>
+  ) : (
+    <>
+      Turning business logic into clean code. Specializing in React/Next.js and Telegram automation. 
+      Working with Big Tech quality standards.
+    </>
+  )}
 </p>
 
           <div class="scroll-animate flex flex-wrap justify-center lg:justify-start gap-4 mt-2" style="transition-delay: 300ms;">
             <a href="#projects" class="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)]/90 overflow-hidden">
                 <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"></div>
                 <span class="relative z-20 flex items-center gap-2">
-                    <span class="lang-ru">Смотреть проекты</span>
-                    <span class="lang-en">View Projects</span>
+                    {currentLang === 'ru' ? 'Смотреть проекты' : 'View Projects'}
                     <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                 </span>
             </a>
             
-            <a href="/about" class="inline-flex items-center justify-center px-8 py-3 font-semibold text-[var(--color-foreground)] transition-all duration-200 bg-transparent border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-card)] hover:border-[var(--color-primary)]">
-              <span class="lang-ru">Обо мне</span>
-              <span class="lang-en">About Me</span>
+            <a href={getRelativeLocaleUrl(currentLang, 'about')} class="inline-flex items-center justify-center px-8 py-3 font-semibold text-[var(--color-foreground)] transition-all duration-200 bg-transparent border border-[var(--color-border)] rounded-lg hover:bg-[var(--color-card)] hover:border-[var(--color-primary)]">
+              {currentLang === 'ru' ? 'Обо мне' : 'About Me'}
             </a>
           </div>
         </div>
@@ -134,21 +142,23 @@ import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем 
 
 <script>
   function initHero() {
-    const card = document.getElementById("hero-card") as HTMLElement | null;
-    if (!card) return;
-    let bounds = card.getBoundingClientRect();
-    function updateBounds() { bounds = card.getBoundingClientRect(); }
+    const card = document.getElementById("hero-card");
+    if (!(card instanceof HTMLElement)) return;
+    const cardEl = card;
+    
+    let bounds = cardEl.getBoundingClientRect();
+    function updateBounds() { bounds = cardEl.getBoundingClientRect(); }
     window.addEventListener("scroll", updateBounds, { passive: true });
     window.addEventListener("resize", updateBounds, { passive: true });
     const onMouseMove = (e: MouseEvent) => {
       window.requestAnimationFrame(() => {
         const x = e.clientX - bounds.left;
         const y = e.clientY - bounds.top;
-        card.style.setProperty("--mouse-x", `${x}px`);
-        card.style.setProperty("--mouse-y", `${y}px`);
+        cardEl.style.setProperty("--mouse-x", `${x}px`);
+        cardEl.style.setProperty("--mouse-y", `${y}px`);
       });
     };
-    let autoAnimationId;
+    let autoAnimationId: number;
     function startAutoAnimation() {
       const startTime = Date.now();
       function frame() {
@@ -159,14 +169,14 @@ import IconDesktop from "../icons/IconDesktop.astro"; // Импортируем 
         const centerY = bounds.height / 2;
         const x = centerX + Math.cos(time) * radiusX;
         const y = centerY + Math.sin(time) * radiusY;
-        card.style.setProperty("--mouse-x", `${x}px`);
-        card.style.setProperty("--mouse-y", `${y}px`);
+        cardEl.style.setProperty("--mouse-x", `${x}px`);
+        cardEl.style.setProperty("--mouse-y", `${y}px`);
         autoAnimationId = requestAnimationFrame(frame);
       }
       frame();
     }
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) { startAutoAnimation(); } else { card.addEventListener("mousemove", onMouseMove, { passive: true }); }
+    if (isMobile) { startAutoAnimation(); } else { cardEl.addEventListener("mousemove", onMouseMove, { passive: true }); }
   }
   document.addEventListener("astro:page-load", initHero);
   document.addEventListener("DOMContentLoaded", initHero);

@@ -1,6 +1,14 @@
 ---
 // src/components/Header.astro
 import HeaderControls from './HeaderControls.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const currentLang = Astro.currentLocale || 'ru';
+const targetLang = currentLang === 'ru' ? 'en' : 'ru';
+
+// Получаем текущий путь (например, /about) и делаем из него ссылку на другой язык
+const currentPath = Astro.url.pathname.replace(/^\/en/, '') || '/';
+const targetPath = getRelativeLocaleUrl(targetLang, currentPath);
 ---
 
 <header
@@ -9,27 +17,36 @@ import HeaderControls from './HeaderControls.astro';
   <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
     <!-- Лого/Имя -->
     <a
-      href="/"
+      href={getRelativeLocaleUrl(currentLang, '/')}
       class="font-cinzel relative z-50 inline-flex items-center text-xl font-bold transition-opacity hover:opacity-80 md:text-2xl"
     >
       <!-- Класс text-gradient перенесен сюда -->
-      <span class="lang-ru text-gradient">Rerowros</span>
+      <span class="text-gradient">Rerowros</span>
     </a>
 
     <!-- Контролы для десктопа -->
     <div class="hidden items-center gap-6 md:flex">
       <nav class="flex gap-6 font-medium text-[var(--color-muted-foreground)]">
-        <a href="/#skills" class="transition-colors hover:text-[var(--color-primary)]">
-          <span class="lang-ru">Навыки</span><span class="lang-en">Skills</span>
-        </a>
-        <a href="/about" class="transition-colors hover:text-[var(--color-primary)]">
-          <span class="lang-ru">Обо мне</span><span class="lang-en">About</span>
-        </a>
-        <a href="/blog/" class="transition-colors hover:text-[var(--color-primary)]">
-          <span class="lang-ru">Статьи</span><span class="lang-en">Blog</span>
+        <a
+          href={getRelativeLocaleUrl(currentLang, '/#skills')}
+          class="transition-colors hover:text-[var(--color-primary)]"
+        >
+          {currentLang === 'ru' ? 'Навыки' : 'Skills'}
         </a>
         <a
-          href="/tools/xray/"
+          href={getRelativeLocaleUrl(currentLang, 'about/')}
+          class="transition-colors hover:text-[var(--color-primary)]"
+        >
+          {currentLang === 'ru' ? 'Обо мне' : 'About'}
+        </a>
+        <a
+          href={getRelativeLocaleUrl(currentLang, 'blog/')}
+          class="transition-colors hover:text-[var(--color-primary)]"
+        >
+          {currentLang === 'ru' ? 'Статьи' : 'Blog'}
+        </a>
+        <a
+          href={getRelativeLocaleUrl(currentLang, 'tools/xray/')}
           class="group flex items-center gap-1.5 transition-colors hover:text-[var(--color-primary)]"
         >
           <svg
@@ -46,11 +63,14 @@ import HeaderControls from './HeaderControls.astro';
               d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
             ></path>
           </svg>
-          <span class="lang-ru">Тулзы</span><span class="lang-en">Tools</span>
+          {currentLang === 'ru' ? 'Тулзы' : 'Tools'}
         </a>
 
-        <a href="/projects/" class="transition-colors hover:text-[var(--color-primary)]">
-          <span class="lang-ru">Проекты</span><span class="lang-en">Projects</span>
+        <a
+          href={getRelativeLocaleUrl(currentLang, 'projects/')}
+          class="transition-colors hover:text-[var(--color-primary)]"
+        >
+          {currentLang === 'ru' ? 'Проекты' : 'Projects'}
         </a>
       </nav>
       <HeaderControls />
@@ -94,8 +114,7 @@ import HeaderControls from './HeaderControls.astro';
         <h4
           class="font-cinzel mb-4 text-xs font-bold tracking-widest text-[var(--color-primary)] uppercase"
         >
-          <span class="lang-ru">В этой статье</span>
-          <span class="lang-en">In this article</span>
+          {currentLang === 'ru' ? 'В этой статье' : 'In this article'}
         </h4>
         <div id="mobile-toc-links" class="flex flex-col gap-3">
           <!-- Сюда JS вставит ссылки -->
@@ -103,36 +122,29 @@ import HeaderControls from './HeaderControls.astro';
       </div>
       <div class="space-y-2">
         <a
-          href="/#skills"
+          href={getRelativeLocaleUrl(currentLang, '/#skills')}
           class="flex items-center gap-3 rounded-xl p-3 text-[var(--color-muted-foreground)] transition-all hover:bg-[var(--color-foreground)]/5 hover:text-[var(--color-primary)]"
         >
-          <span class="text-lg font-medium"
-            ><span class="lang-ru">Навыки</span><span class="lang-en">Skills</span></span
-          >
+          <span class="text-lg font-medium">{currentLang === 'ru' ? 'Навыки' : 'Skills'}</span>
         </a>
         <a
-          href="/about"
+          href={getRelativeLocaleUrl(currentLang, 'about')}
           class="flex items-center gap-3 rounded-xl p-3 text-[var(--color-muted-foreground)] transition-all hover:bg-[var(--color-foreground)]/5 hover:text-[var(--color-primary)]"
         >
-          <span class="text-lg font-medium"
-            ><span class="lang-ru">Обо мне</span><span class="lang-en">About</span></span
-          >
+          <span class="text-lg font-medium">{currentLang === 'ru' ? 'Обо мне' : 'About'}</span>
         </a>
         <a
-          href="/blog/"
+          href={getRelativeLocaleUrl(currentLang, 'blog')}
           class="flex items-center gap-3 rounded-xl p-3 text-[var(--color-muted-foreground)] transition-all hover:bg-[var(--color-foreground)]/5 hover:text-[var(--color-primary)]"
         >
-          <span class="text-lg font-medium"
-            ><span class="lang-ru">Статьи</span><span class="lang-en">Blog</span></span
-          >
+          <span class="text-lg font-medium">{currentLang === 'ru' ? 'Статьи' : 'Blog'}</span>
         </a>
         <a
-          href="/tools/xray/"
+          href={getRelativeLocaleUrl(currentLang, 'tools/xray')}
           class="flex items-center gap-3 rounded-xl p-3 text-[var(--color-muted-foreground)] transition-all hover:bg-[var(--color-foreground)]/5 hover:text-[var(--color-primary)]"
         >
           <span class="text-lg font-medium">
-            <span class="lang-ru">Инструменты</span>
-            <span class="lang-en">Tools</span>
+            {currentLang === 'ru' ? 'Инструменты' : 'Tools'}
           </span>
           <!-- Бэджик NEW -->
           <span
@@ -143,12 +155,10 @@ import HeaderControls from './HeaderControls.astro';
         </a>
 
         <a
-          href="/projects/"
+          href={getRelativeLocaleUrl(currentLang, 'projects')}
           class="flex items-center gap-3 rounded-xl p-3 text-[var(--color-muted-foreground)] transition-all hover:bg-[var(--color-foreground)]/5 hover:text-[var(--color-primary)]"
         >
-          <span class="text-lg font-medium"
-            ><span class="lang-ru">Проекты</span><span class="lang-en">Projects</span></span
-          >
+          <span class="text-lg font-medium">{currentLang === 'ru' ? 'Проекты' : 'Projects'}</span>
         </a>
       </div>
 
@@ -157,7 +167,7 @@ import HeaderControls from './HeaderControls.astro';
         <!-- Цветовая палитра -->
         <div class="flex items-center justify-between p-1">
           <span class="text-sm font-medium text-[var(--color-muted-foreground)]">
-            <span class="lang-ru">Цветовая схема</span><span class="lang-en">Color scheme</span>
+            {currentLang === 'ru' ? 'Цветовая схема' : 'Color scheme'}
           </span>
           <div id="palette-switcher-mobile" class="flex items-center gap-3">
             <button
@@ -185,13 +195,12 @@ import HeaderControls from './HeaderControls.astro';
 
         <!-- Язык и тема -->
         <div class="flex items-center gap-3">
-          <button
-            id="lang-toggle-mobile"
-            class="font-cinzel flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/50 px-4 py-3 text-sm font-bold transition-all hover:border-[var(--color-primary)] active:scale-95"
+          <a
+            href={targetPath}
+            class="font-cinzel flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/50 px-4 py-3 text-center text-sm font-bold transition-all hover:border-[var(--color-primary)] active:scale-95"
           >
-            <span class="lang-ru">Switch to English</span>
-            <span class="lang-en">Переключить на RU</span>
-          </button>
+            {currentLang === 'ru' ? 'Switch to English' : 'Переключить на RU'}
+          </a>
 
           <button
             id="theme-toggle-mobile"
@@ -340,42 +349,41 @@ import HeaderControls from './HeaderControls.astro';
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
         updateIcon(isLight);
       };
+    }
 
-      function syncMobileTOC() {
-        const mobileTocSection = document.getElementById('mobile-toc-section');
-        const mobileTocLinks = document.getElementById('mobile-toc-links');
-        // Ищем заголовки только в основном контенте статьи
-        const articleHeadings = document.querySelectorAll(
-          '.article-content h2, .article-content h3'
-        );
+    function syncMobileTOC() {
+      const mobileTocSection = document.getElementById('mobile-toc-section');
+      const mobileTocLinks = document.getElementById('mobile-toc-links');
+      // Ищем заголовки только в основном контенте статьи
+      const articleHeadings = document.querySelectorAll('.article-content h2, .article-content h3');
 
-        if (articleHeadings.length > 0 && mobileTocSection && mobileTocLinks) {
-          mobileTocSection.classList.remove('hidden');
-          mobileTocLinks.innerHTML = ''; // Чистим
+      if (articleHeadings.length > 0 && mobileTocSection && mobileTocLinks) {
+        mobileTocSection.classList.remove('hidden');
+        mobileTocLinks.innerHTML = ''; // Чистим
 
-          articleHeadings.forEach((heading) => {
-            // Клонируем логику видимости (offsetParent) как в десктопном TOC
-            if (heading.offsetParent === null) return;
+        articleHeadings.forEach((heading) => {
+          const h = heading as HTMLElement;
+          // Клонируем логику видимости (offsetParent) как в десктопном TOC
+          if (h.offsetParent === null) return;
 
-            const link = document.createElement('a');
-            link.href = `#${heading.id}`;
-            link.className = `text-sm transition-colors hover:text-[var(--color-primary)] ${heading.tagName === 'H3' ? 'pl-4 text-xs opacity-80' : 'font-medium'}`;
-            link.textContent = heading.textContent;
+          const link = document.createElement('a');
+          link.href = `#${h.id}`;
+          link.className = `text-sm transition-colors hover:text-[var(--color-primary)] ${h.tagName === 'H3' ? 'pl-4 text-xs opacity-80' : 'font-medium'}`;
+          link.textContent = h.textContent;
 
-            // Закрывать меню при клике на пункт оглавления
-            link.onclick = () => {
-              const mobileMenu = document.getElementById('mobile-menu');
-              const mobileMenuButton = document.getElementById('mobile-menu-button');
-              mobileMenu?.classList.add('hidden');
-              mobileMenuButton?.classList.remove('is-active');
-              document.body.style.overflow = '';
-            };
+          // Закрывать меню при клике на пункт оглавления
+          link.onclick = () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            mobileMenu?.classList.add('hidden');
+            mobileMenuButton?.classList.remove('is-active');
+            document.body.style.overflow = '';
+          };
 
-            mobileTocLinks.appendChild(link);
-          });
-        } else {
-          mobileTocSection?.classList.add('hidden');
-        }
+          mobileTocLinks.appendChild(link);
+        });
+      } else {
+        mobileTocSection?.classList.add('hidden');
       }
     }
   }

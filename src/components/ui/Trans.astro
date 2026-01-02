@@ -1,0 +1,29 @@
+---
+// src/components/ui/Trans.astro
+// Этот компонент показывает контент в зависимости от текущего языка URL
+
+interface Props {
+  className?: string; // Для передачи классов (например, text-gradient)
+}
+
+const { className = '' } = Astro.props;
+const currentLang = Astro.currentLocale || 'ru';
+---
+
+{/* Если передан слот 'ru' и язык русский - показываем его */}
+{
+  currentLang === 'ru' && (
+    <span class={className}>
+      <slot name="ru" />
+    </span>
+  )
+}
+
+{/* Если передан слот 'en' и язык английский - показываем его */}
+{
+  currentLang === 'en' && (
+    <span class={className}>
+      <slot name="en" />
+    </span>
+  )
+}

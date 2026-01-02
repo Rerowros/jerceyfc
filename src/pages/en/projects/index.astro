@@ -2,10 +2,10 @@
 // src/pages/projects/index.astro
 import { getCollection } from 'astro:content';
 import { fade } from 'astro:transitions';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/layout/Header.astro';
-import ProjectCard from '../../components/ui/ProjectCard.astro';
-import Footer from '../../components/layout/Footer.astro';
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/layout/Header.astro';
+import ProjectCard from '../../../components/ui/ProjectCard.astro';
+import Footer from '../../../components/layout/Footer.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const currentLang = Astro.currentLocale || 'ru';
@@ -25,7 +25,7 @@ const sortedProjects = allProjects.sort((a, b) => {
   description={currentLang === 'ru'
     ? 'Кейсы и проекты: Telegram Stars, LiteForce, и другие.'
     : 'Cases and projects: Telegram Stars, LiteForce, and others.'}
-  pathname="/projects"
+  pathname={getRelativeLocaleUrl(currentLang, 'projects')}
 >
   <Header />
   <main
