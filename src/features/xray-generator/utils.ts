@@ -56,7 +56,7 @@ export const generateVlessLink = (c: XrayConfig, name: string = 'XrayConfig'): s
     url.searchParams.set('mode', 'gun');
   }
 
-  // XHTTP (NEW 2026 SPEC)
+  // XHTTP
   if (c.network === 'xhttp') {
     url.searchParams.set('path', c.xhttpPath);
     url.searchParams.set('mode', c.xhttpMode);
