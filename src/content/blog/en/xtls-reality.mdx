@@ -8,4 +8,126 @@ excerpt: 'Reality changed the game by eliminating the need for self-signed certi
 tldr: 'Learn how masquerading as Microsoft and Cloudflare works, why self-signed certificates are dead, and how to configure uTLS to bypass JA4 detectors.'
 ---
 
+<Callout type="info" title="Course Navigation: Part 5">
+  Final topics of the course. You are reading part 5:
 
+1. [How the Internet Works: From Cables to HTTPS](/en/blog/network-fundamentals/)
+2. [TSPU Deep Dive](/en/blog/tspu-deep-dive/)
+3. [Network Protocol Architecture 2025](/en/blog/protocols-2025/)
+4. [XHTTP: A Deep Technical Analysis](/en/blog/xhttp/)
+5. [**XTLS Reality & JA4 Fingerprinting (You are here)**](/en/blog/xtls-reality/)
+   </Callout>
+
+<Callout type="info" title="Deep Dive: Reality">
+  A technical deep dive into Reality masking. Recommended prerequisite: understanding the **[TLS
+  Handshake](/en/blog/network-fundamentals/)**.
+</Callout>
+
+# Introduction: The End of Self-Signed Certificates
+
+XTLS Reality represents a paradigm shift in circumvention. Before Reality, operators relied on self-signed certificates or obtaining public certs (Let's Encrypt). Both had fatal flaws: self-signed certs are immediately detected (no CA chain), while public certs require domain ownership and can be blacklisted.
+
+Reality removes the need to own a certificate. Instead, it uses a cryptographically verified ephemeral certificate combined with steganographic `shortId` authentication. This lets the server present itself as a legitimate web resource (e.g., microsoft.com) to outside observers, while covertly serving proxy clients.
+
+## Part 1. How Reality Eliminates Certificate Ownership
+
+### Weaknesses of Classic Schemes
+
+Censors detect proxies by three signs:
+
+1. **CA validation failure:** Certificate is not signed by a trusted CA.
+2. **Issuer/Subject match:** In self-signed certs these fields are identical.
+3. **Active probing:** The censor connects and sees an unusual certificate.
+
+Active probing is the main verification method in 2025; mechanics are discussed in **[TSPU Deep Dive](/en/blog/tspu-deep-dive/)**.
+
+### Reality's Solution: Ephemeral Certificates with HMAC
+
+Instead of storing a static certificate on disk, Reality operates in-memory using the following scheme:
+
+**Server side:**
+
+1. Generate an ephemeral Ed25519 keypair.
+2. Create an in-memory self-signed x509 certificate (never sent in raw form).
+3. During client connection perform ECDH to derive a `preMasterKey`.
+4. Replace the certificate signature with `HMAC-SHA512(preMasterKey, ed25519_publickey)`.
+
+**Client side:**
+
+1. Extract the Ed25519 public key from the received certificate.
+2. Compute HMAC with locally derived `preMasterKey` and compare against the certificate signature.
+3. If they match — the server is authenticated to the client without a CA chain.
+
+Why it works:
+
+- For Reality clients, authentication is cryptographic via HMAC rather than CA verification.
+- For censors, the HMAC is opaque; checking via CA will fail or be impossible because the certificate is not a normal CA-signed chain.
+
+## Part 2. shortId and dest: Friend Among Strangers
+
+### shortId: Steganography in the SessionId
+
+How does the server tell "friends" from censors when the ClientHello is in the clear? The answer is a crafted `SessionId` (32 bytes). Reality hides an encrypted token there.
+
+**SessionId layout:**
+
+```
+[0-7 bytes]: public metadata (Xray version, timestamp)
+[8-31 bytes]: AEAD-encrypted shortId + padding
+```
+
+Process:
+
+1. The client encrypts its `shortId` (e.g., `a1b2c3d4`) with a key derived from ECDH.
+2. The server attempts to decrypt the `SessionId` and, if successful and the `shortId` is whitelisted, recognizes a Reality client.
+3. If decryption fails, the peer is treated as a regular visitor or a censor.
+
+### dest: Masquerade Target
+
+`dest` specifies which service identity the server will "borrow" for outsiders.
+
+- **If a valid shortId is present:** the server uses the ephemeral HMACed certificate and establishes the tunnel.
+- **If not (probing/censor):** the server proxies the connection to `dest` (e.g., `microsoft.com:443`) and relays traffic, presenting a legitimate certificate to the censor.
+
+Result: The censor sees a valid CA-signed certificate for a real domain and is unlikely to block it. Only timing and side-channel artifacts may reveal the proxy.
+
+Good `dest` candidates in 2025: `microsoft.com`, `cloudflare.com`, `github.com`, `aws.amazon.com` — pick popular, unblocked domains with CDN presence.
+
+<Callout type="warning" title="dest selection risks">
+  Avoid blocked or region-sensitive domains (e.g., `google.com` in some regions). Choose widely
+  used, unblocked domains with CDN presence.
+</Callout>
+
+## Part 3. JA4/JA4S: The New Fingerprinting Standard
+
+By 2025 JA3 is outdated; browsers randomized extension order, breaking JA3. **JA4** replaces it by sorting parameters before fingerprinting.
+
+JA4 produces a readable fingerprint like `t13_1301_47c0c`:
+
+- `t13`: transport + TLS version
+- `1301`: number of supported ciphers (after sorting)
+- `47c0c`: hash of sorted TLS extensions
+
+Key difference: JA4 captures the _set_ of client capabilities (not their order), so simple extension reordering no longer evades detection. Using an unmodified Go TLS stack yields a JA4 distinct from Chrome/Firefox and is easily flagged.
+
+Reality uses **uTLS** for byte-for-byte mimicry of real browsers (Chrome 120 profile, etc.), including extensions, curves, ciphers and padding.
+
+## Part 4. New Attack Vectors in 2025
+
+Despite Reality's strengths, two notable detection vectors emerged:
+
+1. **Post-Handshake Analysis (Aparecium PoC)**
+
+In 2025 a PoC demonstrated fingerprinting based on `NewSessionTicket` behavior. Real servers typically send `NewSessionTicket` messages after the Finished handshake. Some Reality setups omit or fail to proxy these tickets, creating an anomaly.
+
+Mitigation: generate fake `NewSessionTicket` messages that match `dest` in length and timing.
+
+2. **Cross-Layer RTT Fingerprinting**
+
+Censors compare layered RTTs (TCP/TLS/Application). If proxying adds measurable delay to application-layer packets (e.g., +30 ms), the difference between direct connection RTT and proxied RTT can reveal the proxy.
+
+Mitigation: select `dest` that is geographically and topologically close to your server to minimize extra RTT.
+
+# Conclusion
+
+Reality greatly raised the bar for censorship circumvention by removing the need for static certificates and providing robust steganographic client authentication. However, side-channel signals (post-handshake behavior, RTT asymmetry) remain detection points and should be addressed by updated implementations.

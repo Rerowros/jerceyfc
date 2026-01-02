@@ -8,4 +8,216 @@ excerpt: 'XHTTP changes the game in traffic obfuscation. We analyze how the new 
 tldr: 'XHTTP abandons WebSocket and gRPC in favor of native HTTP requests with randomization. Learn how XMUX breaks statistical analysis and how to configure traffic separation across different IPs.'
 ---
 
+<Callout type="info" title="Course Navigation: Part 4">
+  Deep technical reads. You are reading part 4:
 
+1. [How the Internet Works: From Cables to HTTPS](/en/blog/network-fundamentals/)
+2. [TSPU Deep Dive](/en/blog/tspu-deep-dive/)
+3. [Network Protocol Architecture 2025](/en/blog/protocols-2025/)
+4. [**XHTTP: A Deep Technical Analysis (You are here)**](/en/blog/xhttp/)
+5. [XTLS Reality & JA4 Fingerprinting](/en/blog/xtls-reality/)
+   </Callout>
+
+<Callout type="info" title="Deep Dive: XHTTP">
+  This article provides a detailed analysis of the XHTTP transport protocol. For context, we
+  recommend reading **[TSPU Deep Dive](/en/blog/tspu-deep-dive/)** first.
+</Callout>
+
+# Introduction: A Paradigm Shift in Obfuscation
+
+By late 2024, the XTLS/Xray-core ecosystem introduced **XHTTP** — a transport protocol that fundamentally rethinks encrypted traffic delivery. Unlike prior approaches (VMess, VLESS over TCP/WS), which encapsulated proxy protocols inside TLS and produced detectable "TLS-in-TLS" signatures, XHTTP operates over native HTTP requests.
+
+The nested-handshake problem and static timing patterns are explained in **[Network Fundamentals](/en/blog/network-fundamentals/)**. XHTTP addresses this by avoiding long tunnels and making traffic resemble ordinary CDN usage.
+
+From a network perspective, XHTTP is essentially indistinguishable from normal CDN traffic. This architectural change provides a major advantage against classic DPI systems and modern ML-based analyzers.
+
+In this breakdown we cover the three operational modes of XHTTP, the XMUX randomization techniques, and the download/upload stream separation strategy.
+
+## Part 1. The Three XHTTP Modes
+
+XHTTP implements three distinct modes. Crucially, these modes are independent of the HTTP version (HTTP/1.1, HTTP/2, HTTP/3), which allows flexible combinations for varying network conditions.
+
+### 1. Packet-UP: Universal Compatibility
+
+This mode is the "fallback" option. It emulates chunked file uploads and long-running HTTP requests to traverse CDNs and corporate firewalls.
+
+Architecture:
+
+- **Uplink (Client → Server):** A series of POST requests, each with a sequence number (Sequence Number).
+  ```http
+  POST /yourpath/[random-UUID]/[seq=0,1,2,3...]
+  Body: 1MB data chunk
+  ```
+- **Downlink (Server → Client):** A single long-lived GET request with streaming response.
+  ```http
+  GET /yourpath/[random-UUID]
+  Response: Chunked transfer encoding (infinite stream)
+  ```
+
+Technical details:
+The server buffers POSTs (default up to 30 packets) and reorders them by Sequence Number. This is critical because CDNs may alter delivery order.
+
+Each POST includes a randomized `Referer` header (`x_padding=XXX`) between 100 and 1000 bytes for masking. Server responses include headers to avoid intermediate caching:
+
+| Header                            | Purpose                             |
+| :-------------------------------- | :---------------------------------- |
+| `X-Accel-Buffering: no`           | Disable buffering on Nginx/CDNs     |
+| `Cache-Control: no-store`         | Prevent intermediate caching        |
+| `Content-Type: text/event-stream` | Masking as Server-Sent Events (SSE) |
+| `Transfer-Encoding: chunked`      | Enable streaming for HTTP/1.1       |
+
+Performance parameters (configurable):
+
+- `scMaxEachPostBytes`: 500 KB – 1 MB
+- `scMinPostsIntervalMs`: 10–50 ms
+
+### 2. Stream-UP: Optimized for HTTP/2
+
+This mode provides true bidirectional streaming and reduces POST overhead. It requires HTTP/2 support.
+
+Architecture:
+
+- **Uplink:** One long-running POST with a streaming body.
+  ```http
+  POST /yourpath/[random-UUID]
+  Headers: Referer padding, Content-Type: application/grpc
+  Body: Continuous stream
+  ```
+- **Downlink:** A separate streaming GET.
+
+Masking as gRPC: Stream-UP typically sets `Content-Type: application/grpc` and `TE: trailers` so intermediaries (Cloudflare, CDNs) treat it as legitimate gRPC traffic. The internal payload is not actual gRPC, but the handshake looks like a microservice call.
+
+Cloudflare timeouts: CDNs may close idle streams after ~100 seconds. Stream-UP mitigates this via `scStreamUpServerSecs` (default 20–80 seconds), sending small keepalive frames.
+
+### 3. Stream-ONE: One Request to Rule Them All
+
+This mode collapses traffic into **a single HTTP request**:
+
+```http
+POST /yourpath/
+Request body: Uplink stream
+Response body: Downlink stream
+```
+
+It minimizes handshakes (ideal with REALITY) but cannot separate download and upload channels.
+
+## Part 2. Independence from HTTP Versions and XMUX
+
+XHTTP decouples transport logic from HTTP versions.
+
+- **Packet-UP over HTTP/2:** Multiple POSTs can be multiplexed into different H2 streams.
+- **Stream-UP over HTTP/3 (QUIC):** QUIC allows connection migration (Wi‑Fi ↔ LTE) without breaks.
+- **Stream-ONE over HTTP/1.1:** Works over plain TCP.
+
+<Callout type="info" title="Server Architecture">
+  Out-of-the-box XHTTP servers accept TCP (HTTP/1.1, HTTP/2). QUIC (HTTP/3) support usually sits at
+  the CDN or edge (Nginx/Caddy) which forwards to the backend.
+</Callout>
+
+### XMUX: Intelligent Multiplexing
+
+**XMUX** controls how requests are distributed across connections; it's the main defense against fingerprinting.
+
+Key randomization parameters:
+
+| Parameter          | Example Value      | Purpose                                       |
+| :----------------- | :----------------- | :-------------------------------------------- |
+| `maxConcurrency`   | "16-32" (random)   | Concurrent streams per TCP connection         |
+| `hMaxRequestTimes` | "600-900" (random) | Number of requests before connection rotation |
+| `hMaxReusableSecs` | "1800-3000" (rand) | Connection lifetime (30–50 minutes)           |
+
+Why it matters: XMUX prevents stable, long-lived behavior. By varying concurrency and lifetime, XHTTP breaks ML models that rely on stable features.
+
+## Part 3. Comparison with WebSocket, HTTP/2 and VMess
+
+XHTTP vs WebSocket: WebSocket has an identifiable ALPN (`http/1.1`) and relies on an Upgrade handshake. XHTTP uses native HTTP/2 or HTTP/3 and blends with typical web traffic.
+
+XHTTP vs VMess/VLESS: VMess/VLESS wrap user data inside an inner protocol plus TLS — the nested handshake creates timing anomalies (RTT discrepancies) that ML models learn to detect. XHTTP places user data inside normal HTTP requests, removing the second handshake and producing traffic similar to standard web activity.
+
+## Part 4. Why XHTTP is Invisible to ML Analyzers
+
+Modern DPI relies on ML models trained on packet lengths and inter-packet timings. XHTTP defeats these metrics via three layers of randomization:
+
+1. **Padding Randomization:** Random padding (100–1000 bytes) in the `Referer` header changes packet size distributions.
+2. **Volume Randomization:** `scMinPostsIntervalMs` introduces jitter between packets in Packet-UP.
+3. **Lifecycle Randomization:** XMUX varies connection lifetime, concurrency and request counts.
+
+Because the feature space becomes very wide, ML models trained on static patterns suffer high false-positive rates when trying to classify XHTTP.
+
+## Part 5. Download–Upload Separation
+
+Unique to XHTTP is the ability to route upload and download through different endpoints or IPs.
+
+Example:
+
+- **Uplink:** IPv4, HTTP/2, `cdn.example.com`.
+- **Downlink:** IPv6, HTTP/3 (QUIC), `ipv6-cdn.example.com`.
+
+For DPI this looks like two unrelated flows (different IP families, ALPNs, timing characteristics), making correlation much harder.
+
+## Part 6. Known Issues and Fixes (Q4 2024)
+
+### ADSL and Back-pressure (Issue #4100)
+
+On low-upload channels (upload < 1 Mbps) Packet-UP could hang because clients sent POSTs faster than the line could handle. The fix: back-pressure — the client waits for socket write confirmation before sending the next POST. Temporarily lowering `scMaxEachPostBytes` to 100–300 KB helps on weak links.
+
+### Cloudflare 100-second timeout
+
+Cloudflare may close Stream-UP if no data is observed for ~100 seconds. Using `scStreamUpServerSecs` the server sends small keepalive frames to maintain the connection.
+
+## Part 7. Recommended Configurations
+
+### Config 1: Universal (Maximum Compatibility)
+
+```json
+{
+  "streamSettings": {
+    "network": "xhttp",
+    "xhttpSettings": {
+      "path": "/v1/",
+      "host": "cdn.example.com",
+      "mode": "auto"
+    },
+    "extra": {
+      "xPaddingBytes": "500-2000",
+      "xmux": {
+        "maxConcurrency": "8-64",
+        "hMaxRequestTimes": "200-1000"
+      }
+    }
+  }
+}
+```
+
+### Config 2: Speed with Download/Upload Separation
+
+```json
+{
+  "streamSettings": {
+    "network": "xhttp",
+    "xhttpSettings": {
+      "path": "/api/v2/",
+      "host": "upload.example.com",
+      "mode": "stream-up"
+    },
+    "security": "tls",
+    "tlsSettings": { "alpn": ["h2"], "serverName": "upload.example.com" },
+    "extra": {
+      "downloadSettings": {
+        "address": "2001:db8::1",
+        "port": 443,
+        "network": "xhttp",
+        "tlsSettings": { "alpn": ["h3"], "serverName": "download.example.com" },
+        "xhttpSettings": {
+          "path": "/api/v2/",
+          "host": "download.example.com"
+        }
+      }
+    }
+  }
+}
+```
+
+# Conclusion
+
+XHTTP is not just another transport — it's a strategic response to the evolution of censorship. By removing nested TLS handshakes and operating at the HTTP application level, XHTTP makes detection economically impractical for censors. Correctly configured XHTTP achieves near-zero detection rates because blocking it would cause widespread collateral damage to legitimate services (CDNs, APIs, SSE).

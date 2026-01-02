@@ -8,6 +8,142 @@ excerpt: "Before configuring complex circumvention systems, it's essential to un
 tldr: "Learn the difference between TCP and UDP, understand what TLS 1.3 conceals, and explore why data packets sometimes don't fit into the network due to MTU."
 ---
 
+<Callout type="info" title="Course Navigation: Part 1">
+  You are reading the introductory part of the "Networking 2025" course.
+
+1. [**How the Internet Works: From Cables to HTTPS (You are here)**](/en/blog/network-fundamentals/)
+2. [TSPU Deep Dive](/en/blog/tspu-deep-dive/)
+3. [Network Protocol Architecture 2025](/en/blog/protocols-2025/)
+4. [XHTTP: A Deep Technical Analysis](/en/blog/xhttp/)
+5. [XTLS Reality & JA4 Fingerprinting](/en/blog/xtls-reality/)
+   </Callout>
+
+# Introduction: Life Inside a Packet
+
+Every time you open this page, your machine performs millions of tiny operations. Data is split into small pieces (packets), wrapped in several layers of "protective paper" and travels thousands of kilometers of fiber.
+
+By 2025 the Internet is far more complex and secure than it was a decade ago. This article explains the _fundamentals_ — the networking stack that underpins everything from a simple web page to encrypted circumvention tunnels.
+
+<Callout type="info" title="Who is this for?">
+  This is a starting point. If you want to understand why a VPN fails, how TSPU finds your traffic,
+  or what XHTTP does, you first need to know how packets behave on a normal network.
+</Callout>
+
+## Chapter 1. What is HTTPS and why does it matter?
+
+Put simply: **HTTPS is plain text inside an armored safe.**
+
+HTTP used to send everything in cleartext — passwords, cookies, and form data. Anyone in the middle (a Wi‑Fi admin or an ISP) could read it.
+
+**HTTPS (HTTP over TLS)** solved three problems:
+
+1. **Encryption:** Only you and the server can read the payload.
+
+<Callout type="warning" title="Why HTTPS is not enough">
+  Even with HTTPS, your ISP can often see the domain you connect to via SNI. How censors use that to
+  block traffic is covered in **[TSPU Deep Dive](/en/blog/tspu-deep-dive/)**.
+</Callout>
+
+2. **Integrity:** The data cannot be tampered with (for example, replacing a payment address).
+3. **Authentication:** You are talking to the real `google.com`, not an impostor.
+
+### How does the "lock" work?
+
+HTTPS is not a separate protocol — it is regular HTTP carried over **TLS** (Transport Layer Security). In 2025 TLS 1.3 is the standard.
+
+---
+
+## Chapter 2. Transport layer: TCP vs UDP
+
+For delivery, the Internet relies on two main "trucks": TCP and UDP.
+
+### 2.1 TCP — The reliable courier
+
+TCP sets up a connection and guarantees delivery and ordering. Think of a courier who checks signatures for every parcel.
+
+- **Pros:** Retransmits lost packets; preserves order.
+- **Cons:** Extra control messages increase latency on poor networks.
+- **Use cases:** Web (HTTPS), email, file transfers.
+
+### 2.2 UDP — The postcard
+
+UDP sends datagrams without delivery guarantees — fire and forget.
+
+- **Pros:** Low latency, minimal overhead.
+- **Cons:** Packets can be lost or reordered.
+- **Use cases:** Real‑time media, games, and (since QUIC/HTTP/3) modern web transport.
+
+| Characteristic  | TCP                            | UDP                          |
+| :-------------- | :----------------------------- | :--------------------------- |
+| **Connection**  | Handshake required             | Stateless                    |
+| **Reliability** | Guaranteed                     | Not guaranteed               |
+| **Speed**       | Lower (control overhead)       | Higher (minimal headers)     |
+| **Masking**     | Easy to blend with web traffic | Easier to be filtered by ISP |
+
+---
+
+## Chapter 3. TLS 1.3: Establishing a secure session
+
+TLS 1.3 reduces handshake cost to **1‑RTT** in normal cases.
+
+Typical flow:
+
+1. **ClientHello:** The client advertises supported versions, ciphers and key material.
+2. **ServerHello:** The server selects parameters and provides a certificate.
+
+### The SNI problem
+
+Although the payload is encrypted, the **ClientHello** historically contains **SNI (Server Name Indication)** in the clear. ISPs and censors use SNI to learn which site you are visiting and optionally block it.
+
+<Callout type="warning" title="2025 tech note">
+  By 2025, techniques exist to hide or mask SNI; see **[XTLS Reality](/en/blog/xtls-reality/)** for
+  practical approaches.
+</Callout>
+
+---
+
+## Chapter 4. MTU and MSS: Why size matters
+
+Imagine the network as a highway with tunnels.
+
+- **MTU (Maximum Transmission Unit)** — the maximum "height" of the vehicle (packet). Commonly **1500 bytes**.
+- **MSS (Maximum Segment Size)** — how much payload fits inside a TCP segment (usually ~1460 bytes without headers).
+
+If a VPN or proxy adds overhead, packets can exceed MTU and must be fragmented. Fragmentation causes performance problems and can break some tunnels.
+
+**2025 mitigation:** MSS clamping — lowering the payload size (for example to 1380 bytes) so the packet plus encapsulation fits any network.
+
+Modern transports like **[XHTTP](/en/blog/xhttp/)** also address MTU issues by splitting flows into many small HTTP requests.
+
+---
+
+## Chapter 5. Network fingerprinting: How the network guesses your OS
+
+Your machine speaks with a certain "accent" — small differences in packet headers leak platform traits.
+
+1. **TTL (Time To Live):** Default initial TTL differs by OS (Linux/Android ≈ 64, Windows ≈ 128).
+2. **TCP window size:** Default buffer sizes vary across operating systems.
+
+In 2025 DPI systems use these signals as features to distinguish real human clients from bots or proxy servers. Mismatches between claimed and observed characteristics can raise flags.
+
+# Conclusion
+
+Quick recap:
+
+- **HTTPS** provides encryption and integrity but may reveal the target via SNI.
+- **TCP** is for reliability, **UDP** for speed.
+- **MTU** limits packet size and matters for tunnels.
+- **Fingerprinting** is your digital "accent".
+
+Next article will explain how these fundamentals apply to modern filtering algorithms and why "smart" blocking became so effective.
+
+---
+
+**Further reading:**
+
+- [TSPU Deep Dive](/en/blog/tspu-deep-dive/)
+- [Modern protocol architecture: VLESS, Reality, XHTTP](/en/blog/protocols-2025/)
+
 <References
   items={[
     {
