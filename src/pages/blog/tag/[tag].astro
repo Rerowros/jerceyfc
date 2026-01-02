@@ -7,7 +7,7 @@ import { fade } from 'astro:transitions';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection('blog');
+  const allPosts = await getCollection('blog', ({ id }) => id.startsWith('ru/'));
   const uniqueTags = [...new Set(allPosts.flatMap((post) => post.data.tags))];
 
   return uniqueTags.map((tag) => {
@@ -106,24 +106,20 @@ const currentLang = Astro.currentLocale || 'ru';
               </div>
 
               <a
-                href={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)}
+                href={getRelativeLocaleUrl(currentLang, `blog/${post.slug.replace(/^ru\//, '')}`)}
                 class="relative z-10 block"
               >
                 <h2 class="font-cinzel mb-3 text-2xl leading-tight font-bold transition-colors group-hover:text-[var(--color-primary)]">
-                  {currentLang === 'ru'
-                    ? post.data.title.ru
-                    : post.data.title.en || post.data.title.ru}
+                  {post.data.title}
                 </h2>
               </a>
 
               <p class="relative z-10 mb-4 line-clamp-3 text-base leading-relaxed text-[var(--color-muted-foreground)]">
-                {currentLang === 'ru'
-                  ? post.data.excerpt.ru
-                  : post.data.excerpt.en || post.data.excerpt.ru}
+                {post.data.excerpt}
               </p>
 
               <a
-                href={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)}
+                href={getRelativeLocaleUrl(currentLang, `blog/${post.slug.replace(/^ru\//, '')}`)}
                 class="relative z-10 inline-flex items-center text-sm font-medium text-[var(--color-primary)]"
               >
                 {currentLang === 'ru' ? 'Читать статью' : 'Read article'}

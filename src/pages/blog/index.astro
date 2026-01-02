@@ -10,7 +10,7 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 const currentLang = Astro.currentLocale || 'ru';
 
 // Получаем все посты и сортируем
-const posts = (await getCollection('blog'))
+const posts = (await getCollection('blog', ({ id }) => id.startsWith('ru/')))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
@@ -132,18 +132,18 @@ const posts = (await getCollection('blog'))
                  </time>
               </div>
 
-              <a href={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)} class="relative z-10 mb-3 block grow">
+              <a href={getRelativeLocaleUrl(currentLang, `blog/${post.slug.replace(/^ru\//, '')}`)} class="relative z-10 mb-3 block grow">
                 <h2 class="font-cinzel text-xl font-bold leading-tight transition-colors group-hover:text-[var(--color-primary)]">
-                  {currentLang === 'ru' ? post.data.title.ru : (post.data.title.en || post.data.title.ru)}
+                  {post.data.title}
                 </h2>
               </a>
               
               <p class="mb-4 line-clamp-2 text-sm text-[var(--color-muted-foreground)]">
-                  {currentLang === 'ru' ? post.data.excerpt.ru : post.data.excerpt.en}
+                  {post.data.excerpt}
               </p>
 
               <div class="mt-auto pt-4 border-t border-[var(--color-border)]/50">
-                 <a href={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)} class="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider">
+                 <a href={getRelativeLocaleUrl(currentLang, `blog/${post.slug.replace(/^ru\//, '')}`)} class="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider">
                    {currentLang === 'ru' ? 'Читать статью' : 'Read Article'} &rarr;
                  </a>
               </div>

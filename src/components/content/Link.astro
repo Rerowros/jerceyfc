@@ -1,0 +1,17 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+interface Props {
+  href: string;
+  class?: string;
+}
+
+const { href, class: className } = Astro.props;
+const currentLang = Astro.currentLocale || 'ru';
+
+// Если ссылка внутренняя (начинается с /), оборачиваем её в локаль
+const isInternal = href.startsWith('/');
+const finalHref = isInternal ? getRelativeLocaleUrl(currentLang, href) : href;
+---
+
+<a href={finalHref} class={className}><slot /></a>

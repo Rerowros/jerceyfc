@@ -5,14 +5,8 @@ const projectsCollection = defineCollection({
   type: 'content', // Указываем, что это контент (MD/MDX)
   schema: ({ image }) =>
     z.object({
-      title: z.object({
-        ru: z.string(),
-        en: z.string(),
-      }),
-      description: z.object({
-        ru: z.string(),
-        en: z.string(),
-      }),
+      title: z.string(),
+      description: z.string(),
       // 'details' удалено, так как контент теперь в теле файла MDX
       tags: z.array(z.string()),
 
@@ -32,21 +26,11 @@ const blogCollection = defineCollection({
   type: 'content',
   schema: ({ image }) =>
     z.object({
-      title: z.object({
-        ru: z.string(),
-        en: z.string().optional(),
-      }),
-      excerpt: z.object({
-        ru: z.string(),
-        en: z.string().optional(),
-      }),
+      title: z.string(),
+      description: z.string().optional(),
+      excerpt: z.string().optional(),
       // TL;DR
-      tldr: z
-        .object({
-          ru: z.string().optional(),
-          en: z.string().optional(),
-        })
-        .optional(),
+      tldr: z.string().optional(),
       pubDate: z.date(),
       tags: z.array(z.string()),
       coverImage: image().optional(),

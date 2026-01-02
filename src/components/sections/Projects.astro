@@ -15,7 +15,7 @@ interface Props {
 const { limit, showViewAll = false, showFeaturedOnly = false } = Astro.props;
 
 // 1. Получаем проекты из коллекции
-const allProjects = await getCollection('projects');
+const allProjects = await getCollection('projects', ({ id }) => id.startsWith(`${currentLang}/`));
 
 // 2. Сортируем и фильтруем
 let displayProjects = allProjects.sort(

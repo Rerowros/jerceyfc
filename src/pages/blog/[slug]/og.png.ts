@@ -6,9 +6,9 @@ import fs from 'fs';
 import path from 'path';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await getCollection('blog', ({ id }) => id.startsWith('ru/'));
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.slug.replace(/^ru\//, '') },
     props: { post },
   }));
 }
@@ -81,7 +81,7 @@ export const GET: APIRoute<Props> = async ({ props }) => {
                 display: 'flex',
                 flexWrap: 'wrap',
               },
-              children: post.data.title.ru,
+              children: post.data.title,
             },
           },
           // Теги

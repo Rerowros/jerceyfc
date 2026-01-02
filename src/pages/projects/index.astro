@@ -10,7 +10,7 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const currentLang = Astro.currentLocale || 'ru';
 
-const allProjects = await getCollection('projects');
+const allProjects = await getCollection('projects', ({ id }) => id.startsWith('ru/'));
 
 // Сортировка: сначала featured, потом по дате
 const sortedProjects = allProjects.sort((a, b) => {

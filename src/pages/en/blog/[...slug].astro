@@ -4,7 +4,6 @@ import { getCollection } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import Header from '../../../components/layout/Header.astro';
 import Footer from '../../../components/layout/Footer.astro';
-import Lang from '../../../components/content/Lang.astro';
 import Callout from '../../../components/content/Callout.astro';
 import References from '../../../components/content/References.astro';
 import { Image } from 'astro:assets';
@@ -15,11 +14,14 @@ import '../../../styles/blog-post.css';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  const posts = await getCollection('blog', ({ id }) => id.startsWith('en/'));
+  return posts.map((post) => {
+    const slug = post.slug.replace(/^en\//, '');
+    return {
+      params: { slug },
+      props: { post },
+    };
+  });
 }
 
 const { post } = Astro.props;
@@ -27,34 +29,10 @@ const { Content, headings } = await post.render();
 
 const currentLang = Astro.currentLocale || 'ru';
 
-// Фильтрация заголовков для текущего языка:
-// 1) Быстрый путь — по наличию кириллицы (ru) или латиницы (en) в тексте заголовка.
-// 2) Fallback — если заголовок состоит только из цифр/символов, пытаемся найти его внутри
-//    блока <Lang val="..."> в исходном MDX (post.body), если он доступен.
-const filteredHeadings = headings.filter((h) => {
-  if (currentLang === 'ru') {
-    if (/[А-Яа-яЁё]/.test(h.text)) return true;
-  } else {
-    if (/[A-Za-z]/.test(h.text)) return true;
-  }
-
-  // Fallback — поиск в исходном MDX по наличию внутри нужного блока <Lang>
-  try {
-    const escaped = h.text.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
-    const langBlockRegex = new RegExp(
-      `<Lang val=["']${currentLang}["']>[\\s\\S]*?${escaped}[\\s\\S]*?<\\/Lang>`,
-      'i'
-    );
-    return typeof post.body === 'string' && langBlockRegex.test(post.body);
-  } catch (e) {
-    return false;
-  }
-});
-
-const seoTitle = `${currentLang === 'ru' ? post.data.title.ru : post.data.title.en || post.data.title.ru} | Blog Rerowros`;
-const seoDesc = currentLang === 'ru' ? post.data.excerpt.ru : post.data.excerpt.en;
-const currentUrl = `https://rerowros.ru${getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)}`;
-const ogImageUrl = `/blog/${post.slug}/og.png`;
+const seoTitle = `${post.data.title} | Blog Rerowros`;
+const seoDesc = post.data.excerpt;
+const currentUrl = `https://rerowros.ru${getRelativeLocaleUrl(currentLang, `blog/${post.slug.replace(/^en\//, '')}`)}`;
+const ogImageUrl = `/blog/${post.slug.replace(/^en\//, '')}/og.png`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -77,17 +55,15 @@ const jsonLd = {
         {
           '@type': 'ListItem',
           position: 3,
-          name:
-            currentLang === 'ru' ? post.data.title.ru : post.data.title.en || post.data.title.ru,
+          name: post.data.title,
           item: currentUrl,
         },
       ],
     },
     {
       '@type': 'BlogPosting',
-      headline:
-        currentLang === 'ru' ? post.data.title.ru : post.data.title.en || post.data.title.ru,
-      description: currentLang === 'ru' ? post.data.excerpt.ru : post.data.excerpt.en,
+      headline: post.data.title,
+      description: post.data.excerpt,
       image: ogImageUrl.toString(),
       datePublished: post.data.pubDate.toISOString(),
       dateModified: post.data.pubDate.toISOString(),
@@ -108,7 +84,7 @@ const jsonLd = {
 <Layout
   title={seoTitle}
   description={seoDesc}
-  pathname={getRelativeLocaleUrl(currentLang, `blog/${post.slug}`)}
+  pathname={getRelativeLocaleUrl(currentLang, `blog/${post.slug.replace(/^en\//, '')}`)}
   image={ogImageUrl}
 >
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
@@ -162,7 +138,7 @@ const jsonLd = {
       <h1
         class="font-cinzel text-glow relative z-10 mb-8 px-2 text-2xl leading-[1.2] font-extrabold break-words md:text-5xl lg:text-7xl"
       >
-        {currentLang === 'ru' ? post.data.title.ru : post.data.title.en || post.data.title.ru}
+        {post.data.title}
       </h1>
 
       <div class="mb-10 flex flex-wrap justify-center gap-2">
@@ -186,7 +162,7 @@ const jsonLd = {
           <div class="group relative mb-8 aspect-[21/9] w-full overflow-hidden rounded-3xl border border-[var(--color-border)] shadow-2xl">
             <Image
               src={post.data.coverImage}
-              alt={post.data.title.ru}
+              alt={post.data.title}
               class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               width={1600}
               height={900}
@@ -234,9 +210,7 @@ const jsonLd = {
                 <div class="accordion-content">
                   <div class="px-6 pb-6 md:px-8 md:pb-8">
                     <div class="border-l-2 border-[var(--color-primary)] pl-4 text-base leading-relaxed text-[var(--color-foreground)] italic opacity-90 md:text-lg">
-                      {currentLang === 'ru'
-                        ? post.data.tldr.ru
-                        : post.data.tldr.en || post.data.tldr.ru}
+                      {post.data.tldr}
                     </div>
                   </div>
                 </div>
@@ -248,7 +222,7 @@ const jsonLd = {
             class="article-content prose prose-lg dark:prose-invert prose-headings:font-cinzel prose-headings:scroll-mt-32 prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline max-w-none overflow-x-clip"
           >
             <!-- ИЗМЕНЕНИЕ: overflow-hidden заменен на overflow-x-clip, чтобы не обрезать вертикальный контент -->
-            <Content components={{ Lang, Callout, References }} />
+            <Content components={{ Callout, References }} />
           </div>
 
           <!-- CONTACT CTA AT THE END -->

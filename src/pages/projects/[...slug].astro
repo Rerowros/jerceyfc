@@ -6,18 +6,20 @@ import Header from '../../components/layout/Header.astro';
 import Footer from '../../components/layout/Footer.astro';
 import GitHubIcon from '../../components/icons/GitHubIcon.astro';
 import TelegramIcon from '../../components/icons/TelegramIcon.astro';
-import Lang from '../../components/content/Lang.astro'; // Импортируем наш компонент
 import { slide } from 'astro:transitions';
 import { Image } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
 // Point 9: Динамические маршруты через getCollection
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
-  }));
+  const projects = await getCollection('projects', ({ id }) => id.startsWith('ru/'));
+  return projects.map((project) => {
+    const slug = project.slug.replace(/^ru\//, '');
+    return {
+      params: { slug },
+      props: { project },
+    };
+  });
 }
 
 interface Props {
@@ -46,9 +48,9 @@ const bgAccent = typeGradients[data.type] || 'bg-indigo-600';
 ---
 
 <Layout
-  title={currentLang === 'ru' ? data.title.ru : data.title.en}
-  description={currentLang === 'ru' ? data.description.ru : data.description.en}
-  pathname={getRelativeLocaleUrl(currentLang, `projects/${project.slug}/`)}
+  title={data.title}
+  description={data.description}
+  pathname={getRelativeLocaleUrl(currentLang, `projects/${project.slug.replace(/^ru\//, '')}/`)}
 >
   <Header />
 
@@ -137,13 +139,13 @@ const bgAccent = typeGradients[data.type] || 'bg-indigo-600';
           <h1
             class="font-cinzel text-glow text-3xl leading-[1.1] font-extrabold break-words hyphens-auto sm:text-4xl md:text-6xl lg:text-7xl"
           >
-            {currentLang === 'ru' ? data.title.ru : data.title.en}
+            {data.title}
           </h1>
 
           <p
             class="border-l-2 border-[var(--color-primary)] pl-4 text-lg leading-relaxed font-light text-[var(--color-muted-foreground)] md:pl-6 md:text-2xl"
           >
-            {currentLang === 'ru' ? data.description.ru : data.description.en}
+            {data.description}
           </p>
         </div>
 
@@ -196,7 +198,7 @@ const bgAccent = typeGradients[data.type] || 'bg-indigo-600';
             <div class="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[#050505] shadow-2xl">
               <Image
                 src={coverImage}
-                alt={data.title.en}
+                alt={data.title}
                 class="h-auto w-full"
                 width={1200}
                 height={800}
@@ -227,7 +229,7 @@ const bgAccent = typeGradients[data.type] || 'bg-indigo-600';
             >
               <!-- Point 3: Вставка компонента Content. 
                    Передаем наши кастомные компоненты внутрь MDX -->
-              <Content components={{ Lang }} />
+              <Content />
             </div>
           </div>
         </div>

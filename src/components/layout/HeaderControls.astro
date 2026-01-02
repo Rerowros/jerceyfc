@@ -5,9 +5,11 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 const currentLang = Astro.currentLocale || 'ru';
 const targetLang = currentLang === 'ru' ? 'en' : 'ru';
 
-// Получаем текущий путь (например, /about) и делаем из него ссылку на другой язык
-const currentPath = Astro.url.pathname.replace(/^\/en/, '') || '/';
-const targetPath = getRelativeLocaleUrl(targetLang, currentPath);
+// Получаем чистый путь без локали
+let purePath = Astro.url.pathname.replace(/^\/en\//, '/').replace(/^\//, '');
+
+// Формируем правильную ссылку
+const targetPath = getRelativeLocaleUrl(targetLang, purePath);
 ---
 
 <div class="flex items-center gap-3">
