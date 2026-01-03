@@ -207,6 +207,44 @@ const currentLang = Astro.currentLocale || 'ru';
     <script>
       import { initMagneticButtons } from '../scripts/magnetic';
 
+      // --- ЛОГИКА СОХРАНЕНИЯ СКРОЛЛА ПРИ СМЕНЕ ЯЗЫКА ---
+
+      // 1. Перед началом перехода
+      document.addEventListener('astro:before-preparation', (event) => {
+        const fromPath = window.location.pathname;
+        const toPath = new URL(event.to).pathname;
+
+        // Функция нормализации пути (убираем /en/ и слеши)
+        const normalize = (p: string) =>
+          p
+            .replace(/^\/en\//, '/')
+            .replace(/\/$/, '')
+            .replace(/^\//, '');
+
+        // Если это одна и та же страница (просто смена языка)
+        if (normalize(fromPath) === normalize(toPath)) {
+          // Сохраняем позицию
+          sessionStorage.setItem('lang-scroll-y', window.scrollY.toString());
+          // Сохраняем флаг, что это именно смена языка (чтобы не путать с кнопкой "Назад")
+          sessionStorage.setItem('is-lang-switch', 'true');
+        }
+      });
+
+      // 2. Сразу после подмены DOM, но до отрисовки
+      document.addEventListener('astro:after-swap', () => {
+        const savedY = sessionStorage.getItem('lang-scroll-y');
+        const isLangSwitch = sessionStorage.getItem('is-lang-switch');
+
+        if (savedY && isLangSwitch) {
+          // Мгновенно восстанавливаем скролл без анимации
+          window.scrollTo({ top: parseInt(savedY), behavior: 'instant' });
+
+          // Чистим хранилище
+          sessionStorage.removeItem('lang-scroll-y');
+          sessionStorage.removeItem('is-lang-switch');
+        }
+      });
+
       function initScrollObserver() {
         const observer = new IntersectionObserver(
           (entries) => {

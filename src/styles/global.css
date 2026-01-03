@@ -408,50 +408,57 @@ h1 {
   transform: translateY(0) !important;
 }
 /* ========================================
-   VIEW TRANSITIONS
+   VIEW TRANSITIONS (SPA EFFECT)
    ======================================== */
 
+/* Базовые настройки длительности */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 400ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-duration: 0.5s; /* Чуть медленнее для красоты */
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* Мягкая эластичность */
+  mix-blend-mode: normal; /* Важно для чистого перехода цветов */
 }
 
-html[data-astro-transition='forward']::view-transition-old(root) {
-  animation-name: slide-to-left;
-}
-html[data-astro-transition='forward']::view-transition-new(root) {
-  animation-name: slide-from-right;
+/* Старая страница: Размывается и чуть уменьшается (уходит вглубь) */
+::view-transition-old(root) {
+  animation-name: blurOut;
 }
 
-html[data-astro-transition='back']::view-transition-old(root) {
-  animation-name: slide-to-right;
-}
-html[data-astro-transition='back']::view-transition-new(root) {
-  animation-name: slide-from-left;
+/* Новая страница: Собирается из "тумана" и чуть увеличивается (наплывает) */
+::view-transition-new(root) {
+  animation-name: focusIn;
 }
 
-@keyframes slide-to-left {
-  to {
-    transform: translateX(-100%);
+/* Убираем слайды и старую логику forward/back атрибутов, 
+   делаем единую красивую анимацию для всего */
+
+@keyframes blurOut {
+  0% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
   }
-}
-@keyframes slide-from-right {
-  from {
-    transform: translateX(100%);
-  }
-}
-@keyframes slide-to-right {
-  to {
-    transform: translateX(100%);
-  }
-}
-@keyframes slide-from-left {
-  from {
-    transform: translateX(-100%);
+  100% {
+    opacity: 0;
+    filter: blur(12px); /* Сильное размытие */
+    transform: scale(0.98); /* Легкое уменьшение */
   }
 }
 
+@keyframes focusIn {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(1.02); /* Легкое увеличение */
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
+  }
+}
+
+/* Отключаем анимацию для пользователей, которые просят меньше движения */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
