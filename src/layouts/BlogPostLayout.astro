@@ -9,8 +9,9 @@ import EmailIcon from '../components/icons/EmailIcon.astro';
 import SparklesIcon from '../components/icons/SparklesIcon.astro';
 import '../styles/blog-post.css';
 import { getRelativeLocaleUrl } from 'astro:i18n';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
+import { getReadingTime } from '../scripts/reading-time';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -38,6 +39,10 @@ const TRANSLATIONS = {
     haveProjectDesc: 'Давайте обсудим вашу идею и превратим её в качественный продукт.',
     share: 'Share', // Оставил как есть в дизайне
     inThisArticle: 'В этой статье',
+    adTitle: 'Защити свой интернет',
+    adDesc:
+      'Используй мой проект для обхода блокировок и анонимности. Быстрые и надежные протоколы VLESS/Reality.',
+    adBtn: 'Попробовать бесплатно',
   },
   en: {
     home: 'Home',
@@ -55,6 +60,10 @@ const TRANSLATIONS = {
     haveProjectDesc: 'Let’s discuss your idea and turn it into a high-quality product.',
     share: 'Share',
     inThisArticle: 'In this article',
+    adTitle: 'Secure your internet',
+    adDesc:
+      'Use my project for censorship circumvention and anonymity. Fast and reliable VLESS/Reality protocols.',
+    adBtn: 'Try for free',
   },
 };
 
@@ -63,10 +72,26 @@ const t = TRANSLATIONS[lang];
 // --- SEO & URL Logic ---
 const cleanSlug = post.slug.replace(/^(ru|en)\//, '');
 const currentUrl = `https://rerowros.ru${getRelativeLocaleUrl(lang, `blog/${cleanSlug}`)}`;
+const alternateLang = lang === 'ru' ? 'en' : 'ru';
+const alternateUrl = `https://rerowros.ru${getRelativeLocaleUrl(alternateLang, `blog/${cleanSlug}`)}`;
 const ogImageUrl = `/blog/${cleanSlug}/og.png`;
 
 const seoTitle = `${post.data.title} | Blog Rerowros`;
 const seoDesc = post.data.excerpt;
+
+// --- Automated Metadata ---
+const autoReadingTime = getReadingTime(post.body);
+const displayReadingTime = post.data.readingTime || autoReadingTime;
+
+// --- Post Navigation ---
+const allPosts = await getCollection('blog', ({ id }: { id: string }) => id.startsWith(`${lang}/`));
+const sortedPosts = [...allPosts].sort(
+  (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+    b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const currentIndex = sortedPosts.findIndex((p: CollectionEntry<'blog'>) => p.id === post.id);
+const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
 
 // --- JSON-LD ---
 const jsonLd = {
@@ -122,6 +147,10 @@ const jsonLd = {
   pathname={getRelativeLocaleUrl(lang, `blog/${cleanSlug}`)}
   image={ogImageUrl}
 >
+  <link rel="alternate" hreflang={lang} href={currentUrl} />
+  <link rel="alternate" hreflang={alternateLang} href={alternateUrl} />
+  <link rel="alternate" hreflang="x-default" href={lang === 'en' ? currentUrl : alternateUrl} />
+
   <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 
   <Header />
@@ -138,6 +167,49 @@ const jsonLd = {
   </div>
 
   <article class="post-page min-h-screen pt-24 pb-20 md:pt-32">
+    <!-- Breadcrumbs & Lang Switcher -->
+    <div class="container mx-auto mb-8 max-w-5xl px-4">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <nav
+          class="flex items-center gap-2 text-xs font-medium text-[var(--color-muted-foreground)]"
+        >
+          <a href={getRelativeLocaleUrl(lang, '/')} class="hover:text-[var(--color-primary)]"
+            >{t.home}</a
+          >
+          <svg class="h-3 w-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"
+            ></path>
+          </svg>
+          <a href={getRelativeLocaleUrl(lang, 'blog/')} class="hover:text-[var(--color-primary)]"
+            >{t.blog}</a
+          >
+          <svg class="h-3 w-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"
+            ></path>
+          </svg>
+          <span class="max-w-[150px] truncate opacity-50 sm:max-w-[300px]">{post.data.title}</span>
+        </nav>
+
+        <a
+          href={getRelativeLocaleUrl(alternateLang, `blog/${cleanSlug}`)}
+          class="glass-card flex items-center gap-2 rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-bold transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+        >
+          <svg
+            class="h-3.5 w-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+            ></path>
+          </svg>
+          {lang === 'ru' ? 'Read in English' : 'Читать на русском'}
+        </a>
+      </div>
+    </div>
+
     <!-- Hero Section -->
     <div class="container mx-auto mb-12 max-w-5xl px-4 text-center md:mb-16">
       <div
@@ -154,7 +226,7 @@ const jsonLd = {
         </span>
         <span class="h-1 w-1 rounded-full bg-[var(--color-muted-foreground)]"></span>
         {
-          post.data.readingTime && (
+          displayReadingTime && (
             <span class="flex items-center gap-1 text-xs text-[var(--color-muted-foreground)]">
               <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -164,7 +236,7 @@ const jsonLd = {
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              {post.data.readingTime}
+              {displayReadingTime} {t.readingTime}
             </span>
           )
         }
@@ -258,6 +330,97 @@ const jsonLd = {
             class="article-content prose prose-lg dark:prose-invert prose-headings:font-cinzel prose-headings:scroll-mt-32 prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline max-w-none overflow-x-clip"
           >
             <slot />
+          </div>
+
+          <!-- Post Navigation -->
+          <div
+            class="mt-16 grid grid-cols-1 gap-6 border-t border-[var(--color-border)] pt-12 sm:grid-cols-2"
+          >
+            {
+              prevPost ? (
+                <a
+                  href={getRelativeLocaleUrl(
+                    lang,
+                    `blog/${prevPost.slug.replace(/^(ru|en)\//, '')}`
+                  )}
+                  class="group relative flex flex-col gap-2 rounded-2xl border border-[var(--color-border)] p-6 transition-all hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/5"
+                >
+                  <span class="text-[10px] font-bold tracking-widest text-[var(--color-muted-foreground)] uppercase">
+                    {lang === 'ru' ? 'Предыдущая статья' : 'Previous post'}
+                  </span>
+                  <span class="font-cinzel text-base font-bold group-hover:text-[var(--color-primary)]">
+                    {prevPost.data.title}
+                  </span>
+                </a>
+              ) : (
+                <div />
+              )
+            }
+            {
+              nextPost && (
+                <a
+                  href={getRelativeLocaleUrl(
+                    lang,
+                    `blog/${nextPost.slug.replace(/^(ru|en)\//, '')}`
+                  )}
+                  class="group relative flex flex-col items-end gap-2 rounded-2xl border border-[var(--color-border)] p-6 text-right transition-all hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/5"
+                >
+                  <span class="text-[10px] font-bold tracking-widest text-[var(--color-muted-foreground)] uppercase">
+                    {lang === 'ru' ? 'Следующая статья' : 'Next post'}
+                  </span>
+                  <span class="font-cinzel text-base font-bold group-hover:text-[var(--color-primary)]">
+                    {nextPost.data.title}
+                  </span>
+                </a>
+              )
+            }
+          </div>
+
+          <!-- PROJECT AD BANNER -->
+          <div
+            class="group relative mt-16 overflow-hidden rounded-3xl border border-[var(--color-primary)]/30 bg-[var(--color-card)] p-1 shadow-2xl"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/20 via-transparent to-[var(--color-primary)]/20 opacity-30"
+            >
+            </div>
+            <div
+              class="relative z-10 flex flex-col items-center justify-between gap-8 rounded-[22px] bg-[var(--color-background)]/80 p-8 backdrop-blur-sm md:flex-row md:p-10"
+            >
+              <div class="flex-1 text-center md:text-left">
+                <div
+                  class="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/10 px-3 py-1"
+                >
+                  <span class="relative flex h-2 w-2">
+                    <span
+                      class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-75"
+                    ></span>
+                    <span
+                      class="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]"
+                    ></span>
+                  </span>
+                  <span
+                    class="text-[10px] font-bold tracking-widest text-[var(--color-primary)] uppercase"
+                    >Partner Project</span
+                  >
+                </div>
+                <h3 class="font-cinzel mb-4 text-2xl font-bold md:text-3xl">{t.adTitle}</h3>
+                <p class="leading-relaxed text-[var(--color-muted-foreground)]">{t.adDesc}</p>
+              </div>
+              <div class="shrink-0">
+                <a
+                  href="https://t.me/bpn228Bot?start=c_rerowrosRU"
+                  target="_blank"
+                  class="group/ad-btn relative inline-flex items-center gap-3 overflow-hidden rounded-xl bg-[var(--color-primary)] px-8 py-4 font-bold text-white shadow-[var(--color-primary)]/25 shadow-lg transition-all hover:scale-105 active:scale-95"
+                >
+                  <span
+                    class="absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-700 ease-in-out group-hover/ad-btn:translate-x-full"
+                  ></span>
+                  <TelegramIcon class="h-5 w-5" />
+                  <span>{t.adBtn}</span>
+                </a>
+              </div>
+            </div>
           </div>
 
           <!-- CONTACT CTA AT THE END -->

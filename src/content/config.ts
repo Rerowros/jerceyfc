@@ -36,6 +36,7 @@ const blogCollection = defineCollection({
       coverImage: image().optional(),
       draft: z.boolean().default(false),
       readingTime: z.string().optional(),
+      lastModified: z.date().optional(),
     }),
 });
 
