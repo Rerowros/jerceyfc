@@ -1,4 +1,13 @@
-import type { XrayConfig } from './types';
+import type {
+  XrayGeneratorConfig,
+  RoutingConfig,
+  DnsConfig,
+  PolicyConfig,
+  InboundConfig,
+  OutboundConfig,
+  LogConfig,
+} from './types';
+import { generateKeys } from './curve25519';
 
 // Генерация UUID v4
 export const generateUUID = () => {
@@ -16,22 +25,14 @@ export const generateShortId = () => {
     .join('');
 };
 
-// Генерация пары ключей (Эмуляция для UI, в реальном проде лучше использовать wasm/libsodium)
-// Xray требует Curve25519. В браузере нет нативного API для этого без сторонних либ.
-// Мы сделаем кнопку-заглушку, которая вставляет валидный формат, или попросим юзера ввести.
-// Для полноценной генерации нужно подключить 'curve25519-js'.
+// Генерируем реальные x25519 ключи
 export const generateKeyPair = () => {
-  // Это пример валидных ключей для теста UI.
-  // В продакшене лучше генерировать на сервере через `xray x25519`
-  return {
-    private: 'yGTk4vK9pQ5j3wQ8xZ2aN1mJ6lK8xZ2aN1mJ6lK8xZ0=',
-    public: 'P_G7x9qL4wN8xZ2aN1mJ6lK8xZ2aN1mJ6lK8xZ2aN1m=',
-  };
+  return generateKeys();
 };
 
 // --- ГЕНЕРАТОРЫ ---
 
-export const generateVlessLink = (c: XrayConfig, name: string = 'XrayConfig'): string => {
+export const generateVlessLink = (c: XrayGeneratorConfig, name: string = 'XrayConfig'): string => {
   const url = new URL(`vless://${c.uuid}@${c.address}:${c.port}`);
 
   url.searchParams.set('security', c.security);
@@ -83,7 +84,7 @@ export const generateVlessLink = (c: XrayConfig, name: string = 'XrayConfig'): s
 };
 
 // Генерация Client Config (Outbound)
-export const generateClientJson = (c: XrayConfig) => {
+export const generateClientJson = (c: XrayGeneratorConfig) => {
   const outbound: any = {
     tag: 'proxy',
     protocol: 'vless',
@@ -141,19 +142,61 @@ export const generateClientJson = (c: XrayConfig) => {
   return JSON.stringify(outbound, null, 2);
 };
 
-// Генерация Server Config (Inbound) - как в PasarGuard
-export const generateServerJson = (c: XrayConfig) => {
+// Генерация Server Config (FULL + Minimal option)
+export const generateServerJson = (c: XrayGeneratorConfig) => {
+  const config: any = {};
+
+  // 1. Log
+  config.log = {
+    loglevel: c.logLevel || 'warning',
+  };
+  if (c.logAccess) config.log.access = c.logAccess;
+  if (c.logError) config.log.error = c.logError;
+
+  // 2. DNS
+  if (c.dnsServers && c.dnsServers.length > 0) {
+    config.dns = { servers: c.dnsServers };
+  }
+
+  // 3. Routing
+  if (c.enableRouting) {
+    // If we have custom rules defined, use them AND standard rules?
+    // Or just use the rules list?
+    // Let's assume 'routingRules' is the source of truth if populated,
+    // otherwise fallback to a default block list if empty but routing enabled.
+
+    const rules =
+      c.routingRules && c.routingRules.length > 0
+        ? c.routingRules
+        : [
+            {
+              type: 'field',
+              ip: ['geoip:private'],
+              outboundTag: 'block',
+            },
+          ];
+
+    config.routing = {
+      domainStrategy: 'IPIfNonMatch',
+      rules: rules,
+    };
+  }
+
+  // 4. Inbounds
   const inbound: any = {
     tag: `vless-${c.network}`,
     port: Number(c.port),
     protocol: 'vless',
     settings: {
-      clients: [
-        {
-          id: c.uuid,
-          flow: c.network === 'tcp' && c.flow ? c.flow : '',
-        },
-      ],
+      clients: c.isTemplate
+        ? []
+        : [
+            {
+              id: c.uuid,
+              flow: c.network === 'tcp' && c.flow ? c.flow : '',
+              email: 'user',
+            },
+          ],
       decryption: 'none',
     },
     streamSettings: {
@@ -180,11 +223,28 @@ export const generateServerJson = (c: XrayConfig) => {
   if (c.network === 'xhttp') {
     inbound.streamSettings.xhttpSettings = {
       path: c.xhttpPath,
-      scMaxEachPostBytes: '1000000', // Стандарт 2026
-      scMinPostsIntervalMs: '10',
-      noGRPCHeader: false,
+      mode: c.xhttpMode,
     };
+    if (c.xhttpHost) inbound.streamSettings.xhttpSettings.host = c.xhttpHost;
   }
 
-  return JSON.stringify(inbound, null, 2);
+  if (c.network === 'grpc') {
+    inbound.streamSettings.grpcSettings = { serviceName: c.serviceName };
+  }
+
+  config.inbounds = [inbound];
+
+  // 5. Outbounds
+  config.outbounds = [
+    {
+      protocol: 'freedom',
+      tag: 'direct',
+    },
+    {
+      protocol: 'blackhole',
+      tag: 'block',
+    },
+  ];
+
+  return JSON.stringify(config, null, 2);
 };

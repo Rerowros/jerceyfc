@@ -8,31 +8,134 @@ export interface XmuxConfig {
   hMaxReusableSecs: string; // "1800-3000"
 }
 
-export interface XrayConfig {
+// --- Xray Core Types ---
+
+export interface LogConfig {
+  access?: string;
+  error?: string;
+  loglevel: 'debug' | 'info' | 'warning' | 'error' | 'none';
+  dnsLog?: boolean;
+}
+
+export interface DnsConfig {
+  servers: (string | object)[];
+  queryStrategy?: 'UseIP' | 'UseIPv4' | 'UseIPv6';
+  disableCache?: boolean;
+  disableFallback?: boolean;
+}
+
+export interface RoutingRule {
+  type: 'field';
+  domain?: string[];
+  ip?: string[];
+  port?: string;
+  network?: string;
+  source?: string[];
+  user?: string[];
+  inboundTag?: string[];
+  protocol?: string[];
+  attrs?: string;
+  outboundTag: string;
+  balancerTag?: string;
+}
+
+export interface RoutingBalancer {
+  tag: string;
+  selector: string[];
+}
+
+export interface RoutingConfig {
+  domainStrategy: 'AsIs' | 'IPIfNonMatch' | 'IPOnDemand';
+  rules: RoutingRule[];
+  balancers?: RoutingBalancer[];
+}
+
+export interface PolicyLevel {
+  handshake: number;
+  connIdle: number;
+  uplinkOnly: number;
+  downlinkOnly: number;
+  statsUserUplink: boolean;
+  statsUserDownlink: boolean;
+  bufferSize: number;
+}
+
+export interface PolicyConfig {
+  levels: { [key: string]: PolicyLevel };
+  system: {
+    statsInboundUplink: boolean;
+    statsInboundDownlink: boolean;
+    statsOutboundUplink: boolean;
+    statsOutboundDownlink: boolean;
+  };
+}
+
+export interface InboundConfig {
+  tag: string;
+  port: number | string;
+  protocol: string;
+  settings: any;
+  streamSettings: any;
+  sniffing?: {
+    enabled: boolean;
+    destOverride: string[];
+    metadataOnly?: boolean;
+  };
+}
+
+export interface OutboundConfig {
+  tag: string;
+  protocol: string;
+  settings: any;
+  streamSettings?: any;
+  mux?: any;
+}
+
+// --- Generator State ---
+
+export interface XrayGeneratorConfig {
   // Core
   uuid: string;
-  address: string; // IP или домен сервера
+  address: string;
   port: number;
 
   // Transport
   network: NetworkType;
-  flow: string; // 'xtls-rprx-vision' | ''
+  flow: string;
 
   // Reality
   security: SecurityType;
-  publicKey: string; // x25519 public key
-  privateKey: string; // x25519 private key (для серверного конфига)
-  shortId: string; // hex, even length
-  sni: string; // dest / serverName
-  fingerprint: string; // 'chrome' | 'firefox' | 'random'
-  spiderX: string; // Reality path
+  publicKey: string;
+  privateKey: string;
+  shortId: string;
+  sni: string;
+  fingerprint: string;
+  spiderX: string;
 
   // gRPC
   serviceName: string;
 
-  // XHTTP (SplitHTTP)
+  // XHTTP
   xhttpMode: XHttpMode;
   xhttpPath: string;
   xhttpHost: string;
   xmux: XmuxConfig;
+
+  // Logging
+  logLevel: 'debug' | 'info' | 'warning' | 'error' | 'none';
+  logAccess: string;
+  logError: string;
+
+  // Routing
+  routingRules: {
+    type: string;
+    ip?: string[];
+    domain?: string[];
+    outboundTag: string;
+  }[];
+
+  // Advanced / Template
+  isTemplate: boolean; // Если true, то clients: [] (пустой)
+  enableRouting: boolean;
+  dnsServers: string[]; // Просто список IP, например ["8.8.8.8", "1.1.1.1"]
 }
