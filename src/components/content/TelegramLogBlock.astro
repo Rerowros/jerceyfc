@@ -1,0 +1,77 @@
+---
+// src/components/content/TelegramLogBlock.astro
+import TelegramIcon from '../icons/TelegramIcon.astro';
+
+interface Props {
+  lang?: 'ru' | 'en';
+  compact?: boolean;
+}
+
+const { lang = 'ru', compact = false } = Astro.props;
+
+const TRANSLATIONS = {
+  ru: {
+    notice: 'Заметил, что вам интересно читать мой лог. Спасибо за внимание!',
+    cta: 'Подписывайтесь на канал, чтобы не пропустить новые статьи.',
+    button: 'Подписаться на @rerowroslog',
+  },
+  en: {
+    notice: 'I noticed you enjoy reading my log. Thanks for the interest!',
+    cta: 'Subscribe to the channel to never miss new articles.',
+    button: 'Subscribe to @rerowroslog',
+  },
+};
+
+const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS];
+---
+
+<div
+  class={`group relative overflow-hidden rounded-3xl border border-[var(--color-primary)]/20 bg-[var(--color-card)]/40 p-1 shadow-xl backdrop-blur-sm ${compact ? 'mb-4' : 'mb-16'}`}
+>
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/10 to-transparent opacity-50 transition-opacity group-hover:opacity-70"
+  >
+  </div>
+  <div
+    class={`relative z-10 flex flex-col items-center justify-between gap-6 rounded-[22px] bg-[var(--color-background)]/60 p-6 md:p-8 ${compact ? 'md:flex-col text-center' : 'md:flex-row md:text-left'}`}
+  >
+    <div class="flex-1">
+      <div
+        class="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-1"
+      >
+        <span class="relative flex h-2 w-2">
+          <span
+            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-75"
+          ></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]"></span>
+        </span>
+        <span class="text-[10px] font-bold tracking-widest text-[var(--color-primary)] uppercase"
+          >Telegram Channel</span
+        >
+      </div>
+      <h3
+        class={`font-cinzel font-bold text-[var(--color-foreground)] ${compact ? 'text-lg mb-2' : 'text-xl md:text-2xl mb-2'}`}
+      >
+        {t.notice}
+      </h3>
+      <p
+        class={`text-[var(--color-muted-foreground)] ${compact ? 'text-xs' : 'text-sm md:text-base'}`}
+      >
+        {t.cta}
+      </p>
+    </div>
+    <div class="shrink-0">
+      <a
+        href="https://t.me/rerowroslog"
+        target="_blank"
+        class="group/tg-btn relative inline-flex items-center gap-3 overflow-hidden rounded-xl bg-[var(--color-primary)] px-6 py-3 font-bold text-white shadow-[var(--color-primary)]/25 shadow-lg transition-all hover:scale-105 active:scale-95"
+      >
+        <span
+          class="absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-700 ease-in-out group-hover/tg-btn:translate-x-full"
+        ></span>
+        <TelegramIcon class="h-5 w-5" />
+        <span class={compact ? 'text-sm' : 'text-base'}>{t.button}</span>
+      </a>
+    </div>
+  </div>
+</div>
