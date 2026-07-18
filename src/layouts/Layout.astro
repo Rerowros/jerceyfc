@@ -209,7 +209,7 @@ const pageTransition = {
     </div>
 
     {!isBlogArticle && (
-      <div transition:name="byte-companion" transition:animate="none">
+      <div class="site-companion-layer" transition:name="byte-companion" transition:animate="none">
         <ScrollCompanion lang={currentLang} />
       </div>
     )}
@@ -221,6 +221,13 @@ const pageTransition = {
     >
       <slot />
     </main>
+
+    <style is:global>
+      .site-companion-layer {
+        position: relative;
+        z-index: 40;
+      }
+    </style>
 
     <script>
       // --- ЛОГИКА СОХРАНЕНИЯ СКРОЛЛА ПРИ СМЕНЕ ЯЗЫКА ---
