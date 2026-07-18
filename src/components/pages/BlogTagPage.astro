@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../layout/Header.astro';
+import Footer from '../layout/Footer.astro';
+import '../../styles/blog.css';
+
+interface Props { tag: string; posts: CollectionEntry<'blog'>[]; lang: 'ru' | 'en'; }
+const { tag, posts, lang } = Astro.props;
+const isRu = lang === 'ru';
+const postHref = (post: CollectionEntry<'blog'>) => getRelativeLocaleUrl(lang, `blog/${post.slug.replace(/^(ru|en)\//, '')}`);
+const typeLabels = isRu
+  ? { analysis: 'Разбор', experiment: 'Эксперимент', note: 'Заметка', 'build-log': 'Build log' }
+  : { analysis: 'Analysis', experiment: 'Experiment', note: 'Note', 'build-log': 'Build log' };
+---
+
+<Layout title={`#${tag} | Rerowros`} description={isRu ? `Материалы по теме ${tag}` : `Writing about ${tag}`} pathname={getRelativeLocaleUrl(lang, `blog/tag/${tag}`)}>
+  <Header />
+  <main class="blog-shell blog-tag-page">
+    <section class="blog-tag-hero">
+      <a href={getRelativeLocaleUrl(lang, 'blog/')}>← {isRu ? 'Весь блог' : 'All writing'}</a>
+      <p>{isRu ? 'Тема' : 'Topic'}</p>
+      <h1>#{tag}</h1>
+      <span>{isRu ? `${posts.length} материалов` : `${posts.length} posts`}</span>
+    </section>
+    <section class="blog-archive">
+      <div class="blog-list">
+        {posts.map((post, index) => (
+          <a class="blog-card" href={postHref(post)}>
+            <span class="blog-card-index">{String(index + 1).padStart(2, '0')}</span>
+            <div class="blog-card-copy">
+              <div class="blog-meta"><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString(isRu ? 'ru-RU' : 'en-US', { month: 'short', year: 'numeric' })}</time><span>{typeLabels[post.data.postType || 'analysis']}</span></div>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.excerpt || post.data.description}</p>
+            </div>
+            <div class="blog-card-tags">{post.data.tags.slice(0, 3).map((item) => <span class:list={{ 'is-current': item === tag }}>#{item}</span>)}</div>
+            <span class="blog-card-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

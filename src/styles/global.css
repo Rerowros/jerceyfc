@@ -6,14 +6,14 @@
 
 /* === ТЕМНАЯ ТЕМА (по умолчанию - Ethera стиль) === */
 :root {
-  --color-background: #03000a;
-  --color-foreground: #ededed;
-  --color-card: rgba(20, 20, 30, 0.6);
+  --color-background: #11110f;
+  --color-foreground: #f1f0ea;
+  --color-card: #181816;
   --color-card-foreground: #ffffff;
-  --color-muted: #1a1a2e;
-  --color-muted-foreground: #a0aec0;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-primary: #818cf8;
+  --color-muted: #20201d;
+  --color-muted-foreground: #aaa9a1;
+  --color-border: rgba(241, 240, 234, 0.14);
+  --color-primary: #ff7a45;
   --color-primary-foreground: #ffffff;
 
   --blob-color-1: rgba(124, 58, 237, 0.4);
@@ -28,14 +28,14 @@
 
 /* === СВЕТЛАЯ ТЕМА === */
 html.light {
-  --color-background: #fafafa;
-  --color-foreground: #0a0a0a;
-  --color-card: rgba(255, 255, 255, 0.8);
+  --color-background: #f2f0e9;
+  --color-foreground: #171714;
+  --color-card: #e8e5dc;
   --color-card-foreground: #0a0a0a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-border: rgba(0, 0, 0, 0.06);
-  --color-primary: #6366f1;
+  --color-muted: #dfdcd2;
+  --color-muted-foreground: #68675f;
+  --color-border: rgba(23, 23, 20, 0.16);
+  --color-primary: #d94f20;
   --color-primary-foreground: #ffffff;
 
   --blob-color-1: rgba(99, 102, 241, 0.15); /* Indigo, низкая прозрачность */
@@ -219,9 +219,9 @@ h4,
 h5,
 h6,
 .font-cinzel {
-  font-family: 'Unbounded', sans-serif; /* Было 'Cinzel' */
-  letter-spacing: -0.03em;
-  font-weight: 900; /* Unbounded лучше смотрится в жирном начертании */
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: -0.035em;
+  font-weight: 700;
   font-display: swap;
 }
 
@@ -414,20 +414,23 @@ h1 {
 /* Базовые настройки длительности */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.5s; /* Чуть медленнее для красоты */
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* Мягкая эластичность */
+  animation-duration: 0.14s;
+  animation-timing-function: ease-out;
   mix-blend-mode: normal; /* Важно для чистого перехода цветов */
 }
 
 /* Старая страница: Размывается и чуть уменьшается (уходит вглубь) */
 ::view-transition-old(root) {
-  animation-name: blurOut;
+  animation-name: simpleFadeOut;
 }
 
 /* Новая страница: Собирается из "тумана" и чуть увеличивается (наплывает) */
 ::view-transition-new(root) {
-  animation-name: focusIn;
+  animation-name: simpleFadeIn;
 }
+
+@keyframes simpleFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes simpleFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* Убираем слайды и старую логику forward/back атрибутов, 
    делаем единую красивую анимацию для всего */
@@ -463,6 +466,20 @@ h1 {
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scroll-animate {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
@@ -729,4 +746,30 @@ body {
 .post-page .btn-share,
 .post-page .copy-link-btn {
   position: static !important;
+}
+@keyframes page-exit-forward {
+  to { opacity: 0; transform: translateY(-10px) scale(0.996); }
+}
+
+@keyframes page-enter-forward {
+  from { opacity: 0; transform: translateY(18px) scale(0.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes page-exit-back {
+  to { opacity: 0; transform: translateY(10px) scale(0.996); }
+}
+
+@keyframes page-enter-back {
+  from { opacity: 0; transform: translateY(-18px) scale(0.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+::view-transition-group(page-content) {
+  animation-duration: 420ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page-content),
+  ::view-transition-new(page-content) { animation: none !important; }
 }

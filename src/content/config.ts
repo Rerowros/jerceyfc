@@ -37,6 +37,17 @@ const blogCollection = defineCollection({
       draft: z.boolean().default(false),
       readingTime: z.string().optional(),
       lastModified: z.date().optional(),
+      postType: z.enum(['analysis', 'experiment', 'note', 'build-log']).default('analysis'),
+      verifiedAt: z.date().optional(),
+      versionLabel: z.string().optional(),
+      discussionUrl: z.string().url().optional(),
+      series: z
+        .object({
+          name: z.string(),
+          part: z.number().int().positive(),
+          total: z.number().int().positive(),
+        })
+        .optional(),
     }),
 });
 

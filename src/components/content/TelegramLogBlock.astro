@@ -1,77 +1,39 @@
 ---
-// src/components/content/TelegramLogBlock.astro
 import TelegramIcon from '../icons/TelegramIcon.astro';
 
-interface Props {
-  lang?: 'ru' | 'en';
-  compact?: boolean;
-}
-
+interface Props { lang?: 'ru' | 'en'; compact?: boolean; }
 const { lang = 'ru', compact = false } = Astro.props;
-
-const TRANSLATIONS = {
-  ru: {
-    notice: 'Заметил, что вам интересно читать мой лог. Спасибо за внимание!',
-    cta: 'Подписывайтесь на канал, чтобы не пропустить новые статьи.',
-    button: 'Подписаться на @rerowroslog',
-  },
-  en: {
-    notice: 'I noticed you enjoy reading my log. Thanks for the interest!',
-    cta: 'Subscribe to the channel to never miss new articles.',
-    button: 'Subscribe to @rerowroslog',
-  },
-};
-
-const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS];
+const isRu = lang === 'ru';
 ---
 
-<div
-  class={`group relative overflow-hidden rounded-3xl border border-[var(--color-primary)]/20 bg-[var(--color-card)]/40 p-1 shadow-xl backdrop-blur-sm ${compact ? 'mb-4' : 'mb-16'}`}
->
-  <div
-    class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/10 to-transparent opacity-50 transition-opacity group-hover:opacity-70"
-  >
-  </div>
-  <div
-    class={`relative z-10 flex flex-col items-center justify-between gap-6 rounded-[22px] bg-[var(--color-background)]/60 p-6 md:p-8 ${compact ? 'md:flex-col text-center' : 'md:flex-row md:text-left'}`}
-  >
-    <div class="flex-1">
-      <div
-        class="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-3 py-1"
-      >
-        <span class="relative flex h-2 w-2">
-          <span
-            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-75"
-          ></span>
-          <span class="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]"></span>
-        </span>
-        <span class="text-[10px] font-bold tracking-widest text-[var(--color-primary)] uppercase"
-          >Telegram Channel</span
-        >
-      </div>
-      <h3
-        class={`font-cinzel font-bold text-[var(--color-foreground)] ${compact ? 'text-lg mb-2' : 'text-xl md:text-2xl mb-2'}`}
-      >
-        {t.notice}
-      </h3>
-      <p
-        class={`text-[var(--color-muted-foreground)] ${compact ? 'text-xs' : 'text-sm md:text-base'}`}
-      >
-        {t.cta}
-      </p>
-    </div>
-    <div class="shrink-0">
-      <a
-        href="https://t.me/rerowroslog"
-        target="_blank"
-        class="group/tg-btn relative inline-flex items-center gap-3 overflow-hidden rounded-xl bg-[var(--color-primary)] px-6 py-3 font-bold text-white shadow-[var(--color-primary)]/25 shadow-lg transition-all hover:scale-105 active:scale-95"
-      >
-        <span
-          class="absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-700 ease-in-out group-hover/tg-btn:translate-x-full"
-        ></span>
-        <TelegramIcon class="h-5 w-5" />
-        <span class={compact ? 'text-sm' : 'text-base'}>{t.button}</span>
-      </a>
+<aside class:list={['telegram-note', { 'is-compact': compact }]}>
+  <div class="telegram-note-mark" aria-hidden="true"><TelegramIcon /></div>
+  <div class="telegram-note-copy">
+    <p>Telegram / @rerowroslog</p>
+    <h2>{isRu ? 'Канал про AI, разработку и проекты.' : 'A channel about AI, development, and projects.'}</h2>
+    <div>
+      {isRu
+        ? 'Пишу о том, что можно собрать одному человеку, где AI действительно помогает, а где только создаёт ощущение работы. Иногда — про эксперименты с SEO, органическим трафиком и продвижением без бюджета.'
+        : 'I write about what one person can build, where AI genuinely helps, and where it only creates the feeling of progress. Sometimes I cover experiments with SEO, organic traffic, and zero-budget growth.'}
     </div>
   </div>
-</div>
+  <a href="https://t.me/rerowroslog" target="_blank" rel="noopener noreferrer">
+    <TelegramIcon /> {isRu ? 'Открыть Telegram-канал' : 'Open Telegram channel'} <span aria-hidden="true">↗</span>
+  </a>
+</aside>
+
+<style>
+  .telegram-note { display: grid; grid-template-columns: 4rem minmax(0,1fr) auto; gap: clamp(1.2rem,3vw,3rem); align-items: center; margin: 1.25rem 0; padding: clamp(1.5rem,3vw,2.5rem); border: 1px solid color-mix(in srgb,var(--color-primary) 28%,var(--color-border)); border-radius: 1.6rem 3rem 1.6rem 3rem; background: color-mix(in srgb,var(--color-primary) 7%,var(--color-card)); }
+  .telegram-note-mark { display: grid; width: 4rem; height: 4rem; place-items: center; border-radius: 1.3rem; background: var(--color-primary); color: var(--color-primary-foreground); transform: rotate(-4deg); }
+  .telegram-note-mark :global(svg) { width: 1.6rem; height: 1.6rem; }
+  .telegram-note-copy > p { margin: 0 0 .45rem; color: var(--color-primary); font-size: .64rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .telegram-note-copy h2 { margin: 0 0 .45rem; font-size: clamp(1.25rem,2vw,1.8rem); letter-spacing: -.035em; }
+  .telegram-note-copy > div { max-width: 54rem; color: var(--color-muted-foreground); font-size: .88rem; line-height: 1.6; }
+  .telegram-note > a { display: inline-flex; gap: .6rem; align-items: center; padding: 1rem 1.25rem; border: 1px solid var(--color-primary); border-radius: 1rem; background: var(--color-primary); color: var(--color-primary-foreground); box-shadow: 0 12px 30px color-mix(in srgb,var(--color-primary) 22%,transparent); font-size: .86rem; font-weight: 850; white-space: nowrap; transition: transform 180ms ease, box-shadow 180ms ease; }
+  .telegram-note > a :global(svg) { width: 1.15rem; height: 1.15rem; }
+  .telegram-note > a:hover { transform: translateY(-2px); box-shadow: 0 16px 36px color-mix(in srgb,var(--color-primary) 30%,transparent); }
+  .telegram-note.is-compact { grid-template-columns: 2.8rem 1fr; border-radius: 1.3rem; }
+  .telegram-note.is-compact .telegram-note-mark { width: 2.8rem; height: 2.8rem; }
+  .telegram-note.is-compact > a { grid-column: 1/-1; justify-content: center; }
+  @media (max-width:720px) { .telegram-note { grid-template-columns: 3rem 1fr; border-radius: 1.5rem; } .telegram-note-mark { width: 3rem; height: 3rem; } .telegram-note > a { grid-column: 1/-1; justify-content: center; } }
+</style>

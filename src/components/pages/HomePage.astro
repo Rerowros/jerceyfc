@@ -1,0 +1,268 @@
+---
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../layout/Header.astro';
+import Footer from '../layout/Footer.astro';
+import GitHubIcon from '../icons/GitHubIcon.astro';
+import TelegramIcon from '../icons/TelegramIcon.astro';
+import '../../styles/home.css';
+
+const currentLang = Astro.currentLocale || 'ru';
+const isRu = currentLang === 'ru';
+
+const posts = (await getCollection('blog', ({ id }) => id.startsWith(`${currentLang}/`)))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const principles = isRu
+  ? [
+      ['01', 'Сначала понять', 'Разбираюсь в задаче, ограничениях и реальной причине проблемы до того, как выбирать технологию.'],
+      ['02', 'Собрать систему', 'Думаю не только об экране: учитываю данные, интеграции, эксплуатацию и то, что произойдёт после запуска.'],
+      ['03', 'Проверить детали', 'Пограничные сценарии, мобильная версия, ошибки и скорость — часть результата, а не отдельная услуга.'],
+      ['04', 'Довести до работы', 'Мне нравится момент, когда сложная схема превращается в понятный продукт, которым действительно можно пользоваться.'],
+    ]
+  : [
+      ['01', 'Understand first', 'I get to the real problem, constraints, and failure modes before choosing a technology.'],
+      ['02', 'Build the system', 'I think beyond the screen: data, integrations, operations, and what happens after launch.'],
+      ['03', 'Check the details', 'Edge cases, mobile behavior, errors, and speed are part of the result, not optional extras.'],
+      ['04', 'Make it work', 'I enjoy turning a complicated scheme into a clear product people can actually use.'],
+    ];
+
+const title = isRu ? 'Ярослав — разработчик цифровых продуктов' : 'Yaroslav — digital product developer';
+const description = isRu
+  ? 'Проектирую и разрабатываю веб-продукты, автоматизацию и AI-инструменты. Портфолио, инженерные разборы и заметки о работе.'
+  : 'I design and build web products, automation, and AI tools. Selected work, engineering deep dives, and notes from practice.';
+---
+
+<Layout title={title} description={description} pathname={getRelativeLocaleUrl(currentLang, '')}>
+  <Header />
+
+  <div class="home-shell">
+    <section class="home-hero" aria-labelledby="home-title" data-companion-message={isRu ? 'Здесь коротко: думаю о продукте, отвечаю за систему.' : 'The short version: product thinking, system ownership.'}>
+      <div class="home-hero-glow" aria-hidden="true"></div>
+      <div class="home-sticker home-sticker-code" aria-hidden="true">&lt;/&gt;</div>
+      <div class="home-sticker home-sticker-spark" aria-hidden="true">✦</div>
+      <div class="home-hero-stage">
+        <div class="home-hero-title hero-pop hero-pop-delay-1">
+          <h1 id="home-title">
+            <span class="home-hero-line home-hero-line-one">
+              {isRu ? 'Думаю о продукте.' : 'I think in products.'}
+            </span>
+            <span class="home-hero-line home-hero-line-two">
+              {isRu ? 'Собираю как инженер.' : 'I build like an engineer.'}
+            </span>
+          </h1>
+        </div>
+
+        <div class="home-intro hero-pop hero-pop-delay-2">
+          <p>
+            {isRu
+              ? 'Разбираюсь в логике, соединяю интерфейс с данными и довожу систему до состояния, в котором ей действительно можно пользоваться.'
+              : 'I understand the logic, connect interfaces to data, and bring the system to a state people can genuinely use.'}
+          </p>
+          <div class="home-actions">
+            <a class="home-button home-button-primary" href={getRelativeLocaleUrl(currentLang, 'projects/')}>
+              {isRu ? 'Посмотреть проекты' : 'See projects'}
+            </a>
+            <a class="home-button" href="https://t.me/Rerowros" target="_blank" rel="noopener noreferrer">
+              {isRu ? 'Написать мне' : 'Message me'}
+            </a>
+          </div>
+        </div>
+
+        <svg class="home-hero-route" viewBox="0 0 1000 340" aria-hidden="true">
+          <path d="M30 260C180 260 155 70 330 70s160 205 350 205S805 110 970 110" />
+          <circle cx="30" cy="260" r="7" />
+          <circle cx="330" cy="70" r="7" />
+          <circle cx="680" cy="275" r="7" />
+          <circle cx="970" cy="110" r="7" />
+        </svg>
+      </div>
+
+    </section>
+
+    <div class="home-cluster home-cluster-primary">
+    <section id="approach" class="home-section home-approach scroll-animate" aria-labelledby="approach-title" data-companion-message={isRu ? 'Технологии потом. Сначала — понять, что именно должно работать.' : 'Technology comes later. First, understand what has to work.'}>
+      <div class="home-section-heading">
+        <p>{isRu ? 'Как я работаю' : 'How I work'}</p>
+        <h2 id="approach-title">
+          {isRu ? 'Сильный результат начинается не со стека.' : 'Strong work does not start with a stack.'}
+        </h2>
+      </div>
+
+      <div class="home-principles">
+        {principles.map(([number, heading, copy]) => (
+          <article class="home-principle">
+            <span>{number}</span>
+            <h3>{heading}</h3>
+            <p>{copy}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    </div>
+
+    <div class="home-cluster home-cluster-secondary">
+    <section id="expertise" class="home-section home-expertise scroll-animate" aria-labelledby="expertise-title" data-companion-message={isRu ? 'Эти части не живут отдельно — интерфейс связан с данными и эксплуатацией.' : 'These pieces do not live alone — interface, data, and operations stay connected.'}>
+      <div class="home-section-heading">
+        <p>{isRu ? 'Что я умею собирать' : 'What I build'}</p>
+        <h2 id="expertise-title">
+          {isRu ? 'От интерфейса до работающего контура.' : 'From interface to a working system.'}
+        </h2>
+      </div>
+
+      <div class="home-expertise-grid">
+        <article class="home-capability home-capability-web">
+          <div class="home-capability-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <rect class="capability-frame" x="12" y="12" width="296" height="126" rx="18" />
+              <circle cx="32" cy="31" r="4" /><circle cx="46" cy="31" r="4" /><circle cx="60" cy="31" r="4" />
+              <rect x="28" y="52" width="72" height="68" rx="12" />
+              <rect x="112" y="52" width="176" height="24" rx="10" />
+              <rect x="112" y="86" width="80" height="34" rx="10" />
+              <rect x="202" y="86" width="86" height="34" rx="10" />
+            </svg>
+          </div>
+          <div class="home-capability-copy">
+            <span class="home-capability-number">01</span>
+            <h3>{isRu ? 'Продуктовый web' : 'Product web'}</h3>
+            <p>{isRu ? 'Интерфейсы, личные кабинеты, SSR-приложения и сложная бизнес-логика.' : 'Interfaces, dashboards, SSR applications, and complex business logic.'}</p>
+          </div>
+          <div class="home-tech-list" aria-label={isRu ? 'Технологии' : 'Technologies'}>
+            <span><b>TS</b><em>TypeScript</em></span>
+            <span><b>R</b><em>React</em></span>
+            <span><b>A</b><em>Astro</em></span>
+          </div>
+          <a class="home-capability-case" href={getRelativeLocaleUrl(currentLang, 'projects/megafon-ssr/')}>
+            <span>{isRu ? 'Связанный кейс' : 'Related case'}</span>
+            <strong>Megafon SSR</strong><b aria-hidden="true">↗</b>
+          </a>
+        </article>
+
+        <article class="home-capability home-capability-automation">
+          <div class="home-capability-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <path class="capability-route" d="M34 78h68c32 0 29-40 62-40h26c34 0 28 72 62 72h35" />
+              <circle cx="34" cy="78" r="7" /><circle cx="164" cy="38" r="7" /><circle cx="286" cy="110" r="7" />
+            </svg>
+          </div>
+          <div class="home-capability-copy">
+            <span class="home-capability-number">02</span>
+            <h3>{isRu ? 'Автоматизация' : 'Automation'}</h3>
+            <p>{isRu ? 'Боты, фоновые процессы, интеграции и инструменты вместо ручной рутины.' : 'Bots, background jobs, integrations, and tools that replace manual work.'}</p>
+          </div>
+          <div class="home-tech-list" aria-label={isRu ? 'Технологии' : 'Technologies'}>
+            <span><b>Py</b><em>Python</em></span>
+            <span><b>N</b><em>Node.js</em></span>
+            <span><b>➤</b><em>Telegram</em></span>
+          </div>
+          <a class="home-capability-case" href={getRelativeLocaleUrl(currentLang, 'projects/tsc/')}>
+            <span>{isRu ? 'Связанный кейс' : 'Related case'}</span>
+            <strong>ServerControlBot</strong><b aria-hidden="true">↗</b>
+          </a>
+        </article>
+
+        <article class="home-capability home-capability-ai">
+          <div class="home-capability-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <rect x="28" y="29" width="76" height="92" rx="18" />
+              <rect x="216" y="29" width="76" height="92" rx="18" />
+              <path class="capability-route" d="M104 75h112" />
+              <path d="m145 75 15-15 15 15-15 15Zm34-28 8-8 8 8-8 8Zm0 56 8-8 8 8-8 8" />
+              <circle cx="53" cy="54" r="9" /><path d="m43 104 18-23 25 23" />
+              <path d="m230 91 14-14 9 9 18-22 8 27" />
+            </svg>
+            <span class="capability-spark">✦</span>
+          </div>
+          <div class="home-capability-copy">
+            <span class="home-capability-number">03</span>
+            <h3>{isRu ? 'AI-функции' : 'AI features'}</h3>
+            <p>{isRu ? 'Не демо ради демо, а AI внутри понятного пользовательского сценария.' : 'Not AI demos for their own sake, but useful features inside a clear product flow.'}</p>
+          </div>
+          <div class="home-tech-list" aria-label={isRu ? 'Технологии' : 'Technologies'}>
+            <span><b>PT</b><em>PyTorch</em></span>
+            <span><b>✦</b><em>Gemini</em></span>
+            <span><b>R</b><em>Replicate</em></span>
+          </div>
+          <a class="home-capability-case" href={getRelativeLocaleUrl(currentLang, 'projects/ai-video-gen/')}>
+            <span>{isRu ? 'Связанный кейс' : 'Related case'}</span>
+            <strong>AI Video Gen</strong><b aria-hidden="true">↗</b>
+          </a>
+        </article>
+
+        <article class="home-capability home-capability-reliability">
+          <div class="home-capability-visual" aria-hidden="true">
+            <svg viewBox="0 0 320 150">
+              <rect x="31" y="25" width="258" height="100" rx="18" />
+              <path d="M31 51h258M49 38h4m10 0h4" />
+              <path class="capability-pulse" d="M50 89h38l12-24 18 49 16-34 13 9h28l13-20 18 38 14-18h50" />
+            </svg>
+            <span class="capability-health">CHECKS / LOGS</span>
+          </div>
+          <div class="home-capability-copy">
+            <span class="home-capability-number">04</span>
+            <h3>{isRu ? 'Надёжность' : 'Reliability'}</h3>
+            <p>{isRu ? 'Платежи, вебхуки, базы данных, серверы и наблюдаемое поведение системы.' : 'Payments, webhooks, databases, servers, and observable system behavior.'}</p>
+          </div>
+          <div class="home-tech-list" aria-label={isRu ? 'Технологии' : 'Technologies'}>
+            <span><b>PG</b><em>PostgreSQL</em></span>
+            <span><b>$_</b><em>Linux</em></span>
+            <span><b>▦</b><em>Docker</em></span>
+          </div>
+          <a class="home-capability-case" href={getRelativeLocaleUrl(currentLang, 'projects/telegram-stars/')}>
+            <span>{isRu ? 'Связанный кейс' : 'Related case'}</span>
+            <strong>Telegram Stars</strong><b aria-hidden="true">↗</b>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <section id="writing" class="home-section home-writing scroll-animate" aria-labelledby="writing-title" data-companion-message={isRu ? 'Записываю то, до чего докопался. Иначе хорошие находки теряются.' : 'I write down what I uncover, so useful findings do not disappear.'}>
+      <div class="home-writing-heading">
+        <div>
+          <p>{isRu ? 'Блог' : 'Blog'}</p>
+          <h2 id="writing-title">{isRu ? 'Последние материалы' : 'Latest writing'}</h2>
+        </div>
+        <a class="home-text-link" href={getRelativeLocaleUrl(currentLang, 'blog/')}>
+          {isRu ? 'Все статьи' : 'All posts'} <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="home-post-list">
+        {posts.map((post) => {
+          const slug = post.id.replace(/^(ru|en)\//, '').replace(/\.mdx$/, '');
+          return (
+            <a href={getRelativeLocaleUrl(currentLang, `blog/${slug}/`)}>
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString(isRu ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'short' })}
+              </time>
+              <h3>{post.data.title}</h3>
+              <span aria-hidden="true">↗</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+    </div>
+
+    <section id="contact" class="home-contact scroll-animate" aria-labelledby="contact-title" data-companion-message={isRu ? 'Если задача сложная и интересная — мы уже почти знакомы.' : 'If the problem is hard and interesting, we are almost acquainted.'}>
+      <p>{isRu ? 'Есть задача или сильная команда?' : 'Have a project or a strong team?'}</p>
+      <h2 id="contact-title">
+        {isRu ? 'Давайте сделаем вещь, которой не нужен громкий питч.' : 'Let’s build something that does not need a loud pitch.'}
+      </h2>
+      <div class="home-contact-links">
+        <a href="https://t.me/Rerowros" target="_blank" rel="noopener noreferrer">
+          <TelegramIcon class="h-5 w-5" /> Telegram
+        </a>
+        <a href="https://github.com/Rerowros" target="_blank" rel="noopener noreferrer">
+          <GitHubIcon class="h-5 w-5" /> GitHub
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <Footer />
+</Layout>

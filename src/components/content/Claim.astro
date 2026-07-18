@@ -1,0 +1,27 @@
+---
+interface Props {
+  type?: 'fact' | 'inference' | 'hypothesis' | 'observation';
+  title?: string;
+}
+const { type = 'observation', title } = Astro.props;
+const lang = Astro.currentLocale || 'ru';
+const labels = {
+  ru: { fact: 'Факт', inference: 'Мой вывод', hypothesis: 'Гипотеза', observation: 'Наблюдение' },
+  en: { fact: 'Fact', inference: 'My inference', hypothesis: 'Hypothesis', observation: 'Observation' },
+};
+---
+
+<aside class={`claim claim-${type}`}>
+  <p><span>{labels[lang === 'ru' ? 'ru' : 'en'][type]}</span>{title && <strong>{title}</strong>}</p>
+  <div><slot /></div>
+</aside>
+
+<style>
+  .claim { margin: 2rem 0; padding: 1.1rem 1.2rem; border: 1px solid var(--color-border); border-left: 3px solid var(--color-primary); border-radius: .35rem 1rem 1rem .35rem; background: color-mix(in srgb,var(--color-primary) 6%,var(--color-card)); }
+  .claim > p { display: flex; gap: .6rem; align-items: center; margin: 0 0 .65rem; }
+  .claim > p span { color: var(--color-primary); font-family: ui-monospace,monospace; font-size: .61rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+  .claim > p strong { color: var(--color-foreground); font-size: .78rem; }
+  .claim > div { color: var(--color-muted-foreground); font-size: .92rem; line-height: 1.65; }
+  .claim > div :global(p) { margin: 0; }
+  .claim-hypothesis { border-left-style: dashed; }
+</style>

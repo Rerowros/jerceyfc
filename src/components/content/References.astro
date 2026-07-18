@@ -1,71 +1,41 @@
 ---
-// src/components/content/References.astro
 const currentLang = Astro.currentLocale || 'ru';
-
-interface Source {
-  id: string | number;
-  title: string;
-  url: string;
-  sourceName?: string;
-}
-
-interface Props {
-  items: Source[];
-}
-
+interface Source { id: string | number; title: string; url: string; sourceName?: string; }
+interface Props { items: Source[]; }
 const { items } = Astro.props;
 ---
 
-<div class="mt-16 border-t border-[var(--color-border)] pt-8">
-  <h3 class="font-cinzel mb-6 flex items-center gap-3 text-2xl font-bold">
-    <svg
-      class="h-6 w-6 text-[var(--color-primary)]"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-      ></path>
-    </svg>
-    <span class="text-glow">
-      {currentLang === 'ru' ? 'Источники и литература' : 'References & Sources'}
-    </span>
-  </h3>
-
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-    {
-      items.map((item) => (
-        <div
-          id={`ref-${item.id}`}
-          class="group relative flex gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]/50 p-3 transition-all hover:border-[var(--color-primary)] hover:bg-[var(--color-card)]"
-        >
-          <div class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-[var(--color-primary)]/10 font-mono text-xs font-bold text-[var(--color-primary)]">
-            {item.id}
-          </div>
-          <div class="min-w-0 flex-grow">
-            <a href={item.url} target="_blank" rel="noopener noreferrer" class="block">
-              <div class="truncate text-sm font-medium text-[var(--color-foreground)] transition-colors group-hover:text-[var(--color-primary)]">
-                {item.title}
-              </div>
-              <div class="mt-1 flex items-center gap-1 truncate text-xs break-all text-[var(--color-muted-foreground)]">
-                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-                {item.sourceName || new URL(item.url).hostname.replace('www.', '')}
-              </div>
-            </a>
-          </div>
-        </div>
-      ))
-    }
+<section class="references-block" aria-labelledby="references-title">
+  <header>
+    <p>{currentLang === 'ru' ? 'Проверить самостоятельно' : 'Verify it yourself'}</p>
+    <h2 id="references-title">{currentLang === 'ru' ? 'Источники' : 'Sources'}</h2>
+    <span>{String(items.length).padStart(2, '0')}</span>
+  </header>
+  <div class="references-list">
+    {items.map((item) => (
+      <a id={`ref-${item.id}`} href={item.url} target="_blank" rel="noopener noreferrer">
+        <b>{String(item.id).padStart(2, '0')}</b>
+        <span><strong>{item.title}</strong><small>{item.sourceName || new URL(item.url).hostname.replace('www.', '')}</small></span>
+        <i aria-hidden="true">↗</i>
+      </a>
+    ))}
   </div>
-</div>
+</section>
+
+<style>
+  .references-block { max-width: none; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--color-border); }
+  header { position: relative; margin-bottom: 1.4rem; }
+  header p { margin: 0 0 .45rem; color: var(--color-primary); font-size: .62rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+  header h2 { margin: 0; color: var(--color-foreground); font-size: clamp(1.8rem,3vw,2.7rem); letter-spacing: -.045em; }
+  header > span { position: absolute; right: 0; bottom: .2rem; color: var(--color-primary); font-family: ui-monospace,monospace; font-size: .7rem; }
+  .references-list { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+  .references-list a { display: grid; grid-template-columns: 2rem minmax(0,1fr) 1.2rem; gap: .75rem; align-items: start; padding: 1rem; border: 1px solid var(--color-border); border-radius: 1rem; background: color-mix(in srgb,var(--color-card) 75%,transparent); color: var(--color-foreground); text-decoration: none; }
+  .references-list a:hover { border-color: var(--color-primary); background: color-mix(in srgb,var(--color-primary) 7%,var(--color-card)); }
+  .references-list b { color: var(--color-primary); font-family: ui-monospace,monospace; font-size: .67rem; }
+  .references-list span { min-width: 0; }
+  .references-list strong, .references-list small { display: block; }
+  .references-list strong { font-size: .82rem; line-height: 1.45; }
+  .references-list small { margin-top: .4rem; color: var(--color-muted-foreground); font-size: .65rem; overflow-wrap: anywhere; }
+  .references-list i { color: var(--color-primary); font-style: normal; }
+  @media (max-width:700px) { .references-list { grid-template-columns: 1fr; } }
+</style>

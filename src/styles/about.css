@@ -1,0 +1,151 @@
+.about-shell {
+  width: min(calc(100% - 2rem), 1600px);
+  margin: 0 auto;
+  padding-top: 6.6rem;
+}
+
+.about-opening,
+.about-manifest > section {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-card) 94%, var(--color-primary) 2%);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.1);
+}
+
+.about-opening {
+  display: grid;
+  min-height: clamp(20rem, 38vh, 30rem);
+  place-content: center;
+  padding: clamp(2.5rem, 5vw, 4.5rem);
+  border-radius: clamp(2rem, 5vw, 4.5rem);
+  text-align: center;
+  isolation: isolate;
+}
+
+.about-opening::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 85%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 26rem),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 22rem);
+}
+
+.about-opening > p,
+.about-section-label p,
+.about-statement > p,
+.about-contact > div > p {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.about-opening h1 {
+  max-width: 900px;
+  margin: 0.8rem auto 1.5rem;
+  font-size: clamp(2.8rem, 5.5vw, 5.6rem);
+  font-weight: 720;
+  letter-spacing: -0.065em;
+  line-height: 0.94;
+}
+
+.about-opening > a {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-primary);
+  transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.about-opening > a:hover { background: color-mix(in srgb, var(--color-primary) 12%, transparent); transform: translateY(4px); }
+.about-opening-mark { position: absolute; right: 5%; bottom: -0.2em; z-index: -1; color: color-mix(in srgb, var(--color-primary) 10%, transparent); font-size: clamp(10rem, 22vw, 21rem); font-weight: 800; line-height: 1; transform: rotate(5deg); }
+.about-manifest { margin-top: clamp(1.25rem, 2.5vw, 2.5rem); }
+
+.about-manifest > section {
+  margin-top: clamp(0.8rem, 1.5vw, 1.25rem);
+  padding: clamp(2rem, 4vw, 4rem);
+  border-radius: clamp(2rem, 4vw, 3.75rem);
+}
+
+.about-section-label { display: flex; gap: 0.7rem; align-items: center; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.about-section-label > span { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 0.75rem; background: color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); font-family: ui-monospace, monospace; font-size: 0.7rem; font-weight: 800; }
+.about-section-label p { color: var(--color-muted-foreground); }
+
+.about-lead { display: grid; grid-template-columns: minmax(11rem, 0.38fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem); }
+.about-lead .about-section-label { align-self: start; }
+.about-lead-copy h2,
+.about-proof h2,
+.about-principles > h2,
+.about-contact h2 { margin: 0; font-size: clamp(2.2rem, 4vw, 4rem); letter-spacing: -0.055em; line-height: 1; }
+.about-lead-copy > p { max-width: 54rem; margin: 1.1rem 0 0; color: var(--color-muted-foreground); font-size: clamp(0.95rem, 1.25vw, 1.1rem); line-height: 1.7; }
+
+.about-route { position: absolute; right: 4%; bottom: 8%; display: flex; width: 18%; justify-content: space-between; border-top: 1px dashed color-mix(in srgb, var(--color-primary) 45%, transparent); }
+.about-route i { width: 0.6rem; height: 0.6rem; margin-top: -0.33rem; border: 2px solid var(--color-primary); border-radius: 50%; background: var(--color-card); }
+
+.about-proof-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.58fr); gap: clamp(2rem, 6vw, 6rem); align-items: end; }
+.about-proof-heading > p { margin: 0; color: var(--color-muted-foreground); font-size: 1rem; line-height: 1.75; }
+.about-proof-heading strong { color: var(--color-foreground); }
+.about-proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: clamp(2rem, 3.5vw, 3rem); }
+.about-proof-grid article { position: relative; min-height: 14rem; padding: clamp(1.35rem, 2.4vw, 2rem); border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent); border-radius: 1.6rem; background: color-mix(in srgb, var(--color-background) 42%, transparent); }
+.about-proof-grid article:nth-child(2) { border-radius: 4rem 2rem 2rem; }
+.about-proof-grid article > span { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 1rem; background: var(--color-primary); color: var(--color-primary-foreground); font-family: ui-monospace, monospace; font-size: 0.72rem; font-weight: 900; }
+.about-proof-grid article > span svg { width: 1.65rem; height: 1.65rem; }
+.about-proof-grid h3 { margin: 2rem 0 0.65rem; font-size: clamp(1.4rem, 2.1vw, 1.9rem); letter-spacing: -0.04em; }
+.about-proof-grid p { max-width: 42rem; margin: 0; color: var(--color-muted-foreground); line-height: 1.7; }
+.about-proof-grid strong { color: var(--color-foreground); }
+
+.about-principles { background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-card)), var(--color-card)) !important; }
+.about-principle-list { margin-top: clamp(2rem, 3.5vw, 3rem); }
+.about-principle-list article { display: grid; grid-template-columns: 4rem 1fr; gap: 1.2rem; align-items: center; padding: 1.35rem 0; border-top: 1px solid var(--color-border); }
+.about-principle-list article > span { color: var(--color-primary); font-family: ui-monospace, monospace; font-size: 0.78rem; }
+.about-principle-list h3 { margin: 0; font-size: clamp(1.5rem, 2.4vw, 2.3rem); letter-spacing: -0.045em; }
+.about-principle-list p { margin: 0.5rem 0 0; color: var(--color-muted-foreground); font-size: 1rem; }
+
+.about-statement { padding-top: clamp(2.5rem, 5vw, 4.5rem) !important; padding-bottom: clamp(2.5rem, 5vw, 4.5rem) !important; background: radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 23rem), var(--color-card) !important; }
+.about-statement h2 { margin: 0.9rem 0 1.8rem; font-size: clamp(2.7rem, 5vw, 5.5rem); letter-spacing: -0.065em; line-height: 0.9; }
+.about-statement h2 span,
+.about-statement h2 strong { display: block; }
+.about-statement h2 strong { color: var(--color-primary); font-weight: 760; }
+.about-spoiler { width: fit-content; filter: blur(8px); cursor: pointer; transition: filter 240ms ease, opacity 240ms ease; user-select: none; }
+.about-spoiler:hover { filter: blur(6px); }
+.about-spoiler:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 0.15em; border-radius: 0.08em; }
+.about-spoiler.is-revealed { filter: blur(0); cursor: text; user-select: text; }
+.about-statement > div { max-width: 52rem; margin-left: auto; color: var(--color-muted-foreground); font-size: clamp(0.95rem, 1.3vw, 1.1rem); line-height: 1.7; }
+.about-statement-copy p { margin: 0; }
+.about-statement-copy p + p { margin-top: 1rem; }
+
+.about-contact { display: flex; align-items: end; justify-content: space-between; gap: 3rem; margin-bottom: clamp(1.5rem, 3vw, 3rem); }
+.about-contact h2 { margin: 0.8rem 0 1rem; }
+.about-contact > div > span { color: var(--color-muted-foreground); }
+.about-contact-links { display: flex; gap: 0.75rem; }
+.about-contact-links a { display: inline-flex; gap: 0.6rem; align-items: center; padding: 0.85rem 1.1rem; border: 1px solid var(--color-border); border-radius: 1rem; color: var(--color-foreground); font-weight: 800; transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease; }
+.about-contact-links a:hover { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 11%, transparent); transform: translateY(-3px); }
+
+@media (max-width: 800px) {
+  .about-shell { width: min(calc(100% - 1rem), 1600px); padding-top: 5.2rem; }
+  .about-opening { min-height: 22rem; padding: 2.5rem 1.2rem; }
+  .about-lead,
+  .about-proof-heading { grid-template-columns: 1fr; }
+  .about-proof-grid { grid-template-columns: 1fr; }
+  .about-proof-grid article { min-height: auto; }
+  .about-route { display: none; }
+  .about-principle-list article { grid-template-columns: 2.5rem 1fr; gap: 0.75rem; }
+  .about-contact { align-items: flex-start; flex-direction: column; }
+  .about-contact-links { width: 100%; flex-direction: column; }
+  .about-contact-links a { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-opening > a,
+  .about-contact-links a,
+  .about-spoiler { transition: none; }
+}

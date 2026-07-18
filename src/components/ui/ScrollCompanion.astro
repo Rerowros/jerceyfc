@@ -1,0 +1,647 @@
+---
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'ru' } = Astro.props;
+const isRu = lang === 'ru';
+---
+
+<aside class="scroll-companion" data-scroll-companion data-companion-lang={isRu ? 'ru' : 'en'} aria-live="polite">
+  <div class="companion-speech" data-companion-speech>
+    <span data-companion-text>{isRu ? 'Пойдём, покажу главное' : 'Come on, I’ll show you around'}</span>
+  </div>
+
+  <button
+    class="companion-character"
+    type="button"
+    aria-label={isRu ? 'Байт — проводник по сайту' : 'Byte — site companion'}
+    aria-expanded="false"
+    data-companion-button
+  >
+    <svg viewBox="0 0 132 150" role="img" aria-hidden="true">
+      <path
+        class="companion-wire-shadow"
+        d="M78 121c-21 16-50 9-56-14C15 80 44 68 64 79c17 9 12 31-3 35-15 4-26-12-17-23"
+      />
+      <path
+        class="companion-wire"
+        d="M78 121c-21 16-50 9-56-14C15 80 44 68 64 79c17 9 12 31-3 35-15 4-26-12-17-23"
+      />
+      <path class="companion-neck" d="M76 123c3 8 9 13 18 14" />
+      <g class="companion-face">
+        <rect class="companion-head-shadow" x="54" y="17" width="68" height="66" rx="24" />
+        <rect class="companion-head" x="50" y="13" width="68" height="66" rx="24" />
+        <path class="companion-screen" d="M64 35c10-8 29-8 40 0v24c-11 8-30 8-40 0Z" />
+        <circle class="companion-eye" cx="76" cy="47" r="4" />
+        <circle class="companion-eye" cx="94" cy="47" r="4" />
+        <path class="companion-mouth" d="M78 59c4 3 10 3 14 0" />
+        <path class="companion-antenna" d="M83 13V5" />
+        <circle class="companion-signal" cx="83" cy="4" r="4" />
+      </g>
+      <path class="companion-arm companion-arm-left" d="M52 50c-10 1-15 7-17 15" />
+      <path class="companion-arm companion-arm-right" d="M117 49c8 1 12 6 13 12" />
+      <path class="companion-plug" d="m92 135 17-3 3 9-17 5Z" />
+      <path class="companion-plug-teeth" d="m109 133 5-2m-3 8 5-2" />
+    </svg>
+    <span class="companion-name">BYTE</span>
+  </button>
+</aside>
+
+<style>
+  .scroll-companion {
+    --companion-x: calc(100vw - 9rem);
+    --companion-y: calc(100vh - 11rem);
+    --companion-tilt: 0deg;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 44;
+    width: 5.4rem;
+    height: 8rem;
+    transform: translate3d(var(--companion-x), var(--companion-y), 0) rotate(var(--companion-tilt));
+    transform-origin: 50% 70%;
+    transition: none;
+    pointer-events: none;
+  }
+
+  .companion-character {
+    position: relative;
+    width: 5.4rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+    cursor: pointer;
+    filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.23));
+    pointer-events: auto;
+    transition: transform 180ms ease;
+  }
+
+  .companion-character:hover { transform: translateY(-5px) rotate(2deg); }
+  .companion-character::after {
+    content: '…';
+    position: absolute;
+    top: 0.2rem;
+    right: -0.2rem;
+    display: grid;
+    width: 1.65rem;
+    height: 1.3rem;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+    border-radius: 0.8rem 0.8rem 0.8rem 0.2rem;
+    background: var(--color-card);
+    color: var(--color-primary);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0;
+    transform: translate(4px, 5px) scale(0.75) rotate(5deg);
+    animation: companion-curiosity 7s 2.2s ease-in-out infinite;
+    display: none;
+  }
+
+  .scroll-companion[data-interacted='true'] .companion-character::after {
+    display: none;
+  }
+  .companion-character svg { display: block; width: 100%; overflow: visible; }
+  .companion-wire-shadow,
+  .companion-wire,
+  .companion-neck,
+  .companion-antenna,
+  .companion-arm,
+  .companion-mouth,
+  .companion-plug-teeth {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .companion-wire-shadow { stroke: rgba(0, 0, 0, 0.28); stroke-width: 13; transform: translate(3px, 4px); }
+  .companion-wire { stroke: var(--color-primary); stroke-width: 9; }
+  .companion-neck { stroke: var(--color-primary); stroke-width: 8; }
+  .companion-head-shadow { fill: rgba(0, 0, 0, 0.28); transform: translate(2px, 4px); }
+  .companion-head { fill: var(--color-card); stroke: color-mix(in srgb, var(--color-primary) 70%, white); stroke-width: 3; }
+  .companion-face { transform-box: fill-box; transform-origin: center; }
+  .scroll-companion:not([data-interacted='true']) .companion-face {
+    animation: companion-head-curious 6.2s 1.4s ease-in-out infinite;
+  }
+  .companion-screen { fill: color-mix(in srgb, var(--color-primary) 18%, var(--color-background)); }
+  .companion-eye { fill: var(--color-primary); transform-origin: center; animation: companion-blink 5.5s infinite; }
+  .companion-mouth { stroke: var(--color-primary); stroke-width: 2.5; }
+  .companion-antenna { stroke: var(--color-primary); stroke-width: 3; }
+  .companion-signal { fill: var(--color-primary); }
+  .scroll-companion:not([data-interacted='true']) .companion-signal {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: companion-signal-pulse 3.5s 1.2s ease-in-out infinite;
+  }
+  .companion-arm { stroke: color-mix(in srgb, var(--color-primary) 82%, white); stroke-width: 5; }
+  .companion-arm-right { transform-origin: 117px 49px; }
+  .scroll-companion:not([data-interacted='true']) .companion-arm-right {
+    animation: companion-idle-wave 6.2s 1.4s ease-in-out infinite;
+  }
+  .companion-character:hover .companion-arm-right { animation: companion-wave 620ms ease-in-out 2; }
+  .companion-plug { fill: var(--color-card); stroke: var(--color-primary); stroke-width: 3; }
+  .companion-plug-teeth { stroke: var(--color-primary); stroke-width: 3; }
+
+  .companion-name {
+    position: absolute;
+    right: 0.45rem;
+    bottom: 1.15rem;
+    padding: 0.18rem 0.35rem;
+    border-radius: 0.4rem;
+    background: var(--color-card);
+    color: var(--color-primary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.52rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    transform-origin: center;
+  }
+
+  .scroll-companion:not([data-interacted='true']) .companion-name {
+    animation: companion-name-pulse 6.2s 1.4s ease-in-out infinite;
+  }
+
+  .companion-speech {
+    position: absolute;
+    right: calc(100% + 0.65rem);
+    bottom: 4.1rem;
+    width: max-content;
+    max-width: 15rem;
+    padding: 0.78rem 0.95rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 34%, var(--color-border));
+    border-radius: 1.1rem 1.1rem 0.35rem 1.1rem;
+    background: color-mix(in srgb, var(--color-card) 92%, transparent);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+    color: var(--color-foreground);
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translate(8px, 8px) scale(0.96);
+    transition: opacity 180ms ease, transform 180ms ease;
+    pointer-events: none;
+  }
+
+  .companion-speech [data-companion-text] {
+    white-space: pre-line;
+  }
+
+  .scroll-companion[data-bubble-side='right'] .companion-speech {
+    right: auto;
+    left: calc(100% + 0.65rem);
+    border-radius: 1.1rem 1.1rem 1.1rem 0.35rem;
+    transform: translate(-8px, 8px) scale(0.96);
+  }
+
+  .scroll-companion[data-bubble-vertical='below'] .companion-speech {
+    top: 4.2rem;
+    bottom: auto;
+    border-radius: 1.1rem 0.35rem 1.1rem 1.1rem;
+  }
+
+  .scroll-companion[data-bubble-vertical='below'][data-bubble-side='right'] .companion-speech {
+    border-radius: 0.35rem 1.1rem 1.1rem 1.1rem;
+  }
+
+  .scroll-companion[data-bubble-side='right'][data-speaking='true'] .companion-speech,
+  .scroll-companion[data-bubble-side='right'][data-pinned='true'] .companion-speech {
+    transform: translate(0, 0) scale(1);
+  }
+
+  .scroll-companion[data-speaking='true'] .companion-speech,
+  .scroll-companion[data-pinned='true'] .companion-speech {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+
+  .companion-speech :global(.companion-glitch) {
+    position: relative;
+    display: inline-block;
+    color: var(--color-primary);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-shadow: 1px 0 #ff4fb8, -1px 0 #35e6ff;
+    animation: companion-text-glitch 480ms steps(2, jump-none) 2;
+  }
+
+  .companion-speech :global(.companion-bug) {
+    color: var(--color-primary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-decoration: underline wavy currentColor;
+    text-decoration-thickness: 1px;
+  }
+
+  .companion-speech :global(b) {
+    color: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground));
+    font-weight: 900;
+  }
+
+  .companion-speech :global(code) {
+    padding: 0.12rem 0.32rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 24%, transparent);
+    border-radius: 0.38rem;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.92em;
+  }
+
+  .companion-speech :global(s) {
+    color: var(--color-muted-foreground);
+    text-decoration-color: var(--color-primary);
+    text-decoration-thickness: 2px;
+  }
+
+  .companion-speech :global(.companion-approved) {
+    color: #4ade80;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 900;
+  }
+
+  @keyframes companion-blink {
+    0%, 46%, 50%, 100% { transform: scaleY(1); }
+    48% { transform: scaleY(0.12); }
+  }
+
+  @keyframes companion-wave {
+    50% { transform: rotate(-18deg); }
+  }
+
+  @keyframes companion-curiosity {
+    0%, 60%, 100% { opacity: 0; transform: translate(4px, 5px) scale(0.75) rotate(5deg); }
+    68%, 86% { opacity: 0.9; transform: translate(0, 0) scale(1) rotate(-2deg); }
+    76% { opacity: 1; transform: translate(0, -3px) scale(1.04) rotate(1deg); }
+  }
+
+  @keyframes companion-signal-pulse {
+    0%, 72%, 100% { transform: scale(1); opacity: 1; }
+    78% { transform: scale(1.8); opacity: 0.38; }
+    84% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes companion-head-curious {
+    0%, 58%, 100% { transform: translate(0, 0) rotate(0deg); }
+    66% { transform: translate(0, -2px) rotate(-7deg); }
+    74% { transform: translate(1px, -3px) rotate(5deg); }
+    82% { transform: translate(0, -1px) rotate(-2deg); }
+    90% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  @keyframes companion-idle-wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    68% { transform: rotate(-22deg); }
+    75% { transform: rotate(8deg); }
+    82% { transform: rotate(-18deg); }
+    90% { transform: rotate(0deg); }
+  }
+
+  @keyframes companion-name-pulse {
+    0%, 60%, 100% { color: var(--color-primary); transform: scale(1); }
+    70%, 84% {
+      background: var(--color-primary);
+      color: var(--color-background);
+      box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-primary) 12%, transparent);
+      transform: scale(1.09);
+    }
+  }
+
+  @keyframes companion-text-glitch {
+    0%, 100% { transform: translate(0, 0) skew(0deg); }
+    25% { transform: translate(-2px, 1px) skew(-5deg); }
+    50% { transform: translate(2px, -1px) skew(4deg); }
+    75% { transform: translate(-1px, 0) skew(-2deg); }
+  }
+
+  @media (max-width: 720px) {
+    .scroll-companion { width: 4.6rem; height: 7rem; }
+    .companion-character { width: 4.6rem; }
+    .companion-speech { bottom: 3.6rem; max-width: 11.5rem; font-size: 0.68rem; }
+    .companion-name { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-companion { transform: none; transition: none; }
+    .companion-eye,
+    .companion-character:hover .companion-arm-right,
+    .companion-character::after,
+    .scroll-companion:not([data-interacted='true']) .companion-face,
+    .scroll-companion:not([data-interacted='true']) .companion-arm-right,
+    .scroll-companion:not([data-interacted='true']) .companion-name,
+    .scroll-companion:not([data-interacted='true']) .companion-signal { animation: none; }
+    .companion-character::after { opacity: 0.75; transform: none; }
+    .companion-character,
+    .companion-speech { transition: none; }
+  }
+</style>
+
+<script>
+  let cleanupCompanion = () => {};
+
+  function initScrollCompanion() {
+    cleanupCompanion();
+
+    const root = document.querySelector<HTMLElement>('[data-scroll-companion]');
+    const button = root?.querySelector<HTMLButtonElement>('[data-companion-button]');
+    const text = root?.querySelector<HTMLElement>('[data-companion-text]');
+    if (!root || !button || !text) return;
+    const isRu = root.dataset.companionLang === 'ru';
+    let enabled = localStorage.getItem('byte-enabled') !== 'false';
+    root.hidden = !enabled;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let speechTimer: number | null = null;
+    let activeIndex = -1;
+    let flightToken = 0;
+    let flight: Animation | null = null;
+    let lastJoke = -1;
+
+    const jokes = isRu
+      ? [
+          'Это не баг. Это **<span class="companion-glitch">vibecoded</span>**.',
+          '<b>Важное уточнение:</b> я не знаю, почему это работает.',
+          '<b>Ошибка уровня production</b><br>Один div снова обрёл свободу.',
+          '<code>npm run fix-everything</code><br>команда не найдена. Было бы удобно.',
+          '- [x] написать код\n- [ ] понять код',
+          '[Документация](ссылка-которую-я-не-открыл)',
+          '<i>«Потом поправлю»</i><br>— великий неизвестный разработчик',
+          '<s>исправил баг</s> переименовал баг.',
+          '**ВНИМАНИЕ:** Markdown сегодня не рендерится.',
+          '<b>Маленькая проблема</b><br>на 14 файлов.',
+          '<b>Сгенерировано ИИ</b><br>Ответ может содержать следы React.',
+          '<b>100% готово</b><br>кроме известных неизвестных проблем.',
+          '**vibecoded**\n**vibetested**\n**vibedeployed**',
+          '<s>костыль</s> временное инженерное решение.',
+          '<b>Финальная версия</b><br><code>final_v2_really_final_7</code>',
+          'Vibe check: passed.\nType check: <span class="companion-bug">failed</span>.',
+          '<b>Human in the loop:</b> нажимает Accept All.',
+          'ИИ сказал: «готово».\nTypeScript сказал: 47 errors.',
+          'Контекст закончился раньше проекта.',
+          'Скопировал код из чата. Теперь чат — единственный senior в проекте.',
+          'Модель уверена на 97%. Остальные 3% — production.',
+          'Не знаю, что делает функция. Но ИИ назвал её robust.',
+          'AI refactor: +600 строк.\nЗато «улучшена читаемость».',
+          '<b>Code review:</b> спросил у того же ИИ, который написал код.<br><span class="companion-approved">Approved.</span>',
+          '<b>Архитектура согласована</b><br>с самым убедительным ответом.',
+          '<b>Prompt engineering:</b><br>добавил «подумай внимательнее».',
+          'Не галлюцинация,<br>а <b>speculative implementation</b>.',
+          'Сначала был MVP.<br>Потом я попросил сделать красиво.',
+          '<b>Vibe-driven development:</b><br>если выглядит уверенно — <code>merge</code>.',
+          '<code>// generated by AI</code>',
+          'Ошибка <span class="companion-bug">418</span>: я чайник, но код уже заварился.',
+          'Работает на моей машине. Я и есть машина.',
+          'Нашёл <span class="companion-bug">TODO</span>. Сделал вид, что не видел.',
+          '<span class="companion-bug">undefined</span> — это тоже ответ.',
+          'CSS снова победил. Никто не понял как.',
+          'Маленький refactor. Приходи через три дня.',
+          'Тесты зелёные. Подозрительно зелёные.',
+        ]
+      : [
+          'Not a bug. It was **<span class="companion-glitch">vibecoded</span>**.',
+          '<b>Important note:</b> I have no idea why this works.',
+          '<b>Production-level error</b><br>One div has escaped again.',
+          '<code>npm run fix-everything</code><br>command not found. Unfortunate.',
+          '- [x] write the code\n- [ ] understand the code',
+          '[Documentation](link-i-did-not-open)',
+          '<i>“I will fix it later.”</i><br>— an unknown great developer',
+          '<s>fixed the bug</s> renamed the bug.',
+          '**WARNING:** Markdown is not rendering today.',
+          '<b>Tiny problem</b><br>across 14 files.',
+          '<b>AI-generated</b><br>May contain traces of React.',
+          '<b>100% complete</b><br>except for the known unknown issues.',
+          '**vibecoded**\n**vibetested**\n**vibedeployed**',
+          '<s>hack</s> temporary engineering solution.',
+          '<b>Final version</b><br><code>final_v2_really_final_7</code>',
+          'Vibe check: passed.\nType check: <span class="companion-bug">failed</span>.',
+          '<b>Human in the loop:</b> clicks Accept All.',
+          'AI said: “done.”\nTypeScript said: 47 errors.',
+          'The context window ended before the project did.',
+          'Copied the code from chat. Chat is now the only senior on the project.',
+          'The model is 97% confident. The other 3% is production.',
+          'No idea what the function does. AI called it robust.',
+          'AI refactor: +600 lines.\nBut “readability improved.”',
+          '<b>Code review:</b> asked the same AI that wrote the code.<br><span class="companion-approved">Approved.</span>',
+          '<b>Architecture approved</b><br>by the most convincing answer.',
+          '<b>Prompt engineering:</b><br>added “think more carefully.”',
+          'Not a hallucination,<br>but a <b>speculative implementation</b>.',
+          'It started as an MVP.<br>Then I asked it to make it pretty.',
+          '<b>Vibe-driven development:</b><br>if it looks confident — <code>merge</code>.',
+          '<code>// generated by AI</code>',
+          'Error <span class="companion-bug">418</span>: I am a teapot with deploy access.',
+          'Works on my machine. I am the machine.',
+          'Found a <span class="companion-bug">TODO</span>. Politely looked away.',
+          '<span class="companion-bug">undefined</span> is still an answer.',
+          'CSS won again. Nobody knows how.',
+          'Tiny refactor. See you in three days.',
+          'All tests are green. Suspiciously green.',
+        ];
+
+    const jokeQueueKey = `byte-joke-queue-v1-${isRu ? 'ru' : 'en'}`;
+    const lastJokeKey = `byte-last-joke-v1-${isRu ? 'ru' : 'en'}`;
+    let jokeQueue: number[] = [];
+
+    try {
+      const savedQueue = JSON.parse(sessionStorage.getItem(jokeQueueKey) || '[]');
+      if (Array.isArray(savedQueue)) {
+        jokeQueue = savedQueue.filter(
+          (value, index, array) =>
+            Number.isInteger(value) && value >= 0 && value < jokes.length && array.indexOf(value) === index
+        );
+      }
+      const savedLastJoke = Number(sessionStorage.getItem(lastJokeKey));
+      if (Number.isInteger(savedLastJoke) && savedLastJoke >= 0 && savedLastJoke < jokes.length) {
+        lastJoke = savedLastJoke;
+      }
+    } catch {
+      jokeQueue = [];
+    }
+
+    const refillJokeQueue = () => {
+      jokeQueue = Array.from({ length: jokes.length }, (_, index) => index);
+      for (let index = jokeQueue.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [jokeQueue[index], jokeQueue[swapIndex]] = [jokeQueue[swapIndex], jokeQueue[index]];
+      }
+      if (jokeQueue.length > 1 && jokeQueue[0] === lastJoke) {
+        [jokeQueue[0], jokeQueue[1]] = [jokeQueue[1], jokeQueue[0]];
+      }
+    };
+
+    const getNextJoke = () => {
+      if (jokeQueue.length === 0) refillJokeQueue();
+      const index = jokeQueue.shift() ?? 0;
+      lastJoke = index;
+      sessionStorage.setItem(jokeQueueKey, JSON.stringify(jokeQueue));
+      sessionStorage.setItem(lastJokeKey, String(index));
+      return jokes[index];
+    };
+
+    const speak = (message: string, options: { html?: boolean; duration?: number } = {}) => {
+      if (options.html) text.innerHTML = message;
+      else text.textContent = message;
+      root.dataset.speaking = 'true';
+      button.setAttribute('aria-expanded', 'true');
+      if (speechTimer !== null) window.clearTimeout(speechTimer);
+      speechTimer = window.setTimeout(() => {
+        root.dataset.speaking = 'false';
+        button.setAttribute('aria-expanded', 'false');
+      }, options.duration ?? 3600);
+    };
+
+    const routePositions = [
+      { x: 0.97, y: 0.13 },
+      { x: 0.97, y: 0.13 },
+      { x: 0.97, y: 0.13 },
+      { x: 0.97, y: 0.13 },
+      { x: 0.97, y: 0.13 },
+      { x: 0.97, y: 0.13 },
+    ];
+    const sections = document.querySelectorAll<HTMLElement>('[data-companion-message]');
+
+    const getTarget = (index: number) => {
+      const position = routePositions[index] || routePositions[routePositions.length - 1];
+      const maxX = Math.max(0, window.innerWidth - root.offsetWidth - 12);
+      const maxY = Math.max(0, window.innerHeight - root.offsetHeight - 12);
+      return {
+        x: Math.min(maxX, Math.max(12, maxX * position.x)),
+        y: Math.min(maxY, Math.max(12, maxY * position.y)),
+        side: position.x < 0.5 ? 'right' : 'left',
+        vertical: position.y < 0.34 ? 'below' : 'above',
+      };
+    };
+
+    const landAt = (index: number, animate = true) => {
+      const target = getTarget(index);
+      const rect = root.getBoundingClientRect();
+      const fromX = rect.left;
+      const fromY = rect.top;
+      const dx = target.x - fromX;
+      const dy = target.y - fromY;
+      const distance = Math.hypot(dx, dy);
+      const direction = Math.sign(dx) || 1;
+      const arc = Math.min(110, Math.max(36, distance * 0.16));
+      const overshootX = target.x + direction * Math.min(34, distance * 0.055);
+      const overshootY = target.y + Math.sign(dy || 1) * Math.min(18, distance * 0.03);
+
+      flight?.cancel();
+      root.style.setProperty('--companion-x', `${target.x.toFixed(2)}px`);
+      root.style.setProperty('--companion-y', `${target.y.toFixed(2)}px`);
+      root.style.setProperty('--companion-tilt', '0deg');
+      root.dataset.bubbleSide = target.side;
+      root.dataset.bubbleVertical = target.vertical;
+
+      if (!animate || reducedMotion || distance < 8) return Promise.resolve();
+
+      flight = root.animate(
+        [
+          { transform: `translate3d(${fromX}px, ${fromY}px, 0) rotate(0deg) scale(1)`, offset: 0, easing: 'cubic-bezier(.55,.04,.68,.2)' },
+          { transform: `translate3d(${fromX + dx * 0.12}px, ${fromY + dy * 0.08 - arc * 0.35}px, 0) rotate(${direction * 9}deg) scale(.94)`, offset: 0.18, easing: 'cubic-bezier(.2,.7,.25,1)' },
+          { transform: `translate3d(${overshootX}px, ${overshootY - arc * 0.12}px, 0) rotate(${direction * -7}deg) scale(1.06)`, offset: 0.72, easing: 'cubic-bezier(.2,.8,.2,1)' },
+          { transform: `translate3d(${target.x - direction * 7}px, ${target.y + 4}px, 0) rotate(${direction * 3}deg) scale(.985)`, offset: 0.88, easing: 'ease-out' },
+          { transform: `translate3d(${target.x}px, ${target.y}px, 0) rotate(0deg) scale(1)`, offset: 1 },
+        ],
+        {
+          duration: Math.min(920, Math.max(560, 480 + distance * 0.28)),
+          fill: 'none',
+        }
+      );
+
+      return flight.finished.catch(() => undefined);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!enabled) return;
+        const active = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0];
+        if (!(active?.target instanceof HTMLElement)) return;
+        const index = Array.from(sections).indexOf(active.target);
+        if (index < 0 || index === activeIndex) return;
+        activeIndex = index;
+        const token = ++flightToken;
+        root.dataset.speaking = 'false';
+        void landAt(index).then(() => {
+          if (token !== flightToken) return;
+        });
+      },
+      { rootMargin: '-42% 0px -42% 0px', threshold: 0 }
+    );
+    sections.forEach((section) => observer.observe(section));
+
+    button.onclick = () => {
+      root.dataset.interacted = 'true';
+      const path = window.location.pathname;
+      const contextKey = `byte-context-seen-v1:${path}`;
+      let contextMessage = '';
+      if (!sessionStorage.getItem(contextKey)) {
+        if (/\/blog\/(?!tag\/)[^/]+\/?$/.test(path)) {
+          contextMessage = isRu
+            ? 'Источники — внизу. Я проверил, теперь твоя очередь.'
+            : 'Sources are at the bottom. I checked; now it’s your turn.';
+        } else if (/\/blog\/?$/.test(path)) {
+          contextMessage = isRu
+            ? 'Поиск ищет по заголовкам, темам и технологиям. Почти как AI, только предсказуемо.'
+            : 'Search covers titles, topics, and technologies. Almost like AI, but predictable.';
+        } else if (/\/about\/?$/.test(path)) {
+          contextMessage = isRu
+            ? 'Манифест короткий. Блюр — осознанный.'
+            : 'The manifesto is short. The blur is intentional.';
+        }
+        if (contextMessage) sessionStorage.setItem(contextKey, 'true');
+      }
+      speak(contextMessage || getNextJoke(), { html: true, duration: 6000 });
+    };
+
+    const onResize = () => {
+      if (activeIndex >= 0) void landAt(activeIndex, false);
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+    const onByteToggle = (event: Event) => {
+      const nextEnabled =
+        event instanceof CustomEvent && typeof event.detail?.enabled === 'boolean'
+          ? event.detail.enabled
+          : localStorage.getItem('byte-enabled') !== 'false';
+      enabled = nextEnabled;
+      root.hidden = !enabled;
+
+      if (!enabled) {
+        flightToken += 1;
+        flight?.cancel();
+        root.dataset.speaking = 'false';
+        return;
+      }
+
+      void landAt(Math.max(0, activeIndex), false);
+    };
+    window.addEventListener('byte:toggle', onByteToggle);
+    activeIndex = Math.max(
+      0,
+      Array.from(sections).reduce((closest, section, index) => {
+        const center = section.getBoundingClientRect().top + section.getBoundingClientRect().height * 0.5;
+        const previous = sections[closest]?.getBoundingClientRect();
+        const previousCenter = previous ? previous.top + previous.height * 0.5 : Number.POSITIVE_INFINITY;
+        return Math.abs(center - window.innerHeight * 0.5) < Math.abs(previousCenter - window.innerHeight * 0.5)
+          ? index
+          : closest;
+      }, 0)
+    );
+    if (enabled) {
+      void landAt(activeIndex, false);
+    }
+
+    cleanupCompanion = () => {
+      observer.disconnect();
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('byte:toggle', onByteToggle);
+      flight?.cancel();
+      if (speechTimer !== null) window.clearTimeout(speechTimer);
+    };
+  }
+
+  document.addEventListener('astro:page-load', initScrollCompanion);
+  document.addEventListener('astro:before-swap', () => cleanupCompanion());
+</script>

@@ -3,6 +3,7 @@ title: 'XHTTP: A Deep Technical Analysis of the New Xray Transport Protocol'
 description: 'The ultimate guide to XHTTP architecture: Packet-UP and Stream-UP modes, mechanisms for bypassing ML DPI analyzers, and download/upload stream separation.'
 tags: ['Xray', 'XHTTP', 'DPI', 'VLESS', 'Networking', 'Cybersecurity']
 pubDate: 2025-12-30
+postType: analysis
 type: 'web'
 excerpt: 'XHTTP changes the game in traffic obfuscation. We analyze how the new protocol mimics CDN behavior, eliminates nested TLS handshakes, and makes data flow invisible to neural networks.'
 tldr: 'XHTTP abandons WebSocket and gRPC in favor of native HTTP requests with randomization. Learn how XMUX breaks statistical analysis and how to configure traffic separation across different IPs.'
@@ -222,4 +223,11 @@ Cloudflare may close Stream-UP if no data is observed for ~100 seconds. Using `s
 
 # Conclusion
 
-XHTTP is not just another transport — it's a strategic response to the evolution of censorship. By removing nested TLS handshakes and operating at the HTTP application level, XHTTP makes detection economically impractical for censors. Correctly configured XHTTP achieves near-zero detection rates because blocking it would cause widespread collateral damage to legitimate services (CDNs, APIs, SSE).
+XHTTP is not just another transport — it is a response to the evolution of censorship systems. Ordinary HTTP semantics, multiple transfer modes, and CDN infrastructure make signature-based blocking harder and raise the cost of false positives. Detection cannot be treated as zero, however: the outcome depends on configuration, environment, client behavior, and the capabilities of a particular traffic-analysis system.
+
+<References items={[
+  { id: 1, title: 'XHTTP: Beyond REALITY — official documentation', url: 'https://xtls.github.io/en/config/transports/xhttp.html', sourceName: 'Project X' },
+  { id: 2, title: 'XHTTP: Beyond REALITY — design discussion by its authors', url: 'https://github.com/XTLS/Xray-core/discussions/4113', sourceName: 'GitHub / XTLS' },
+  { id: 3, title: 'Xray-core transport configuration', url: 'https://xtls.github.io/en/config/transport.html', sourceName: 'Project X' },
+  { id: 4, title: 'Xray-core source code', url: 'https://github.com/XTLS/Xray-core', sourceName: 'GitHub / XTLS' },
+]} />

@@ -1,0 +1,195 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../layout/Header.astro';
+import Footer from '../layout/Footer.astro';
+import EmailIcon from '../icons/EmailIcon.astro';
+import TelegramIcon from '../icons/TelegramIcon.astro';
+import AutomationBotsIcon from '../icons/AutomationBotsIcon.astro';
+import ProductEngineeringIcon from '../icons/ProductEngineeringIcon.astro';
+import '../../styles/about.css';
+
+const currentLang = Astro.currentLocale || 'ru';
+const isRu = currentLang === 'ru';
+---
+
+<Layout
+  title={isRu ? 'Обо мне | Rerowros' : 'About Me | Rerowros'}
+  description={isRu
+    ? 'Обо мне — разработчик современных веб-приложений и автоматизированных Telegram-ботов.'
+    : 'About me — developer of modern web applications and automated Telegram bots.'}
+  pathname={getRelativeLocaleUrl(currentLang, 'about')}
+>
+  <Header />
+
+  <main class="about-shell">
+    <section class="about-opening" aria-labelledby="about-opening-title">
+      <span class="about-opening-mark" aria-hidden="true">?</span>
+      <p>{isRu ? 'Обо мне' : 'About me'}</p>
+      <h1 id="about-opening-title">
+        {isRu ? 'Вам действительно это интересно?' : 'Are you really interested?'}
+      </h1>
+      <a href="#manifest" aria-label={isRu ? 'Читать дальше' : 'Continue reading'}>↓</a>
+    </section>
+
+    <div id="manifest" class="about-manifest">
+      <section class="about-lead" aria-labelledby="approach-title">
+        <div class="about-section-label">
+          <span>01</span>
+          <p>{isRu ? 'Как я работаю' : 'How I work'}</p>
+        </div>
+        <div class="about-lead-copy">
+          <h2 id="approach-title">{isRu ? 'Сначала разбираюсь. Потом пишу код.' : 'Understand first. Then write code.'}</h2>
+          <p>
+            {isRu
+              ? 'Я занимаюсь веб-разработкой, автоматизацией и продуктами с AI-функциями. Смотрю на задачу не только со стороны реализации: для кого мы это делаем, какую проблему решаем, чем измерим результат и что произойдёт после запуска.'
+              : 'I build web products, automation, and products with AI features. I look beyond implementation: who we are building for, what problem we solve, how we measure the result, and what happens after launch.'}
+          </p>
+          <p>
+            {isRu
+              ? 'Мне интереснее найти правильное решение, чем просто закрыть поставленную задачу. Код для меня — не результат сам по себе. Результат — когда продукт понятен пользователю, полезен бизнесу и предсказуем в работе.'
+              : 'I am more interested in finding the right solution than simply closing the assigned task. Code is not the result by itself. The result is a product that is clear to the user, useful to the business, and predictable in operation.'}
+          </p>
+        </div>
+        <div class="about-route" aria-hidden="true"><i></i><i></i><i></i></div>
+      </section>
+
+      <section class="about-proof" aria-labelledby="proof-title">
+        <div class="about-section-label">
+          <span>02</span>
+          <p>{isRu ? 'Ответственность' : 'Responsibility'}</p>
+        </div>
+        <div class="about-proof-heading">
+          <h2 id="proof-title">
+            {isRu ? 'Мне важно видеть систему целиком.' : 'I need to see the whole system.'}
+          </h2>
+          <p>
+            {isRu ? (
+              <>В коммерческих проектах я могу отвечать за весь путь: от архитектуры и данных до интерфейса, деплоя и поддержки. Если проблема мешает продукту работать, мне не очень интересно, в чьей она формальной зоне ответственности.</>
+            ) : (
+              <>In commercial projects, I can own the whole path: from architecture and data to interface, deployment, and support. If a problem prevents the product from working, I am not particularly interested in whose formal area of responsibility it belongs to.</>
+            )}
+          </p>
+        </div>
+
+        <div class="about-proof-grid">
+          <article>
+            <span aria-hidden="true"><AutomationBotsIcon /></span>
+            <h3>Python & Bots</h3>
+            <p>
+              {isRu
+                ? 'Пишу ботов, интеграции и фоновые процессы. Думаю не только о счастливом сценарии, но и об ошибках, повторных событиях, нагрузке и дальнейшей поддержке.'
+                : 'I build bots, integrations, and background processes. I think not only about the happy path, but also errors, repeated events, load, and future maintenance.'}
+            </p>
+          </article>
+          <article>
+            <span aria-hidden="true"><ProductEngineeringIcon /></span>
+            <h3>Product & Engineering</h3>
+            <p>
+              {isRu ? (
+                <>Связываю пользовательский сценарий, бизнес-логику и техническую реализацию. Могу участвовать в приоритизации, самостоятельно продумать архитектуру, запустить продукт и разбираться с тем, что происходит в продакшене.</>
+              ) : (
+                <>I connect the user journey, business logic, and technical implementation. I can contribute to prioritization, independently design the architecture, launch the product, and investigate what happens in production.</>
+              )}
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="about-principles" aria-labelledby="principles-title">
+        <div class="about-section-label">
+          <span>03</span>
+          <p>{isRu ? 'Принципы' : 'Principles'}</p>
+        </div>
+        <h2 id="principles-title">{isRu ? 'Как я принимаю решения' : 'How I make decisions'}</h2>
+        <div class="about-principle-list">
+          <article>
+            <span>01</span>
+            <div>
+              <h3>{isRu ? 'Говорить прямо.' : 'Speak directly.'}</h3>
+              <p>{isRu ? 'Если идея не сработает, сроки нереалистичны или решение создаёт новую проблему — лучше сказать об этом сразу.' : 'If an idea will not work, the deadline is unrealistic, or a solution creates another problem, it is better to say so immediately.'}</p>
+            </div>
+          </article>
+          <article>
+            <span>02</span>
+            <div>
+              <h3>{isRu ? 'Проверять детали.' : 'Check the details.'}</h3>
+              <p>{isRu ? 'Основной сценарий обычно работает первым. Качество проявляется в пограничных случаях, ошибках и мелочах, которые легко не заметить.' : 'The main scenario usually works first. Quality shows up in edge cases, errors, and small details that are easy to overlook.'}</p>
+            </div>
+          </article>
+          <article>
+            <span>03</span>
+            <div>
+              <h3>{isRu ? 'Доводить до работы.' : 'Make it work.'}</h3>
+              <p>{isRu ? 'Мне неинтересно оставить после себя красивую схему или набор файлов. Результат должен запускаться, приносить пользу и оставаться понятным после моего ухода.' : 'I am not interested in leaving behind a beautiful diagram or a collection of files. The result should run, be useful, and remain understandable after I leave.'}</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="about-statement" aria-labelledby="statement-title">
+        <p>{isRu ? 'Формат работы' : 'How I prefer to work'}</p>
+        <h2 id="statement-title">
+          <span>{isRu ? 'За деньги — да.' : 'For money — yes.'}</span>
+          <strong
+            class="about-spoiler"
+            role="button"
+            tabindex="0"
+            aria-label={isRu ? 'Показать продолжение фразы' : 'Reveal the rest of the phrase'}
+            title={isRu ? 'Нажмите, чтобы увидеть' : 'Click to reveal'}
+          >{isRu ? 'Но не хуйню.' : "But I don't ship garbage."}</strong>
+        </h2>
+        <div class="about-statement-copy">
+          <p>
+            {isRu
+              ? 'Мне ближе не роль исполнителя отдельных задач, а участие в продукте: обсуждать приоритеты, смотреть на метрики и отвечать за результат. Поэтому особенно интересны проекты на проценте — когда у меня есть влияние на решения, доступ к цифрам и общий интерес в росте.'
+              : 'I prefer participating in a product over executing isolated tasks: discussing priorities, looking at metrics, and sharing responsibility for the outcome. That is why I am especially interested in revenue-share projects where I have influence over decisions, access to the numbers, and a shared interest in growth.'}
+          </p>
+          <p>
+            {isRu
+              ? 'Я нормально отношусь к деньгам и люблю хорошо оплачиваемую работу. Но не хочу имитировать результат, закрывать глаза на очевидные проблемы или делать вещь, в которую сам не верю. Если берусь — хочу сделать нормально.'
+              : 'I am comfortable talking about money and I like well-paid work. But I do not want to imitate results, ignore obvious problems, or build something I do not believe in. If I take it on, I want to do it properly.'}
+          </p>
+        </div>
+      </section>
+
+      <section class="about-contact" aria-labelledby="about-contact-title">
+        <div>
+          <p>{isRu ? 'Связаться' : 'Contact'}</p>
+          <h2 id="about-contact-title">{isRu ? 'Если подход близок — поговорим.' : 'If this approach resonates, let’s talk.'}</h2>
+          <span>
+            {isRu
+              ? 'Лучше всего написать в Telegram.'
+              : 'Telegram is the best way to reach me.'}
+          </span>
+        </div>
+        <div class="about-contact-links">
+          <a href="mailto:rerowros@gmail.com"><EmailIcon class="h-5 w-5" /> Email</a>
+          <a href="https://t.me/rerowros" target="_blank" rel="noopener noreferrer"><TelegramIcon class="h-5 w-5" /> Telegram</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function initAboutSpoilers() {
+      document.querySelectorAll<HTMLElement>('.about-spoiler:not([data-spoiler-ready])').forEach((spoiler) => {
+        spoiler.dataset.spoilerReady = 'true';
+        const reveal = () => {
+          spoiler.classList.add('is-revealed');
+          spoiler.setAttribute('aria-label', spoiler.textContent?.trim() || '');
+        };
+        spoiler.addEventListener('click', reveal, { once: true });
+        spoiler.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          reveal();
+        });
+      });
+    }
+    document.addEventListener('DOMContentLoaded', initAboutSpoilers);
+    document.addEventListener('astro:page-load', initAboutSpoilers);
+  </script>
+
+  <Footer />
+</Layout>

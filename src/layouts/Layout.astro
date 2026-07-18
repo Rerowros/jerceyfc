@@ -10,7 +10,7 @@ import '@fontsource/unbounded/900.css';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Background from '../components/ui/Background.astro';
-import MobileHint from '../components/ui/MobileHint.astro';
+import ScrollCompanion from '../components/ui/ScrollCompanion.astro';
 
 interface Props {
   title?: string;
@@ -20,8 +20,8 @@ interface Props {
 }
 
 const {
-  title = 'Full-Stack Developer | Rerowros',
-  description = '...',
+  title = 'Rerowros — продуктовый разработчик',
+  description = 'Разрабатываю веб-продукты, автоматизацию и AI-инструменты. Пишу о разработке, собственных проектах и практических экспериментах.',
   pathname = '/',
   image = '/favicon.svg',
 } = Astro.props;
@@ -33,10 +33,22 @@ const cleanPathname = normalizedPathname.endsWith('/')
 
 const canonicalImage = new URL(image, Astro.site || 'https://rerowros.ru').toString();
 const currentLang = Astro.currentLocale || 'ru';
+const isBlogArticle = /^\/(?:en\/)?blog\/(?!tag(?:\/|$))[^/]+\/?$/.test(Astro.url.pathname);
+
+const pageTransition = {
+  forwards: {
+    old: { name: 'page-exit-forward', duration: '180ms', easing: 'cubic-bezier(.4,0,1,1)' },
+    new: { name: 'page-enter-forward', duration: '420ms', easing: 'cubic-bezier(.16,1,.3,1)' },
+  },
+  backwards: {
+    old: { name: 'page-exit-back', duration: '180ms', easing: 'cubic-bezier(.4,0,1,1)' },
+    new: { name: 'page-enter-back', duration: '420ms', easing: 'cubic-bezier(.16,1,.3,1)' },
+  },
+};
 ---
 
 <!doctype html>
-<html lang={currentLang} class="scroll-smooth">
+<html lang={currentLang} class="scroll-smooth" transition:name="root" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -47,13 +59,13 @@ const currentLang = Astro.currentLocale || 'ru';
 
     <meta
       name="keywords"
-      content="Web Development, React Developer, TypeScript, Python, Telegram Bots, Next.js, Astro, Frontend, Backend, Full-Stack, Разработка сайтов, Телеграм боты"
+      content="Product Engineering, AI Development, Web Products, Automation, TypeScript, Python, Astro, React, продуктовая разработка, AI-инструменты, автоматизация"
     />
 
     <title>{title}</title>
 
     <link rel="canonical" href={`https://rerowros.ru${cleanPathname}`} />
-    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:locale" content={currentLang === 'ru' ? 'ru_RU' : 'en_US'} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -63,7 +75,7 @@ const currentLang = Astro.currentLocale || 'ru';
     <meta property="og:image:height" content="630" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:creator" content="" />
+    <meta name="twitter:creator" content="@rerowros" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={canonicalImage} />
@@ -75,36 +87,36 @@ const currentLang = Astro.currentLocale || 'ru';
         '@graph': [
           {
             '@type': 'Person',
-            name: 'Rerowros',
+            name: 'Ярослав (Rerowros)',
             url: 'https://rerowros.ru/',
             sameAs: ['https://t.me/rerowros', 'https://github.com/Rerowros'],
-            jobTitle: 'Full-Stack Web Developer',
+            jobTitle: 'Product Engineer and Full-Stack Developer',
             makesOffer: [
               {
                 '@type': 'Offer',
                 itemOffered: {
                   '@type': 'Service',
-                  name: 'Разработка Telegram-ботов',
+                  name: 'Разработка цифровых продуктов',
                 },
               },
               {
                 '@type': 'Offer',
                 itemOffered: {
                   '@type': 'Service',
-                  name: 'Создание сайтов на React',
+                  name: 'AI-функции и автоматизация',
                 },
               },
             ],
-            knowsAbout: ['React', 'TypeScript', 'Python', 'Next.js', 'Telegram API'],
-            description: 'Разработчик веб-приложений и Telegram-ботов с фокусом на React и Python.',
+            knowsAbout: ['Product Engineering', 'Artificial Intelligence', 'TypeScript', 'Python', 'React', 'Astro', 'Automation', 'SEO experiments'],
+            description: 'Разработчик цифровых продуктов, веб-приложений, автоматизации и AI-инструментов.',
           },
           {
             '@type': 'WebSite',
-            name: 'Rerowros — Portfolio',
+            name: 'Rerowros — продукты, разработка и блог',
             url: 'https://rerowros.ru/',
             potentialAction: {
               '@type': 'SearchAction',
-              target: 'https://rerowros.ru/?s={search_term_string}',
+              target: 'https://rerowros.ru/blog/?q={search_term_string}',
               'query-input': 'required name=search_term_string',
             },
           },
@@ -196,17 +208,21 @@ const currentLang = Astro.currentLocale || 'ru';
       <Background />
     </div>
 
-    <main class="relative z-10 w-full overflow-x-clip">
+    {!isBlogArticle && (
+      <div transition:name="byte-companion" transition:animate="none">
+        <ScrollCompanion lang={currentLang} />
+      </div>
+    )}
+
+    <main
+      class="relative z-10 w-full overflow-x-clip"
+      transition:name="page-content"
+      transition:animate={pageTransition}
+    >
       <slot />
     </main>
 
-    <div transition:persist>
-      <MobileHint />
-    </div>
-
     <script>
-      import { initMagneticButtons } from '../scripts/magnetic';
-
       // --- ЛОГИКА СОХРАНЕНИЯ СКРОЛЛА ПРИ СМЕНЕ ЯЗЫКА ---
 
       // 1. Перед началом перехода
@@ -245,7 +261,10 @@ const currentLang = Astro.currentLocale || 'ru';
         }
       });
 
+      let cleanupScrollObserver = () => {};
+
       function initScrollObserver() {
+        cleanupScrollObserver();
         const observer = new IntersectionObserver(
           (entries) => {
             window.requestAnimationFrame(() => {
@@ -265,17 +284,14 @@ const currentLang = Astro.currentLocale || 'ru';
 
         const animatedElements = document.querySelectorAll('.scroll-animate');
         animatedElements.forEach((element) => observer.observe(element));
+        cleanupScrollObserver = () => observer.disconnect();
       }
 
       document.addEventListener('astro:page-load', () => {
         initScrollObserver();
-        initMagneticButtons();
       });
-
-      document.addEventListener('DOMContentLoaded', () => {
-        initScrollObserver();
-        initMagneticButtons();
-      });
+      document.addEventListener('astro:before-swap', () => cleanupScrollObserver());
     </script>
   </body>
+
 </html>

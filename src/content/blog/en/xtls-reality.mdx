@@ -3,6 +3,7 @@ title: 'XTLS Reality & JA4 Fingerprinting: 2025 Technical Analysis'
 description: 'How Reality steals TLS certificates, why shortId is essential, and how JA4/JA4S fingerprinting is rendering old circumvention methods obsolete.'
 tags: ['XTLS', 'Reality', 'JA4', 'Fingerprinting', 'Cybersecurity', 'VLESS']
 pubDate: 2025-12-31
+postType: analysis
 type: 'web'
 excerpt: 'Reality changed the game by eliminating the need for self-signed certificates. But in 2025, that is not enough: we analyze new attack vectors via RTT timings and post-handshake messages.'
 tldr: 'Learn how masquerading as Microsoft and Cloudflare works, why self-signed certificates are dead, and how to configure uTLS to bypass JA4 detectors.'
@@ -133,3 +134,11 @@ Mitigation: select `dest` that is geographically and topologically close to your
 # Conclusion
 
 Reality greatly raised the bar for censorship circumvention by removing the need for static certificates and providing robust steganographic client authentication. However, side-channel signals (post-handshake behavior, RTT asymmetry) remain detection points and should be addressed by updated implementations.
+
+<References items={[
+  { id: 1, title: 'REALITY — official Project X documentation', url: 'https://xtls.github.io/en/config/transports/reality.html', sourceName: 'Project X' },
+  { id: 2, title: 'XTLS/REALITY implementation and configuration example', url: 'https://github.com/XTLS/REALITY', sourceName: 'GitHub / XTLS' },
+  { id: 3, title: 'uTLS: ClientHello fingerprinting resistance', url: 'https://github.com/refraction-networking/utls', sourceName: 'GitHub / refraction-networking' },
+  { id: 4, title: 'JA4+ network fingerprinting technical details', url: 'https://github.com/FoxIO-LLC/ja4', sourceName: 'GitHub / FoxIO' },
+  { id: 5, title: 'Aparecium: TLS camouflage analysis PoC', url: 'https://github.com/ban6cat6/aparecium', sourceName: 'GitHub / ban6cat6' },
+]} />

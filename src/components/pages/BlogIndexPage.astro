@@ -1,0 +1,170 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../layout/Header.astro';
+import Footer from '../layout/Footer.astro';
+import TelegramLogBlock from '../content/TelegramLogBlock.astro';
+import '../../styles/blog.css';
+
+const currentLang = Astro.currentLocale || 'ru';
+const isRu = currentLang === 'ru';
+const posts = (await getCollection('blog', ({ id }) => id.startsWith(`${currentLang}/`)))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const featured = posts[0];
+const rest = posts.slice(1);
+const tagCounts = new Map<string, number>();
+posts.forEach((post) => post.data.tags.forEach((tag) => tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)));
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+const postHref = (slug: string) => getRelativeLocaleUrl(currentLang, `blog/${slug.replace(/^(ru|en)\//, '')}`);
+const typeLabels = isRu
+  ? { analysis: 'Разборы', experiment: 'Эксперименты', note: 'Заметки', 'build-log': 'Build logs' }
+  : { analysis: 'Analysis', experiment: 'Experiments', note: 'Notes', 'build-log': 'Build logs' };
+const postTypes = [...new Set(posts.map((post) => post.data.postType || 'analysis'))];
+const typeCount = (type: string) => posts.filter((post) => (post.data.postType || 'analysis') === type).length;
+---
+
+<Layout
+  title={isRu ? 'Блог | Rerowros' : 'Blog | Rerowros'}
+  description={isRu ? 'Инженерные разборы, продуктовые наблюдения и заметки из практики.' : 'Engineering deep dives, product observations, and notes from practice.'}
+  pathname={getRelativeLocaleUrl(currentLang, 'blog')}
+>
+  <Header />
+  <main class="blog-shell">
+    <section class="blog-intro" aria-labelledby="blog-title">
+      <div>
+        <p>{isRu ? 'Блог / рабочие заметки' : 'Blog / working notes'}</p>
+        <h1 id="blog-title">{isRu ? 'Пишу о том, что проверяю на практике.' : 'I write about what I test in practice.'}</h1>
+      </div>
+      <div class="blog-intro-note">
+        {isRu
+          ? 'AI, разработка, собственные проекты, SEO и органическое продвижение. Что получилось, что не получилось и что из этого можно использовать в реальной работе.'
+          : 'AI, development, personal projects, SEO, and organic growth. What worked, what did not, and what can actually be used in real work.'}
+      </div>
+    </section>
+
+    <form class="blog-search" role="search" data-blog-search>
+      <span aria-hidden="true">⌕</span>
+      <label class="sr-only" for="blog-search-input">{isRu ? 'Поиск по блогу' : 'Search the blog'}</label>
+      <input id="blog-search-input" type="search" name="q" autocomplete="off" placeholder={isRu ? 'Название, тема или технология' : 'Title, topic, or technology'} data-blog-search-input />
+      <output for="blog-search-input" data-blog-search-count>{posts.length}</output>
+      <button type="reset" aria-label={isRu ? 'Очистить поиск' : 'Clear search'}>×</button>
+    </form>
+
+    <nav class="blog-types" aria-label={isRu ? 'Форматы материалов' : 'Post formats'} data-blog-types>
+      <button type="button" class="is-active" data-blog-type="all">{isRu ? 'Все' : 'All'}<sup>{posts.length}</sup></button>
+      {postTypes.map((type) => <button type="button" data-blog-type={type}>{typeLabels[type]}<sup>{typeCount(type)}</sup></button>)}
+    </nav>
+
+    {featured && (
+      <article class="blog-featured" data-search-entry data-post-type={featured.data.postType || 'analysis'} data-search-text={`${featured.data.title} ${featured.data.excerpt || featured.data.description || ''} ${featured.data.tags.join(' ')} ${featured.data.postType || 'analysis'}`}>
+        <a class="blog-featured-copy" href={postHref(featured.slug)}>
+          <div class="blog-meta">
+            <time datetime={featured.data.pubDate.toISOString()}>{featured.data.pubDate.toLocaleDateString(isRu ? 'ru-RU' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
+            <span>{typeLabels[featured.data.postType || 'analysis']}</span>
+          </div>
+          <h2>{featured.data.title}</h2>
+          <p>{featured.data.excerpt || featured.data.description}</p>
+          <strong>{isRu ? 'Читать' : 'Read'} <span aria-hidden="true">↗</span></strong>
+        </a>
+        {featured.data.coverImage ? (
+          <a class="blog-featured-image" href={postHref(featured.slug)} tabindex="-1" aria-hidden="true">
+            <Image src={featured.data.coverImage} alt="" width={900} height={620} format="webp" quality={78} />
+          </a>
+        ) : (
+          <div class="blog-featured-graphic" aria-hidden="true"><span></span><i></i><b>01</b></div>
+        )}
+      </article>
+    )}
+
+    <TelegramLogBlock lang={currentLang as 'ru' | 'en'} />
+
+    {tags.length > 0 && (
+      <nav class="blog-tags" aria-label={isRu ? 'Темы блога' : 'Blog topics'}>
+        <span>{isRu ? 'Темы' : 'Topics'}</span>
+        {tags.map(([tag, count]) => (
+          <a href={getRelativeLocaleUrl(currentLang, `blog/tag/${tag}/`)}>#{tag}<sup>{count}</sup></a>
+        ))}
+      </nav>
+    )}
+
+    <section class="blog-archive" aria-labelledby="archive-title">
+      <div class="blog-archive-heading">
+        <p>{isRu ? 'Архив' : 'Archive'}</p>
+        <h2 id="archive-title">{isRu ? 'Остальные материалы' : 'More writing'}</h2>
+        <span>{String(rest.length).padStart(2, '0')}</span>
+      </div>
+      <div class="blog-list">
+        {rest.map((post, index) => (
+          <a class="blog-card" href={postHref(post.slug)} data-search-entry data-post-type={post.data.postType || 'analysis'} data-search-text={`${post.data.title} ${post.data.excerpt || post.data.description || ''} ${post.data.tags.join(' ')} ${post.data.postType || 'analysis'}`}>
+            <span class="blog-card-index">{String(index + 2).padStart(2, '0')}</span>
+            <div class="blog-card-copy">
+              <div class="blog-meta"><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString(isRu ? 'ru-RU' : 'en-US', { month: 'short', year: 'numeric' })}</time><span>{typeLabels[post.data.postType || 'analysis']}</span></div>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.excerpt || post.data.description}</p>
+            </div>
+            <div class="blog-card-tags">{post.data.tags.slice(0, 3).map((tag) => <span>#{tag}</span>)}</div>
+            <span class="blog-card-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+      <p class="blog-search-empty" data-search-empty hidden>{isRu ? 'Ничего не нашлось. Попробуйте другой запрос.' : 'Nothing found. Try another query.'}</p>
+    </section>
+  </main>
+  <Footer />
+
+  <script>
+    let cleanupBlogSearch = () => {};
+    function initBlogSearch() {
+      cleanupBlogSearch();
+      const form = document.querySelector<HTMLFormElement>('[data-blog-search]');
+      const input = form?.querySelector<HTMLInputElement>('[data-blog-search-input]');
+      const output = form?.querySelector<HTMLOutputElement>('[data-blog-search-count]');
+      const entries = Array.from(document.querySelectorAll<HTMLElement>('[data-search-entry]'));
+      const empty = document.querySelector<HTMLElement>('[data-search-empty]');
+      const typeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-blog-type]'));
+      if (!form || !input || !output || !entries.length) return;
+      const controller = new AbortController();
+      let activeType = new URL(window.location.href).searchParams.get('type') || 'all';
+      const normalize = (value: string) => value.toLocaleLowerCase().replace(/ё/g, 'е').trim();
+      const apply = (updateUrl = true) => {
+        const query = normalize(input.value);
+        let visible = 0;
+        entries.forEach((entry) => {
+          const matchesQuery = !query || normalize(entry.dataset.searchText || '').includes(query);
+          const matchesType = activeType === 'all' || entry.dataset.postType === activeType;
+          const matches = matchesQuery && matchesType;
+          entry.hidden = !matches;
+          if (matches) visible += 1;
+        });
+        output.value = String(visible);
+        if (empty) empty.hidden = visible !== 0;
+        if (updateUrl) {
+          const url = new URL(window.location.href);
+          if (query) url.searchParams.set('q', input.value.trim());
+          else url.searchParams.delete('q');
+          if (activeType !== 'all') url.searchParams.set('type', activeType);
+          else url.searchParams.delete('type');
+          history.replaceState(history.state, '', url);
+        }
+      };
+      const syncTypeButtons = () => typeButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.blogType === activeType));
+      input.value = new URL(window.location.href).searchParams.get('q') || '';
+      input.addEventListener('input', () => apply(), { signal: controller.signal });
+      form.addEventListener('submit', (event) => { event.preventDefault(); apply(); }, { signal: controller.signal });
+      form.addEventListener('reset', () => { requestAnimationFrame(() => apply()); }, { signal: controller.signal });
+      typeButtons.forEach((button) => button.addEventListener('click', () => {
+        activeType = button.dataset.blogType || 'all';
+        syncTypeButtons();
+        apply();
+      }, { signal: controller.signal }));
+      syncTypeButtons();
+      apply(false);
+      cleanupBlogSearch = () => controller.abort();
+    }
+    document.addEventListener('astro:page-load', initBlogSearch);
+    document.addEventListener('astro:before-swap', () => cleanupBlogSearch());
+  </script>
+</Layout>

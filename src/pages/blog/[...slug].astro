@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Callout from '../../components/content/Callout.astro';
 import References from '../../components/content/References.astro';
+import Claim from '../../components/content/Claim.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ id }) => id.startsWith('ru/'));
@@ -22,5 +23,5 @@ const { Content, headings } = await post.render();
 
 <BlogPostLayout post={post} headings={headings} lang="ru">
   <!-- Передаем компоненты, так как они используются внутри MDX -->
-  <Content components={{ Callout, References }} />
+  <Content components={{ Callout, References, Claim }} />
 </BlogPostLayout>
